@@ -132,7 +132,7 @@ rotate.Image_Array <- function(object, degrees){
 #' @export
 negate.Image_Array <- function(object){
   
-  n.series <- len(x)
+  n.series <- len(object)
   for(i in 1:n.series){
     object[[i]] <- 255 - object[[i]]
   }
@@ -142,12 +142,10 @@ negate.Image_Array <- function(object){
 #' flip Image_Array image
 #'
 #' @param image an Image_Array object
-#' 
-#' @importFrom magick image_negate
 #'
-#' @noRd
-flip.Image_Array <- function(image){
-  n.series <- len(x)
+#' @export
+flip.Image_Array <- function(object){
+  n.series <- len(object)
   for(i in 1:n.series){
     img <- object[[i]]
     dim_img <- dim(img)
@@ -159,12 +157,10 @@ flip.Image_Array <- function(image){
 #' flop Image_Array image
 #'
 #' @param image an Image_Array object
-#' 
-#' @importFrom magick image_negate
 #'
-#' @noRd
-flop.Image_Array <- function(image){
-  n.series <- len(x)
+#' @export
+flop.Image_Array <- function(object){
+  n.series <- len(object)
   for(i in 1:n.series){
     img <- object[[i]]
     dim_img <- dim(img)
@@ -176,15 +172,27 @@ flop.Image_Array <- function(image){
 #' crop Image_Array image
 #'
 #' @param image an Image_Array object
-#' @param geometry a geometry string specifying area (for cropping) or size (for resizing).
-#' 
-#' @importFrom magick image_crop
+#' @param ind index list
 #'
-#' @noRd
-crop.Image_Array <- function(object, geometry){
+#' @export
+crop.Image_Array <- function(object, ind){
   
-  # crop_info_int <- as.integer(strsplit(geometry, split = "[x|+]")[[1]])
-  # image <- image[,crop_info_int[3]:(crop_info_int[3]+crop_info_int[1]), crop_info_int[4]:(crop_info_int[4]+crop_info_int[2]), drop = FALSE]
+  # check ind
+  if(!is.list(ind))
+    stop("'ind' should be a list of integers")
+  if((length(dim(object[[1]])) - 1) != length(ind))
+    stop("'ind' should be a list of integers")
+  
+  # crop all images
+  n.series <- len(object)
+  for(i in 1:n.series){
+    img <- object[[i]]
+    cur_ind <- lapply(ind, function(curind){
+      seq(floor(head(curind,1)/(2^(i-1))), ceiling(tail(curind,1)/(2^(i-1))))
+    })
+    object[[i]] <- img[, cur_ind[[1]], cur_ind[[2]], drop = FALSE]
+  }
+  
   object
 }
 

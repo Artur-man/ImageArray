@@ -4,7 +4,7 @@
 \alias{negate.Image_Array}
 \title{negate Image_Array image}
 \usage{
-negate.Image_Array(object)
+\method{negate}{Image_Array}(object)
 }
 \arguments{
 \item{object}{an Image_Array object}

@@ -4,7 +4,7 @@
 \alias{rotate.Image_Array}
 \title{rotate.Image_Array}
 \usage{
-rotate.Image_Array(object, degrees)
+\method{rotate}{Image_Array}(object, degrees)
 }
 \arguments{
 \item{object}{an Image_Array object}
