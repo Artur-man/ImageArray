@@ -2,16 +2,16 @@
 # Objects and Classes ####
 ####
 
-#' The Image.Array Class
+#' The Image_Array Class
 #'
 #' @slot series a list of DelayedArray
 #'
-#' @name Image.Array-class
-#' @rdname Image.Array-class
-#' @exportClass Image.Array
+#' @name Image_Array-class
+#' @rdname Image_Array-class
+#' @exportClass Image_Array
 #'
 setClass(
-  Class="Image.Array",
+  Class="Image_Array",
   slots=c(
     series="list"
   )
@@ -23,7 +23,7 @@ setClass(
 
 #' len
 #'
-#' @param object An object of Image.Array class
+#' @param object An object of Image_Array class
 #' 
 #' @noRd
 len <- function(object){
@@ -34,7 +34,7 @@ len <- function(object){
 #' @noRd
 setMethod(
   f = '[[',
-  signature = 'Image.Array',
+  signature = 'Image_Array',
   definition = function(x, i){
     return(x@series[[i]])
   }
@@ -44,7 +44,7 @@ setMethod(
 #' @noRd
 setMethod(
   f = '[[<-',
-  signature = c('Image.Array'),
+  signature = c('Image_Array'),
   definition = function(x, i, ..., value){
     x@series[[i]] <- value
     return(x)
@@ -55,16 +55,33 @@ setMethod(
 #' @noRd
 setMethod(
   f = 'show',
-  signature = c('Image.Array'),
+  signature = c('Image_Array'),
   definition = function(x){
     cat(class(x = object), "Object \n")
     n.series <- len(x)
     for(i in 1:n.series){
       dim_image <- dim(x@series[[i]])
-      cat(paste0("Series ", i, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
+      dim_image <- paste(dim_image, collapse = ",")
+      cat(paste0("Series ", i, " of size (", dim_image, ") \n"))
     }
   }
 )
+
+#' aperm
+#'
+#' aperm
+#'
+#' @rdname aperm
+#' @aliases aperm
+#' @method aperm Image_Array
+#' @export
+aperm.Image_Array <- function(object, perm){
+  n.series <- len(object)
+  for(i in 1:n.series){
+    object[[i]] <- aperm(object[[i]], perm = perm)
+  }
+  object
+}
 
 ####
 # Functions ####
@@ -118,7 +135,7 @@ createImageArray <- function(image, n.series = NULL)
   }
   
   # return
-  methods::new("Image.Array", series = image_list)
+  methods::new("Image_Array", series = image_list)
 }
 
 #' writeImageArray
@@ -129,7 +146,7 @@ createImageArray <- function(image, n.series = NULL)
 #' @param format on disk fornat
 #' @param output output file name
 #' @param replace Should the existing file be removed or not
-#' @param n.series the number of series in the Image.Array
+#' @param n.series the number of series in the Image_Array
 #' @param chunkdim chunkdim
 #' @param level level
 #' @param as.sparse as.sparse 
@@ -202,5 +219,3 @@ isTRUEorFALSE <- function (x) {
 isSingleString <- function (x) {
   is.character(x) && length(x) == 1L && !is.na(x)
 }
-
-
