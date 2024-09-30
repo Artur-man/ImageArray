@@ -83,6 +83,111 @@ aperm.Image_Array <- function(object, perm){
   object
 }
 
+#' getImageInfo
+#'
+#' get information on images
+#'
+#' @param image an Image_Array object
+#'
+#' @export
+getImageInfo <- function(object){
+  dim_image <- dim(object[[1]])
+  imginfo <- list(width = dim_image[2], height = dim_image[3])
+  as.data.frame(imginfo)
+}
+
+#' rotate.Image_Array
+#'
+#' rotate Image_Array image
+#'
+#' @param object an Image_Array object
+#' @param degrees value between 0 and 360 for how many degrees to rotate
+#'
+#' @export
+rotate.Image_Array <- function(object, degrees){
+  
+  # aperm
+  if(degrees %in% c(90, 270)){
+    object <- aperm(object, perm = c(1,3,2)) 
+  }
+  
+  # flop
+  if(degrees %in% c(90,180)){
+    object <- flop(object)
+  }
+  
+  # flip
+  if(degrees %in% c(180, 270)){
+    object <- flip(object)
+  }
+  
+  # return
+  object
+}
+
+#' negate Image_Array image
+#'
+#' @param object an Image_Array object
+#'
+#' @export
+negate.Image_Array <- function(object){
+  
+  n.series <- len(x)
+  for(i in 1:n.series){
+    object[[i]] <- 255 - object[[i]]
+  }
+  object
+}
+
+#' flip Image_Array image
+#'
+#' @param image an Image_Array object
+#' 
+#' @importFrom magick image_negate
+#'
+#' @noRd
+flip.Image_Array <- function(image){
+  n.series <- len(x)
+  for(i in 1:n.series){
+    img <- object[[i]]
+    dim_img <- dim(img)
+    object[[i]] <- img[ , , dim_img[3]:1, drop = FALSE]
+  }
+  object
+}
+
+#' flop Image_Array image
+#'
+#' @param image an Image_Array object
+#' 
+#' @importFrom magick image_negate
+#'
+#' @noRd
+flop.Image_Array <- function(image){
+  n.series <- len(x)
+  for(i in 1:n.series){
+    img <- object[[i]]
+    dim_img <- dim(img)
+    object[[i]] <- img[ , dim_img[2]:1, , drop = FALSE]
+  }
+  object
+}
+
+#' crop Image_Array image
+#'
+#' @param image an Image_Array object
+#' @param geometry a geometry string specifying area (for cropping) or size (for resizing).
+#' 
+#' @importFrom magick image_crop
+#'
+#' @noRd
+crop.Image_Array <- function(object, geometry){
+  
+  # crop_info_int <- as.integer(strsplit(geometry, split = "[x|+]")[[1]])
+  # image <- image[,crop_info_int[3]:(crop_info_int[3]+crop_info_int[1]), crop_info_int[4]:(crop_info_int[4]+crop_info_int[2]), drop = FALSE]
+  object
+}
+
 ####
 # Functions ####
 ####
