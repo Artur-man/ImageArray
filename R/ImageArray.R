@@ -21,6 +21,55 @@ setClass(
 # Methods ####
 ####
 
+#' len
+#'
+#' @param object An object of Image.Array class
+#' 
+#' @noRd
+len <- function(object){
+  return(length(object@series))
+}
+
+#' @importFrom methods slot
+#' @noRd
+setMethod(
+  f = '[[',
+  signature = 'Image.Array',
+  definition = function(x, i){
+    return(x@series[[i]])
+  }
+)
+
+#' @importFrom methods slot
+#' @noRd
+setMethod(
+  f = '[[<-',
+  signature = c('Image.Array'),
+  definition = function(x, i, ..., value){
+    x@series[[i]] <- value
+    return(x)
+  }
+)
+
+#' @importFrom methods slot
+#' @noRd
+setMethod(
+  f = 'show',
+  signature = c('Image.Array'),
+  definition = function(x){
+    cat(class(x = object), "Object \n")
+    n.series <- len(x)
+    for(i in 1:n.series){
+      dim_image <- dim(x@series[[i]])
+      cat(paste0("Series ", i, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
+    }
+  }
+)
+
+####
+# Functions ####
+####
+
 #' createImageArray
 #'
 #' creates an object of ImageArray class
@@ -72,38 +121,25 @@ createImageArray <- function(image, n.series = NULL)
   methods::new("Image.Array", series = image_list)
 }
 
-
-#' len
-#'
-#' @rdname len
-#' @aliases len
+#' writeImageArray
 #' 
-len <- function(object){
-  return(length(object@series))
-}
-
-#' @importFrom methods slot
-#' @noRd
-setMethod(
-  f = '[[',
-  signature = 'Image.Array',
-  definition = function(x, i){
-    return(x@series[[i]])
-  }
-)
-
-#' @importFrom methods slot
-#' @noRd
-setMethod(
-  f = '[[<-',
-  signature = c('Image.Array'),
-  definition = function(x, i, ..., value){
-    x@series[[i]] <- value
-    return(x)
-  }
-)
-
-writeImageArray <- function(x, 
+#' Writing image arrays on disk
+#'
+#' @param image image
+#' @param format on disk fornat
+#' @param output output file name
+#' @param replace Should the existing file be removed or not
+#' @param n.series the number of series in the Image.Array
+#' @param chunkdim chunkdim
+#' @param level level
+#' @param as.sparse as.sparse 
+#' @param verbose 
+#'
+#' @importFrom HDF5Array writeHDF5Array
+#' @importFrom ZarrArray writeZarrArray
+#' 
+#' @export
+  writeImageArray <- function(image, 
                             format = c("HDF5ImageArray", "ZarrImageArray"), 
                             output = "my_image", 
                             replace = FALSE, 
@@ -111,14 +147,11 @@ writeImageArray <- function(x,
                             chunkdim=NULL, 
                             level=NULL,
                             as.sparse=NA,
-                            with.dimnames=TRUE, 
                             verbose=NA)
 {
   # check arguements
   if (!(is.logical(as.sparse) && length(as.sparse) == 1L))
     stop(wmsg("'as.sparse' must be NA, TRUE or FALSE"))
-  if (!isTRUEorFALSE(with.dimnames))
-    stop("'with.dimnames' must be TRUE or FALSE")
   verbose <- DelayedArray:::normarg_verbose(verbose)
   
   # path
@@ -133,7 +166,7 @@ writeImageArray <- function(x,
   }
   
   # make Image Array
-  image_list <- createImageArray(x, n.series = n.series)
+  image_list <- createImageArray(image, n.series = n.series)
   
   # write all series
   for(i in 1:len(image_list)){
@@ -141,17 +174,16 @@ writeImageArray <- function(x,
     
     switch(format,
            HDF5ImageArray = {
-             img <-  HDF5Array::writeHDF5Array(img, filepath = paste0(output, ".h5"), name = paste(i), 
-                                                          chunkdim = chunkdim, 
-                                                          level = level, as.sparse = as.sparse, 
-                                                          with.dimnames = FALSE,verbose = verbose)
-             image_list[[i]] <- img
+             image_list[[i]]  <-  HDF5Array::writeHDF5Array(img, filepath = paste0(output, ".h5"), name = paste(i), 
+                                                            chunkdim = chunkdim, 
+                                                            level = level, as.sparse = as.sparse, 
+                                                            with.dimnames = FALSE,verbose = verbose)
            }, 
            ZarrImageArray = {
              image_list[[i]] <- ZarrArray::writeZarrArray(img, filepath = paste0(output, ".zarr"), name = paste(i), 
-                                              chunkdim = chunkdim, 
-                                              level = level, as.sparse = as.sparse, 
-                                              with.dimnames = FALSE,verbose = verbose)
+                                                          chunkdim = chunkdim, 
+                                                          level = level, as.sparse = as.sparse, 
+                                                          with.dimnames = FALSE,verbose = verbose)
            })
   }
   
