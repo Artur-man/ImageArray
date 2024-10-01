@@ -357,20 +357,24 @@ isSingleString <- function (x) {
 #'
 #' @param image an Image_Array object
 #'
+#' @importFrom DelayedArray path
+#'  
 #' @export
 filepath.Image_Array <- function(object){
-  path(object[[1]])
+  DelayedArray::path(object[[1]])
 }
 
 #' filepath of Image_Array image
 #'
 #' @param image an Image_Array object
-#'
+#' 
+#' @importFrom DelayedArray path<-
+#' 
 #' @export
 "filepath<-.Image_Array" <- function(object, value){
   n.series <- len(object)
   for(i in 1:n.series){
-    object[[i]]@seed@filepath <- value 
+    DelayedArray::path(object[[i]]) <- value
   }
   return(object)
 }
