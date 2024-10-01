@@ -242,7 +242,9 @@ createImageArray <- function(image, n.series = NULL)
     for(i in 2:n.series){
       dim_image <- ceiling(dim_image/2)
       cat(paste0("Creating Series ", i, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
-      cur_image <- magick::image_resize(cur_image, geometry = magick::geometry_size_percent(50))
+      cur_image <- magick::image_resize(cur_image, 
+                                        geometry = magick::geometry_size_percent(50), 
+                                        filter = "Gaussian")
       image_list[[i]] <- magick::image_data(cur_image, channels = "rgb")
     }
   }
