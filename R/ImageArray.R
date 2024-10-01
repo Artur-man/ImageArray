@@ -378,3 +378,28 @@ filepath.Image_Array <- function(object){
   }
   return(object)
 }
+
+#' as.array method for ImageArray object
+#' 
+#' @rdname as.array
+#' @aliases as.array
+#' @method as.array Image_Array
+#' 
+#' @export
+as.array.Image_Array <- function(object, max.pixel.size = NULL){
+  if(is.null(max.pixel.size)){
+    return(as.array(object[[1]]))
+  } else {
+    if(max.pixel.size %% 1 == 0){
+      n.series = len(object)
+      for(i in 1:n.series){
+        dim_img <- dim(object[[i]])
+        if(max.pixel.size >= min(dim_img[2:3])){
+          return(as.array(object[[i]]))
+        }
+      }
+    } else {
+      stop("'max.pixel.size' should be an integer!")
+    }
+  }
+}
