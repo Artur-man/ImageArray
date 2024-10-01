@@ -6,8 +6,9 @@
 \usage{
 writeImageArray(
   image,
-  format = c("HDF5ImageArray", "ZarrImageArray"),
   output = "my_image",
+  name = "",
+  format = c("HDF5ImageArray", "ZarrImageArray"),
   replace = FALSE,
   n.series = NULL,
   chunkdim = NULL,
@@ -19,9 +20,11 @@ writeImageArray(
 \arguments{
 \item{image}{image}
 
-\item{format}{on disk fornat}
-
 \item{output}{output file name}
+
+\item{name}{name of the group}
+
+\item{format}{on disk fornat}
 
 \item{replace}{Should the existing file be removed or not}
 

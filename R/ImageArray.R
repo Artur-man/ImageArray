@@ -212,6 +212,10 @@ crop.Image_Array <- function(object, ind){
 #' @export
 createImageArray <- function(image, n.series = NULL)
 {
+  # convert images
+  if(is.integer(image)){
+    image <- array(as.raw(image), dim = c(3,2,1))
+  }
   if(!inherits(image, "magick-image")){
     image <- magick::image_read(image)
   }
@@ -242,7 +246,9 @@ createImageArray <- function(image, n.series = NULL)
     for(i in 2:n.series){
       dim_image <- ceiling(dim_image/2)
       cat(paste0("Creating Series ", i, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
-      cur_image <- magick::image_resize(cur_image, geometry = magick::geometry_size_percent(50))
+      cur_image <- magick::image_resize(cur_image, 
+                                        geometry = magick::geometry_size_percent(50), 
+                                        filter = "Gaussian")
       image_list[[i]] <- magick::image_data(cur_image, channels = "rgb")
     }
   }
@@ -256,8 +262,9 @@ createImageArray <- function(image, n.series = NULL)
 #' Writing image arrays on disk
 #'
 #' @param image image
-#' @param format on disk fornat
 #' @param output output file name
+#' @param name name of the group
+#' @param format on disk fornat
 #' @param replace Should the existing file be removed or not
 #' @param n.series the number of series in the Image_Array
 #' @param chunkdim chunkdim
@@ -269,9 +276,10 @@ createImageArray <- function(image, n.series = NULL)
 #' @importFrom ZarrArray writeZarrArray
 #' 
 #' @export
-  writeImageArray <- function(image, 
+writeImageArray <- function(image, 
+                            output = "my_image",
+                            name = "",
                             format = c("HDF5ImageArray", "ZarrImageArray"), 
-                            output = "my_image", 
                             replace = FALSE, 
                             n.series = NULL,
                             chunkdim=NULL, 
@@ -298,19 +306,31 @@ createImageArray <- function(image, n.series = NULL)
   # make Image Array
   image_list <- createImageArray(image, n.series = n.series)
   
+  # open ondisk store
+  switch(format,
+         HDF5ImageArray = {
+           rhdf5::h5createFile(ondisk_path)
+           rhdf5::h5createGroup(ondisk_path, group = name)
+         }, 
+         ZarrImageArray = {
+           zarr.array <- pizzarr::zarr_open(store = ondisk_path)
+           zarr.array$create_group(name)
+         })
+  
   # write all series
   for(i in 1:len(image_list)){
     img <- aperm(as.integer(image_list[[i]]), c(3,2,1))
     
+    # write array
     switch(format,
            HDF5ImageArray = {
-             image_list[[i]]  <-  HDF5Array::writeHDF5Array(img, filepath = paste0(output, ".h5"), name = paste(i), 
-                                                            chunkdim = chunkdim, 
-                                                            level = level, as.sparse = as.sparse, 
-                                                            with.dimnames = FALSE,verbose = verbose)
+             image_list[[i]] <- HDF5Array::writeHDF5Array(img, filepath = ondisk_path, name = paste0(name,"/",i), 
+                                                          chunkdim = chunkdim, 
+                                                          level = level, as.sparse = as.sparse, 
+                                                          with.dimnames = FALSE,verbose = verbose)
            }, 
            ZarrImageArray = {
-             image_list[[i]] <- ZarrArray::writeZarrArray(img, filepath = paste0(output, ".zarr"), name = paste(i), 
+             image_list[[i]] <- ZarrArray::writeZarrArray(img, filepath = ondisk_path, name = paste0(name, "/",i), 
                                                           chunkdim = chunkdim, 
                                                           level = level, as.sparse = as.sparse, 
                                                           with.dimnames = FALSE,verbose = verbose)
@@ -331,4 +351,30 @@ isTRUEorFALSE <- function (x) {
 
 isSingleString <- function (x) {
   is.character(x) && length(x) == 1L && !is.na(x)
+}
+
+#' filepath of Image_Array image
+#'
+#' @param image an Image_Array object
+#'
+#' @importFrom DelayedArray path
+#'  
+#' @export
+filepath.Image_Array <- function(object){
+  DelayedArray::path(object[[1]])
+}
+
+#' filepath of Image_Array image
+#'
+#' @param image an Image_Array object
+#' 
+#' @importFrom DelayedArray path
+#' 
+#' @export
+"filepath<-.Image_Array" <- function(object, value){
+  n.series <- len(object)
+  for(i in 1:n.series){
+    object[[i]]@seed@filepath <- value
+  }
+  return(object)
 }
