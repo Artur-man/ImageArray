@@ -212,6 +212,13 @@ crop.Image_Array <- function(object, ind){
 #' @export
 createImageArray <- function(image, n.series = NULL)
 {
+  # convert images
+  if(is.integer(image)){
+    image <- aperm(image, c(3,2,1))
+  }
+  if(inherits(image, "bitmap")){
+    image <- aperm(as.integer(image), c(3,2,1))
+  }
   if(!inherits(image, "magick-image")){
     image <- magick::image_read(image)
   }
@@ -320,10 +327,10 @@ writeImageArray <- function(image,
     # write array
     switch(format,
            HDF5ImageArray = {
-             image_list[[i]]  <-  HDF5Array::writeHDF5Array(img, filepath = ondisk_path, name = paste0(name,"/",i), 
-                                                            chunkdim = chunkdim, 
-                                                            level = level, as.sparse = as.sparse, 
-                                                            with.dimnames = FALSE,verbose = verbose)
+             image_list[[i]] <- HDF5Array::writeHDF5Array(img, filepath = ondisk_path, name = paste0(name,"/",i), 
+                                                          chunkdim = chunkdim, 
+                                                          level = level, as.sparse = as.sparse, 
+                                                          with.dimnames = FALSE,verbose = verbose)
            }, 
            ZarrImageArray = {
              image_list[[i]] <- ZarrArray::writeZarrArray(img, filepath = ondisk_path, name = paste0(name, "/",i), 
