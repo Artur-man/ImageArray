@@ -214,10 +214,7 @@ createImageArray <- function(image, n.series = NULL)
 {
   # convert images
   if(is.integer(image)){
-    image <- aperm(image, c(3,2,1))
-  }
-  if(inherits(image, "bitmap")){
-    image <- aperm(as.integer(image), c(3,2,1))
+    image <- array(as.raw(image), dim = c(3,2,1))
   }
   if(!inherits(image, "magick-image")){
     image <- magick::image_read(image)
