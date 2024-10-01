@@ -368,13 +368,13 @@ filepath.Image_Array <- function(object){
 #'
 #' @param image an Image_Array object
 #' 
-#' @importFrom DelayedArray path<-
+#' @importFrom DelayedArray path
 #' 
 #' @export
 "filepath<-.Image_Array" <- function(object, value){
   n.series <- len(object)
   for(i in 1:n.series){
-    DelayedArray::path(object[[i]]) <- value
+    object[[i]]@seed@filepath <- value
   }
   return(object)
 }
