@@ -258,8 +258,9 @@ createImageArray <- function(image, n.series = NULL)
 #' Writing image arrays on disk
 #'
 #' @param image image
-#' @param format on disk fornat
 #' @param output output file name
+#' @param name name of the group
+#' @param format on disk fornat
 #' @param replace Should the existing file be removed or not
 #' @param n.series the number of series in the Image_Array
 #' @param chunkdim chunkdim
@@ -271,9 +272,10 @@ createImageArray <- function(image, n.series = NULL)
 #' @importFrom ZarrArray writeZarrArray
 #' 
 #' @export
-  writeImageArray <- function(image, 
+writeImageArray <- function(image, 
+                            output = "my_image",
+                            name = "",
                             format = c("HDF5ImageArray", "ZarrImageArray"), 
-                            output = "my_image", 
                             replace = FALSE, 
                             n.series = NULL,
                             chunkdim=NULL, 
@@ -300,19 +302,30 @@ createImageArray <- function(image, n.series = NULL)
   # make Image Array
   image_list <- createImageArray(image, n.series = n.series)
   
+  # open ondisk store
+  switch(format,
+         HDF5ImageArray = {
+           rhdf5::h5createFile(ondisk_path)
+           rhdf5::h5createGroup(ondisk_path, group = name)
+         }, 
+         ZarrImageArray = {
+           zarr.array <- pizzarr::zarr_open(store = ondisk_path)
+           zarr.array$create_group(name)
+         })
+  
   # write all series
   for(i in 1:len(image_list)){
     img <- aperm(as.integer(image_list[[i]]), c(3,2,1))
     
     switch(format,
            HDF5ImageArray = {
-             image_list[[i]]  <-  HDF5Array::writeHDF5Array(img, filepath = paste0(output, ".h5"), name = paste(i), 
+             image_list[[i]]  <-  HDF5Array::writeHDF5Array(img, filepath = ondisk_path, name = paste0(name,"/",i), 
                                                             chunkdim = chunkdim, 
                                                             level = level, as.sparse = as.sparse, 
                                                             with.dimnames = FALSE,verbose = verbose)
            }, 
            ZarrImageArray = {
-             image_list[[i]] <- ZarrArray::writeZarrArray(img, filepath = paste0(output, ".zarr"), name = paste(i), 
+             image_list[[i]] <- ZarrArray::writeZarrArray(img, filepath = ondisk_path, name = paste0(name, "/",i), 
                                                           chunkdim = chunkdim, 
                                                           level = level, as.sparse = as.sparse, 
                                                           with.dimnames = FALSE,verbose = verbose)
