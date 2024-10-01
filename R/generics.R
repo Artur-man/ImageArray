@@ -37,3 +37,19 @@ flip <- function(object) {
 flop <- function(object, ing) {
   UseMethod(generic = 'flop', object = object)
 }
+
+#' filepath
+#'
+#' @rdname filepath
+#' @export filepath
+filepath <- function(object) {
+  UseMethod(generic = 'filepath', object = object)
+}
+
+#' filepath<-
+#'
+#' @rdname filepath
+#' @export filepath<-
+"filepath<-" <- function(object,value) {
+  UseMethod(generic = 'filepath<-', object = object)
+}
