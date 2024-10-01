@@ -317,6 +317,7 @@ writeImageArray <- function(image,
   for(i in 1:len(image_list)){
     img <- aperm(as.integer(image_list[[i]]), c(3,2,1))
     
+    # write array
     switch(format,
            HDF5ImageArray = {
              image_list[[i]]  <-  HDF5Array::writeHDF5Array(img, filepath = ondisk_path, name = paste0(name,"/",i), 
