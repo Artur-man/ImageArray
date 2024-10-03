@@ -198,15 +198,24 @@ crop.Image_Array <- function(object, ind){
 
 #' as.array method for ImageArray object
 #' 
+#' @param max.pixel.size maximum pixel size 
+#' @param min.pixel.size minimum pixel size
+#' 
 #' @rdname as.array
 #' @aliases as.array
 #' @method as.array Image_Array
 #' 
 #' @export
-as.array.Image_Array <- function(object, max.pixel.size = NULL){
-  if(is.null(max.pixel.size)){
+as.array.Image_Array <- function(object, max.pixel.size = NULL, min.pixel.size = NULL){
+  
+  # get parameter
+  if(!is.null(max.pixel.size) && !is.null(min.pixel.size)){
+    stop("min and max values cant be defined in the same time!")
+  }
+  
+  if(is.null(max.pixel.size) && is.null(min.pixel.size)){
     return(as.array(object[[1]]))
-  } else {
+  } else if(!is.null(max.pixel.size)){
     if(max.pixel.size %% 1 == 0){
       n.series = len(object)
       for(i in 1:n.series){
@@ -214,6 +223,24 @@ as.array.Image_Array <- function(object, max.pixel.size = NULL){
         if(max.pixel.size >= max(dim_img[2:3])){
           return(as.array(object[[i]]))
         }
+      }
+    } else {
+      stop("'max.pixel.size' should be an integer!")
+    }
+  } else if(!is.null(min.pixel.size)){
+    if(min.pixel.size %% 1 == 0){
+      n.series = len(object)
+      if(n.series > 1){
+        for(i in 2:n.series){
+          dim_img <- dim(object[[i]])
+          if(min.pixel.size > max(dim_img[2:3])){
+            return(as.array(object[[i-1]]))
+          }
+        }
+        # if no min check was attained, return the last image
+        return(as.array(object[[i]]))
+      } else {
+        return(as.array(object[[1]]))
       }
     } else {
       stop("'max.pixel.size' should be an integer!")

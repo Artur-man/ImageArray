@@ -5,7 +5,12 @@
 \alias{as.array}
 \title{as.array method for ImageArray object}
 \usage{
-\method{as.array}{Image_Array}(object, max.pixel.size = NULL)
+\method{as.array}{Image_Array}(object, max.pixel.size = NULL, min.pixel.size = NULL)
+}
+\arguments{
+\item{max.pixel.size}{maximum pixel size}
+
+\item{min.pixel.size}{minimum pixel size}
 }
 \description{
 as.array method for ImageArray object
