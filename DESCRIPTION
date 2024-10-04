@@ -10,4 +10,5 @@ Imports: S4Arrays, HDF5Array, ZarrArray, magick
 License: MIT
 Remotes:
   BIMSBbioinfo/ZarrArray
+Encoding: UTF-8
 RoxygenNote: 7.3.2
