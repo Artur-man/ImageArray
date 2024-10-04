@@ -3,6 +3,7 @@
 S3method("filepath<-",Image_Array)
 S3method(aperm,Image_Array)
 S3method(as.array,Image_Array)
+S3method(as.raster,Image_Array)
 S3method(crop,Image_Array)
 S3method(filepath,Image_Array)
 S3method(flip,Image_Array)
