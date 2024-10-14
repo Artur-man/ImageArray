@@ -107,7 +107,9 @@ createImageArray <- function(image, n.series = NULL)
   
   # create image series
   cat(paste0("Creating Series ", 1, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
-  image_list <- list(magick::image_data(image, channels = "rgb"))
+  # image_list <- list(magick::image_data(image, channels = "rgb"))
+  image_data <- magick::image_data(image, channels = "rgb")
+  image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
   if(n.series > 1){
     cur_image <- image
     for(i in 2:n.series){
@@ -116,7 +118,9 @@ createImageArray <- function(image, n.series = NULL)
       cur_image <- magick::image_resize(cur_image, 
                                         geometry = magick::geometry_size_percent(50), 
                                         filter = "Gaussian")
-      image_list[[i]] <- magick::image_data(cur_image, channels = "rgb")
+      # image_list[[i]] <- magick::image_data(cur_image, channels = "rgb")
+      image_data <- magick::image_data(cur_image, channels = "rgb")
+      image_list[[i]] <- DelayedArray::DelayedArray(as.array(image_data))
     }
   }
   
@@ -146,7 +150,7 @@ createImageArray <- function(image, n.series = NULL)
 writeImageArray <- function(image, 
                             output = "my_image",
                             name = "",
-                            format = c("HDF5ImageArray", "ZarrImageArray"), 
+                            format = c("InMemoryImageArray", "HDF5ImageArray", "ZarrImageArray"), 
                             replace = FALSE, 
                             n.series = NULL,
                             chunkdim=NULL, 
@@ -186,7 +190,9 @@ writeImageArray <- function(image,
   
   # write all series
   for(i in 1:len(image_list)){
-    img <- aperm(as.integer(image_list[[i]]), c(3,2,1))
+    # img <- aperm(as.integer(image_list[[i]]), c(3,2,1))
+    img <- array(as.integer(image_list[[i]]), dim = dim(image_list[[i]]))
+    # img <- aperm(img, c(3,2,1))
     
     # write array
     switch(format,
@@ -201,6 +207,9 @@ writeImageArray <- function(image,
                                                           chunkdim = chunkdim, 
                                                           level = level, as.sparse = as.sparse, 
                                                           with.dimnames = FALSE,verbose = verbose)
+           }, 
+           InMemoryImageArray = {
+             image_list[[i]] <- img
            })
   }
   
