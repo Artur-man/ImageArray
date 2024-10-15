@@ -8,7 +8,7 @@ writeImageArray(
   image,
   output = "my_image",
   name = "",
-  format = c("HDF5ImageArray", "ZarrImageArray"),
+  format = c("InMemoryImageArray", "HDF5ImageArray", "ZarrImageArray"),
   replace = FALSE,
   n.series = NULL,
   chunkdim = NULL,
@@ -24,7 +24,7 @@ writeImageArray(
 
 \item{name}{name of the group}
 
-\item{format}{on disk fornat}
+\item{format}{on disk format}
 
 \item{replace}{Should the existing file be removed or not}
 
@@ -36,7 +36,7 @@ writeImageArray(
 
 \item{as.sparse}{as.sparse}
 
-\item{verbose}{}
+\item{verbose}{verbose}
 }
 \description{
 Writing image arrays on disk

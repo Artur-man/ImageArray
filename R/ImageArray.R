@@ -9,7 +9,6 @@
 #' @name Image_Array-class
 #' @rdname Image_Array-class
 #' @exportClass Image_Array
-#'
 setClass(
   Class="Image_Array",
   slots=c(
@@ -75,6 +74,8 @@ setMethod(
 #' @param n.series the number of series if the image supposed to be pyrimadil
 #'
 #' @importFrom magick image_read image_info image_resize image_data geometry_size_percent
+#' @importFrom methods new
+#' @importFrom DelayedArray DelayedArray
 #' 
 #' @export
 createImageArray <- function(image, n.series = NULL)
@@ -135,16 +136,17 @@ createImageArray <- function(image, n.series = NULL)
 #' @param image image
 #' @param output output file name
 #' @param name name of the group
-#' @param format on disk fornat
+#' @param format on disk format
 #' @param replace Should the existing file be removed or not
 #' @param n.series the number of series in the Image_Array
 #' @param chunkdim chunkdim
 #' @param level level
 #' @param as.sparse as.sparse 
-#' @param verbose 
+#' @param verbose verbose
 #'
 #' @importFrom HDF5Array writeHDF5Array
 #' @importFrom ZarrArray writeZarrArray
+#' @import DelayedArray
 #' 
 #' @export
 writeImageArray <- function(image, 
@@ -160,7 +162,7 @@ writeImageArray <- function(image,
 {
   # check arguements
   if (!(is.logical(as.sparse) && length(as.sparse) == 1L))
-    stop(wmsg("'as.sparse' must be NA, TRUE or FALSE"))
+    message("'as.sparse' must be NA, TRUE or FALSE")
   verbose <- DelayedArray:::normarg_verbose(verbose)
   
   # path

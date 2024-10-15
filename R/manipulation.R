@@ -92,6 +92,8 @@ flop.Image_Array <- function(object){
 #' @param image an Image_Array object
 #' @param ind index list
 #'
+#' @importFrom utils head tail
+#' 
 #' @export
 crop.Image_Array <- function(object, ind){
   
@@ -106,7 +108,7 @@ crop.Image_Array <- function(object, ind){
   for(i in 1:n.series){
     img <- object[[i]]
     cur_ind <- lapply(ind, function(curind){
-      seq(floor(head(curind,1)/(2^(i-1))), ceiling(tail(curind,1)/(2^(i-1))))
+      seq(floor(utils::head(curind,1)/(2^(i-1))), ceiling(utils::tail(curind,1)/(2^(i-1))))
     })
     object[[i]] <- img[, cur_ind[[1]], cur_ind[[2]], drop = FALSE]
   }
