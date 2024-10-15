@@ -9,7 +9,6 @@
 #' @name Image_Array-class
 #' @rdname Image_Array-class
 #' @exportClass Image_Array
-#'
 setClass(
   Class="Image_Array",
   slots=c(
@@ -75,6 +74,8 @@ setMethod(
 #' @param n.series the number of series if the image supposed to be pyrimadil
 #'
 #' @importFrom magick image_read image_info image_resize image_data geometry_size_percent
+#' @importFrom methods new
+#' @importFrom DelayedArray DelayedArray
 #' 
 #' @export
 createImageArray <- function(image, n.series = NULL)
@@ -107,7 +108,9 @@ createImageArray <- function(image, n.series = NULL)
   
   # create image series
   cat(paste0("Creating Series ", 1, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
-  image_list <- list(magick::image_data(image, channels = "rgb"))
+  # image_list <- list(magick::image_data(image, channels = "rgb"))
+  image_data <- magick::image_data(image, channels = "rgb")
+  image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
   if(n.series > 1){
     cur_image <- image
     for(i in 2:n.series){
@@ -116,7 +119,9 @@ createImageArray <- function(image, n.series = NULL)
       cur_image <- magick::image_resize(cur_image, 
                                         geometry = magick::geometry_size_percent(50), 
                                         filter = "Gaussian")
-      image_list[[i]] <- magick::image_data(cur_image, channels = "rgb")
+      # image_list[[i]] <- magick::image_data(cur_image, channels = "rgb")
+      image_data <- magick::image_data(cur_image, channels = "rgb")
+      image_list[[i]] <- DelayedArray::DelayedArray(as.array(image_data))
     }
   }
   
@@ -131,22 +136,23 @@ createImageArray <- function(image, n.series = NULL)
 #' @param image image
 #' @param output output file name
 #' @param name name of the group
-#' @param format on disk fornat
+#' @param format on disk format
 #' @param replace Should the existing file be removed or not
 #' @param n.series the number of series in the Image_Array
 #' @param chunkdim chunkdim
 #' @param level level
 #' @param as.sparse as.sparse 
-#' @param verbose 
+#' @param verbose verbose
 #'
 #' @importFrom HDF5Array writeHDF5Array
 #' @importFrom ZarrArray writeZarrArray
+#' @import DelayedArray
 #' 
 #' @export
 writeImageArray <- function(image, 
                             output = "my_image",
                             name = "",
-                            format = c("HDF5ImageArray", "ZarrImageArray"), 
+                            format = c("InMemoryImageArray", "HDF5ImageArray", "ZarrImageArray"), 
                             replace = FALSE, 
                             n.series = NULL,
                             chunkdim=NULL, 
@@ -156,7 +162,7 @@ writeImageArray <- function(image,
 {
   # check arguements
   if (!(is.logical(as.sparse) && length(as.sparse) == 1L))
-    stop(wmsg("'as.sparse' must be NA, TRUE or FALSE"))
+    message("'as.sparse' must be NA, TRUE or FALSE")
   verbose <- DelayedArray:::normarg_verbose(verbose)
   
   # path
@@ -186,7 +192,9 @@ writeImageArray <- function(image,
   
   # write all series
   for(i in 1:len(image_list)){
-    img <- aperm(as.integer(image_list[[i]]), c(3,2,1))
+    # img <- aperm(as.integer(image_list[[i]]), c(3,2,1))
+    img <- array(as.integer(image_list[[i]]), dim = dim(image_list[[i]]))
+    # img <- aperm(img, c(3,2,1))
     
     # write array
     switch(format,
@@ -201,6 +209,9 @@ writeImageArray <- function(image,
                                                           chunkdim = chunkdim, 
                                                           level = level, as.sparse = as.sparse, 
                                                           with.dimnames = FALSE,verbose = verbose)
+           }, 
+           InMemoryImageArray = {
+             image_list[[i]] <- img
            })
   }
   

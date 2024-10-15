@@ -1,3 +1,5 @@
+#' as.array
+#' 
 #' as.array method for ImageArray object
 #' 
 #' @param max.pixel.size maximum pixel size 
@@ -65,7 +67,17 @@ as.raster.Image_Array <- function(object, max.pixel.size = NULL, min.pixel.size 
   object <- as_raster_array(aperm(object, perm = c(3,2,1)), max = 255)
 }
 
-as_raster_array <- function (x, max = 1, ...) 
+#' as_raster_array
+#' 
+#' custom as_raster_array funcion 
+#' 
+#' @param x x
+#' @param max max
+#' 
+#' @importFrom  grDevices rgb
+#' 
+#' @noRd
+as_raster_array <- function (x, max = 1) 
 {
   if (!is.numeric(x)) {
     if (is.raw(x)) {
@@ -77,11 +89,11 @@ as_raster_array <- function (x, max = 1, ...)
   if (length(d <- dim(x)) != 3L) 
     stop("a raster array must have exactly 3 dimensions")
   r <- array(if (d[3L] == 3L) 
-    rgb(t(x[, , 1L]), t(x[, , 2L]), t(x[, , 3L]), maxColorValue = max)
+    grDevices::rgb(t(x[, , 1L]), t(x[, , 2L]), t(x[, , 3L]), maxColorValue = max)
     else if (d[3L] == 4L) 
-      rgb(t(x[, , 1L]), t(x[, , 2L]), t(x[, , 3L]), t(x[, , 4L]), maxColorValue = max)
+      grDevices::rgb(t(x[, , 1L]), t(x[, , 2L]), t(x[, , 3L]), t(x[, , 4L]), maxColorValue = max)
     else if (d[3L] == 1L) 
-      rgb(t(x[, , 1L]), t(x[, , 1L]), t(x[, , 1L]), maxColorValue = max)
+      grDevices::rgb(t(x[, , 1L]), t(x[, , 1L]), t(x[, , 1L]), maxColorValue = max)
     else stop("a raster array must have exactly 1, 3 or 4 planes"), 
     dim = d[1:2])
   class(r) <- "raster"

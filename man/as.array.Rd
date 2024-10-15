@@ -3,7 +3,7 @@
 \name{as.array.Image_Array}
 \alias{as.array.Image_Array}
 \alias{as.array}
-\title{as.array method for ImageArray object}
+\title{as.array}
 \usage{
 \method{as.array}{Image_Array}(object, max.pixel.size = NULL, min.pixel.size = NULL)
 }
