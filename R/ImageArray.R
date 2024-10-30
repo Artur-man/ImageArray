@@ -177,8 +177,12 @@ writeImageArray <- function(image,
   }
   
   # make Image Array
-  image_list <- createImageArray(image, n.series = n.series)
-  
+  if(!inherits(image, "Image_Array")){
+    image_list <- createImageArray(image, n.series = n.series)
+  } else {
+    image_list <- image
+  }
+
   # open ondisk store
   switch(format,
          HDF5ImageArray = {
