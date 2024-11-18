@@ -108,7 +108,6 @@ createImageArray <- function(image, n.series = NULL)
   
   # create image series
   cat(paste0("Creating Series ", 1, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
-  # image_list <- list(magick::image_data(image, channels = "rgb"))
   image_data <- magick::image_data(image, channels = "rgb")
   image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
   if(n.series > 1){
