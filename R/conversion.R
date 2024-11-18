@@ -9,6 +9,8 @@
 #' @aliases as.array
 #' @method as.array Image_Array
 #' 
+#' @importFrom S4Arrays as.array.Array
+#' 
 #' @export
 as.array.Image_Array <- function(object, max.pixel.size = NULL, min.pixel.size = NULL){
   
@@ -18,14 +20,14 @@ as.array.Image_Array <- function(object, max.pixel.size = NULL, min.pixel.size =
   }
   
   if(is.null(max.pixel.size) && is.null(min.pixel.size)){
-    return(as.array(object[[1]]))
+    return(S4Arrays::as.array.Array(object[[1]]))
   } else if(!is.null(max.pixel.size)){
     if(max.pixel.size %% 1 == 0){
       n.series = len(object)
       for(i in 1:n.series){
         dim_img <- dim(object[[i]])
         if(max.pixel.size >= max(dim_img[2:3])){
-          return(as.array(object[[i]]))
+          return(S4Arrays::as.array.Array(object[[i]]))
         }
       }
     } else {
@@ -38,13 +40,13 @@ as.array.Image_Array <- function(object, max.pixel.size = NULL, min.pixel.size =
         for(i in 2:n.series){
           dim_img <- dim(object[[i]])
           if(min.pixel.size > max(dim_img[2:3])){
-            return(as.array(object[[i-1]]))
+            return(S4Arrays::as.array.Array(object[[i-1]]))
           }
         }
         # if no min check was attained, return the last image
-        return(as.array(object[[i]]))
+        return(S4Arrays::as.array.Array(object[[i]]))
       } else {
-        return(as.array(object[[1]]))
+        return(S4Arrays::as.array.Array(object[[1]]))
       }
     } else {
       stop("'max.pixel.size' should be an integer!")
