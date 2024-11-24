@@ -4,12 +4,14 @@
 \alias{createImageArray}
 \title{createImageArray}
 \usage{
-createImageArray(image, n.series = NULL)
+createImageArray(image, n.series = NULL, verbose = FALSE)
 }
 \arguments{
 \item{image}{the image}
 
 \item{n.series}{the number of series if the image supposed to be pyrimadil}
+
+\item{verbose}{verbose}
 }
 \description{
 creates an object of ImageArray class
