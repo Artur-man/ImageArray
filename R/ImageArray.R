@@ -72,13 +72,14 @@ setMethod(
 #' 
 #' @param image the image
 #' @param n.series the number of series if the image supposed to be pyrimadil
+#' @param verbose verbose
 #'
 #' @importFrom magick image_read image_info image_resize image_data geometry_size_percent
 #' @importFrom methods new
 #' @importFrom DelayedArray DelayedArray
 #' 
 #' @export
-createImageArray <- function(image, n.series = NULL)
+createImageArray <- function(image, n.series = NULL, verbose = FALSE)
 {
   # convert images
   if(is.integer(image)){
@@ -107,18 +108,19 @@ createImageArray <- function(image, n.series = NULL)
   }
   
   # create image series
-  cat(paste0("Creating Series ", 1, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
+  if(verbose)
+    cat(paste0("Creating Series ", 1, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
   image_data <- magick::image_data(image, channels = "rgb")
   image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
   if(n.series > 1){
     cur_image <- image
     for(i in 2:n.series){
       dim_image <- ceiling(dim_image/2)
-      cat(paste0("Creating Series ", i, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
+      if(verbose)
+        cat(paste0("Creating Series ", i, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
       cur_image <- magick::image_resize(cur_image, 
                                         geometry = magick::geometry_size_percent(50), 
                                         filter = "Gaussian")
-      # image_list[[i]] <- magick::image_data(cur_image, channels = "rgb")
       image_data <- magick::image_data(cur_image, channels = "rgb")
       image_list[[i]] <- DelayedArray::DelayedArray(as.array(image_data))
     }
@@ -157,7 +159,7 @@ writeImageArray <- function(image,
                             chunkdim=NULL, 
                             level=NULL,
                             as.sparse=NA,
-                            verbose=NA)
+                            verbose=FALSE)
 {
   # check arguements
   if (!(is.logical(as.sparse) && length(as.sparse) == 1L))
@@ -177,7 +179,7 @@ writeImageArray <- function(image,
   
   # make Image Array
   if(!inherits(image, "Image_Array")){
-    image_list <- createImageArray(image, n.series = n.series)
+    image_list <- createImageArray(image, n.series = n.series, verbose = verbose)
   } else {
     image_list <- image
   }

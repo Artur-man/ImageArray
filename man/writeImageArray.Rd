@@ -14,7 +14,7 @@ writeImageArray(
   chunkdim = NULL,
   level = NULL,
   as.sparse = NA,
-  verbose = NA
+  verbose = FALSE
 )
 }
 \arguments{
