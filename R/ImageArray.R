@@ -187,20 +187,20 @@ writeImageArray <- function(image,
   # open ondisk store
   switch(format,
          HDF5ImageArray = {
-           rhdf5::h5createFile(ondisk_path)
+           if(!file.exists(ondisk_path))
+            rhdf5::h5createFile(ondisk_path)
            rhdf5::h5createGroup(ondisk_path, group = name)
          }, 
          ZarrImageArray = {
-           zarr.array <- pizzarr::zarr_open(store = ondisk_path)
+           if(!dir.exists(ondisk_path))
+            zarr.array <- pizzarr::zarr_open(store = ondisk_path)
            zarr.array$create_group(name)
          })
   
   # write all series
   for(i in 1:len(image_list)){
-    # img <- aperm(as.integer(image_list[[i]]), c(3,2,1))
     img <- array(as.integer(image_list[[i]]), dim = dim(image_list[[i]]))
-    # img <- aperm(img, c(3,2,1))
-    
+
     # write array
     switch(format,
            HDF5ImageArray = {
