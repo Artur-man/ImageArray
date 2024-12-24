@@ -6,6 +6,7 @@ Date: 2024-09-30
 Author: Artür Manukyan
 Maintainer: Artür Manukyan <artur-man@hotmail.com>
 Description: DelayedArray based image operations
+biocViews:
 Imports: methods, grDevices, S4Arrays, DelayedArray, magick, HDF5Array, ZarrArray
 License: MIT
 Remotes:
