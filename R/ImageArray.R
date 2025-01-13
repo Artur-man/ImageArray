@@ -192,8 +192,7 @@ writeImageArray <- function(image,
            rhdf5::h5createGroup(ondisk_path, group = name)
          }, 
          ZarrImageArray = {
-           if(!dir.exists(ondisk_path))
-            zarr.array <- pizzarr::zarr_open(store = ondisk_path)
+           zarr.array <- pizzarr::zarr_open(store = ondisk_path)
            zarr.array$create_group(name)
          })
   
