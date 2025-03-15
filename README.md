@@ -29,7 +29,7 @@ mat_list
 ```
 
 ```
-Image_Array Object 
+ImgArray Object 
 Series 1 of size (3,5000,2000) 
 Series 2 of size (3,2500,1000) 
 Series 3 of size (3,1250,500) 
@@ -44,7 +44,7 @@ mat_list_rotated
 ```
 
 ```
-Image_Array Object 
+ImgArray Object 
 Series 1 of size (3,2000,5000) 
 Series 2 of size (3,1000,2500) 
 Series 3 of size (3,500,1250) 
@@ -59,7 +59,7 @@ You can even crop images
 ```
 
 ```
-Image_Array Object 
+ImgArray Object 
 Series 1 of size (3,1000,500) 
 Series 2 of size (3,501,251) 
 Series 3 of size (3,251,126) 

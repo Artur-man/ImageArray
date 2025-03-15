@@ -1,9 +1,8 @@
 #' getImageInfo
 #'
-#' get information on images
+#' get information of an ImgArray object
 #'
-#' @param image an Image_Array object
-#'
+#' @param object an ImgArray object
 #' @export
 getImageInfo <- function(object){
   dim_image <- dim(object[[1]])

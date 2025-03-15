@@ -7,8 +7,8 @@
 getImageInfo(object)
 }
 \arguments{
-\item{image}{an Image_Array object}
+\item{object}{an ImgArray object}
 }
 \description{
-get information on images
+get information of an ImgArray object
 }

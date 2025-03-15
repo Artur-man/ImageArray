@@ -1,18 +1,13 @@
 #' as.array
 #' 
-#' as.array method for ImageArray object
+#' as.array method for ImgArray object
 #' 
+#' @param x an ImgArray object
 #' @param max.pixel.size maximum pixel size 
 #' @param min.pixel.size minimum pixel size
-#' 
-#' @rdname as.array
-#' @aliases as.array
-#' @method as.array Image_Array
-#' 
 #' @importFrom S4Arrays as.array.Array
-#' 
 #' @export
-as.array.Image_Array <- function(object, max.pixel.size = NULL, min.pixel.size = NULL){
+setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, min.pixel.size = NULL){
   
   # get parameter
   if(!is.null(max.pixel.size) && !is.null(min.pixel.size)){
@@ -20,14 +15,14 @@ as.array.Image_Array <- function(object, max.pixel.size = NULL, min.pixel.size =
   }
   
   if(is.null(max.pixel.size) && is.null(min.pixel.size)){
-    return(S4Arrays::as.array.Array(object[[1]]))
+    return(S4Arrays::as.array.Array(x[[1]]))
   } else if(!is.null(max.pixel.size)){
     if(max.pixel.size %% 1 == 0){
-      n.series = len(object)
+      n.series = length(x)
       for(i in 1:n.series){
-        dim_img <- dim(object[[i]])
+        dim_img <- dim(x[[i]])
         if(max.pixel.size >= max(dim_img[2:3])){
-          return(S4Arrays::as.array.Array(object[[i]]))
+          return(S4Arrays::as.array.Array(x[[i]]))
         }
       }
     } else {
@@ -35,51 +30,34 @@ as.array.Image_Array <- function(object, max.pixel.size = NULL, min.pixel.size =
     }
   } else if(!is.null(min.pixel.size)){
     if(min.pixel.size %% 1 == 0){
-      n.series = len(object)
+      n.series = length(x)
       if(n.series > 1){
         for(i in 2:n.series){
-          dim_img <- dim(object[[i]])
+          dim_img <- dim(x[[i]])
           if(min.pixel.size > max(dim_img[2:3])){
-            return(S4Arrays::as.array.Array(object[[i-1]]))
+            return(S4Arrays::as.array.Array(x[[i-1]]))
           }
         }
         # if no min check was attained, return the last image
-        return(S4Arrays::as.array.Array(object[[i]]))
+        return(S4Arrays::as.array.Array(x[[i]]))
       } else {
-        return(S4Arrays::as.array.Array(object[[1]]))
+        return(S4Arrays::as.array.Array(x[[1]]))
       }
     } else {
       stop("'max.pixel.size' should be an integer!")
     }
   }
-}
-
-#' as.raster method for ImageArray object
-#' 
-#' @param max.pixel.size maximum pixel size 
-#' @param min.pixel.size minimum pixel size
-#' 
-#' @rdname as.raster
-#' @aliases as.raster
-#' @method as.raster Image_Array
-#' 
-#' @export
-as.raster.Image_Array <- function(object, max.pixel.size = NULL, min.pixel.size = NULL){
-  object <- as.array(object, max.pixel.size = max.pixel.size)
-  object <- as_raster_array(aperm(object, perm = c(3,2,1)), max = 255)
-}
+})
 
 #' as_raster_array
 #' 
-#' custom as_raster_array funcion 
+#' custom as_raster_array function for ImgArray 
 #' 
 #' @param x x
 #' @param max max
-#' 
 #' @importFrom  grDevices rgb
-#' 
 #' @noRd
-as_raster_array <- function (x, max = 1) 
+.as_raster_array <- function (x, max = 1) 
 {
   if (!is.numeric(x)) {
     if (is.raw(x)) {
@@ -101,3 +79,15 @@ as_raster_array <- function (x, max = 1)
   class(r) <- "raster"
   r
 }
+
+#' as.raster method for ImgArray object
+#' 
+#' @param x an ImgArray object
+#' @param max.pixel.size maximum pixel size 
+#' @param min.pixel.size minimum pixel size
+#' @export
+setMethod("as.raster", signature = "ImgArray", function(x, max.pixel.size = NULL, min.pixel.size = NULL) {
+  x <- realize(x, max.pixel.size = max.pixel.size, min.pixel.size = min.pixel.size)
+  x <- .as_raster_array(aperm(x, perm = c(3,2,1)), max = 255)
+  x
+})
