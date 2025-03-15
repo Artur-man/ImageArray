@@ -1,6 +1,7 @@
 library(magick)
+library(rhdf5)
 library(HDF5Array)
-library(ZarrArray)
+library(Rarr)
 
 dir.create(td <- tempfile())
 output_h5ad <- file.path(td, "h5test")

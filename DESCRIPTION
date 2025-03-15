@@ -20,13 +20,9 @@ Imports:
   S4Arrays, 
   DelayedArray, 
   magick, 
-  rhdf5, 
-  pizzarr, 
-  HDF5Array, 
-  ZarrArray
-Remotes:
-  BIMSBbioinfo/ZarrArray, 
-  keller-mark/pizzarr
+  rhdf5,
+  HDF5Array,
+  Rarr
 Suggests: 
     testthat (>= 3.0.0),
     knitr

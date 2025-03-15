@@ -160,20 +160,20 @@ createImgArray <- function(image, n.series = NULL, verbose = FALSE)
 #' @param verbose verbose
 #'
 #' @importFrom HDF5Array writeHDF5Array
-#' @importFrom ZarrArray writeZarrArray
+#' @importFrom Rarr writeZarrArray
 #' @import DelayedArray
 #' 
 #' @export
 writeImgArray <- function(image, 
-                            output = "my_image",
-                            name = "",
-                            format = c("InMemoryImgArray", "HDF5ImgArray", "ZarrImgArray"), 
-                            replace = FALSE, 
-                            n.series = NULL,
-                            chunkdim=NULL, 
-                            level=NULL,
-                            as.sparse=NA,
-                            verbose=FALSE)
+                          output = "my_image",
+                          name = "",
+                          format = c("InMemoryImgArray", "HDF5ImgArray", "ZarrImgArray"), 
+                          replace = FALSE, 
+                          n.series = NULL,
+                          chunkdim=NULL, 
+                          level=NULL,
+                          as.sparse=NA,
+                          verbose=FALSE)
 {
   # check arguements
   if (!(is.logical(as.sparse) && length(as.sparse) == 1L))
@@ -206,8 +206,9 @@ writeImgArray <- function(image,
            rhdf5::h5createGroup(ondisk_path, group = name)
          }, 
          ZarrImgArray = {
-           zarr.array <- pizzarr::zarr_open(store = ondisk_path)
-           zarr.array$create_group(name)
+           dir.zarr <- gsub(paste0(basename(ondisk_path), "$"), "", ondisk_path)
+           open_zarr(dir = dir.zarr, name = basename(ondisk_path))
+           zarrcreateGroup(ondisk_path, name)
          })
   
   # write all series
@@ -221,14 +222,14 @@ writeImgArray <- function(image,
                                                           name = paste0(name,"/",i), 
                                                           chunkdim = chunkdim, 
                                                           level = level, as.sparse = as.sparse, 
-                                                          with.dimnames = FALSE,verbose = verbose)
+                                                          with.dimnames = FALSE, verbose = verbose)
            }, 
            ZarrImgArray = {
-             image_list[[i]] <- ZarrArray::writeZarrArray(img, filepath = ondisk_path, 
-                                                          name = paste0(name, "/",i), 
-                                                          chunkdim = chunkdim, 
-                                                          level = level, as.sparse = as.sparse, 
-                                                          with.dimnames = FALSE,verbose = verbose)
+             image_list[[i]] <- Rarr::writeZarrArray(img, 
+                                                     zarr_array_path = file.path(ondisk_path, paste0(name, "/",i)), 
+                                                     chunk_dim = c(dim(img)[1], 
+                                                                   min(dim(img)[2], 2000), 
+                                                                   min(dim(img)[3], 2000)))
            }, 
            InMemoryImgArray = {
              image_list[[i]] <- img

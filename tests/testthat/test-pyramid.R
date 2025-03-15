@@ -1,6 +1,7 @@
 library(magick)
+library(rhdf5)
 library(HDF5Array)
-library(ZarrArray)
+library(Rarr)
 skip_if_not_installed("ggplot2")
 library(ggplot2)
 
