@@ -18,8 +18,8 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
     return(S4Arrays::as.array.Array(x[[1]]))
   } else if(!is.null(max.pixel.size)){
     if(max.pixel.size %% 1 == 0){
-      n.series = length(x)
-      for(i in 1:n.series){
+      n.series <- length(x)
+      for(i in seq_len(n.series)){
         dim_img <- dim(x[[i]])
         if(max.pixel.size >= max(dim_img[2:3])){
           return(S4Arrays::as.array.Array(x[[i]]))
@@ -30,7 +30,7 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
     }
   } else if(!is.null(min.pixel.size)){
     if(min.pixel.size %% 1 == 0){
-      n.series = length(x)
+      n.series <- length(x)
       if(n.series > 1){
         for(i in 2:n.series){
           dim_img <- dim(x[[i]])
@@ -75,7 +75,7 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
     else if (d[3L] == 1L) 
       grDevices::rgb(t(x[, , 1L]), t(x[, , 1L]), t(x[, , 1L]), maxColorValue = max)
     else stop("a raster array must have exactly 1, 3 or 4 planes"), 
-    dim = d[1:2])
+    dim = d[seq_len(2)])
   class(r) <- "raster"
   r
 }

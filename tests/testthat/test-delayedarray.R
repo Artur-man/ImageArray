@@ -24,11 +24,12 @@ test_that("path", {
                               replace = TRUE, verbose = FALSE)
   expect_true(file.exists(path(mat_list)))
   
-  # change path
+  # change path, TODO: is not working now for some reason
   output_h5ad_replace <- gsub("h5test.h5", "h5test2.h5", path(mat_list))
   file.rename(path(mat_list), output_h5ad_replace)
   path(mat_list) <- output_h5ad_replace
   expect_true(file.exists(path(mat_list)))
+  expect_equal(path(mat_list),output_h5ad_replace)
   
   # zarr
   unlink(output_zarr, recursive = TRUE)

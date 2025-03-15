@@ -44,7 +44,7 @@ setMethod("aperm",
           signature = "ImgArray",
           function(a, perm){
             n.series <- length(a)
-            for(i in 1:n.series){
+            for(i in seq_len(n.series)){
               a[[i]] <- aperm(a[[i]], perm = perm)
             }
             a
@@ -59,7 +59,7 @@ setMethod("negate",
           function(object){
             
             n.series <- length(object)
-            for(i in 1:n.series){
+            for(i in seq_len(n.series)){
               object[[i]] <- 255 - object[[i]]
             }
             object
@@ -73,7 +73,7 @@ setMethod("flip",
           signature = "ImgArray",
           function(object){
             n.series <- length(object)
-            for(i in 1:n.series){
+            for(i in seq_len(n.series)){
               img <- object[[i]]
               dim_img <- dim(img)
               object[[i]] <- img[ , , dim_img[3]:1, drop = FALSE]
@@ -89,7 +89,7 @@ setMethod("flop",
           signature = "ImgArray",
           function(object){
             n.series <- length(object)
-            for(i in 1:n.series){
+            for(i in seq_len(n.series)){
               img <- object[[i]]
               dim_img <- dim(img)
               object[[i]] <- img[ , dim_img[2]:1, , drop = FALSE]
@@ -115,7 +115,7 @@ setMethod("crop",
             
             # crop all images
             n.series <- length(object)
-            for(i in 1:n.series){
+            for(i in seq_len(n.series)){
               img <- object[[i]]
               cur_ind <- lapply(ind, function(curind){
                 seq(floor(utils::head(curind,1)/(2^(i-1))), ceiling(utils::tail(curind,1)/(2^(i-1))))

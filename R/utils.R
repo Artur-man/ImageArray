@@ -31,8 +31,8 @@ setReplaceMethod("path",
                  signature = "ImgArray",
                  function(object, value){
                    n.series <- length(object)
-                   for(i in 1:n.series){
-                     path(object[[i]]@seed) <- value
+                   for(i in seq_len(n.series)){
+                     object[[i]]@seed@filepath <- value
                    }
                    return(object)
                  }

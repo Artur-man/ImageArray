@@ -72,7 +72,7 @@ setMethod(
   definition = function(object){
     cat(class(x = object), "Object \n")
     n.series <- length(object)
-    for(i in 1:n.series){
+    for(i in seq_len(n.series)){
       dim_image <- dim(object@series[[i]])
       dim_image <- paste(dim_image, collapse = ",")
       cat(paste0("Series ", i, " of size (", dim_image, ") \n"))
@@ -211,7 +211,7 @@ writeImgArray <- function(image,
          })
   
   # write all series
-  for(i in 1:length(image_list)){
+  for(i in seq_len(length(image_list))){
     img <- array(as.integer(image_list[[i]]), dim = dim(image_list[[i]]))
 
     # write array
