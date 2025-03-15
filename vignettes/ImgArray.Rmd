@@ -1,0 +1,67 @@
+
+---
+title: "`ImageArray`"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+package: "`r BiocStyle::pkg_ver('ImageArray')`"
+author: 
+  - name: Artur Manukyan
+output:
+  BiocStyle::html_document
+vignette: |
+  %\VignetteIndexEntry{ImageArray}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
+```
+
+```{r load-libs}
+library(ImageArray)
+```
+
+# Introduction
+
+ImageArray is a package for Pyramidal and non-pyramidal images in DelayedArray format 
+
+# Usage
+
+The main usage of the ImageArray is to deliver DelayedArray operations for images or a list of images in Pyramidal format 
+
+```{r read}
+# make random magick image
+mat <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), 
+             dim=c(3, 2000, 5000))
+mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
+mat_image <- magick::image_read(mat_raster)
+
+# create image array
+dir.create(td <- tempfile())
+output_h5ad <- file.path(td, "h5test")
+mat_list <- writeImgArray(mat_image, 
+                          format = "HDF5ImgArray", 
+                          output = output_h5ad, 
+                          replace = TRUE)
+mat_list
+```
+
+Operations such as rotate, flip, flop or negate will be conducted on all series
+
+```{r rotate}
+mat_list_rotated <- rotate(mat_list, degrees = 90)
+mat_list_rotated
+```
+
+You can even crop images
+
+```{r crop}
+mat_list_cropped <- crop(mat_list, ind = list(2001:3000, 501:1000))
+mat_list_cropped
+```
+
+# Session info
+
+```{r sessionInfo, echo=FALSE}
+sessionInfo()
+```

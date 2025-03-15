@@ -21,10 +21,12 @@ mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
 mat_image <- magick::image_read(mat_raster)
 
 # create image array
-mat_list <- writeImageArray(mat_image, 
-                            format = "HDF5ImageArray", 
-                            output = "data/my_image", 
-                            replace = TRUE)
+dir.create(td <- tempfile())
+output_h5ad <- file.path(td, "h5test")
+mat_list <- writeImgArray(mat_image, 
+                          format = "HDF5ImgArray", 
+                          output = output_h5ad, 
+                          replace = TRUE)
 mat_list
 ```
 
