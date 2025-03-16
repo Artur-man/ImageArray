@@ -25,7 +25,7 @@ test_that("path hdf5", {
                               replace = TRUE, verbose = FALSE)
   expect_true(file.exists(path(mat_list)))
   
-  # change path, TODO: is not working now for some reason
+  # change path
   output_h5ad_replace <- gsub("h5test.h5", "h5test2.h5", path(mat_list))
   file.rename(path(mat_list), output_h5ad_replace)
   expect_true(file.exists(output_h5ad_replace))
@@ -44,7 +44,7 @@ test_that("path zarr", {
                               replace = TRUE, verbose = FALSE)
   expect_true(dir.exists(path(mat_list)))
   
-  # change path, TODO: zarr5dim not found
+  # change path
   output_zarr_replace <- gsub("zarrtest.zarr", "zarrtest2.zarr", path(mat_list))
   file.rename(gsub("image/1/", "", path(mat_list)), 
               gsub("image/1/", "", output_zarr_replace))
