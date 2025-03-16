@@ -15,7 +15,7 @@ mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
 # read as magick object
 mat_image <- magick::image_read(mat_raster)
 
-test_that("path", {
+test_that("path hdf5", {
   
   # h5
   mat_list <- writeImgArray(mat_image, 
@@ -28,10 +28,13 @@ test_that("path", {
   # change path, TODO: is not working now for some reason
   output_h5ad_replace <- gsub("h5test.h5", "h5test2.h5", path(mat_list))
   file.rename(path(mat_list), output_h5ad_replace)
+  expect_true(file.exists(output_h5ad_replace))
   path(mat_list) <- output_h5ad_replace
   expect_true(file.exists(path(mat_list)))
   expect_equal(path(mat_list),output_h5ad_replace)
+})
   
+test_that("path zarr", {
   # zarr
   unlink(output_zarr, recursive = TRUE)
   mat_list <- writeImgArray(mat_image, 
@@ -42,8 +45,13 @@ test_that("path", {
   expect_true(dir.exists(path(mat_list)))
   
   # change path, TODO: zarr5dim not found
-  # output_zarr_replace <- gsub("zarrtest.zarr", "zarrtest2.zarr", path(mat_list))
-  # file.rename(path(mat_list), output_zarr_replace)
-  # path(mat_list) <- output_zarr_replace
-  # expect_true(file.exists(path(mat_list)))
+  output_zarr_replace <- gsub("zarrtest.zarr", "zarrtest2.zarr", path(mat_list))
+  file.rename(gsub("image/1/", "", path(mat_list)), 
+              gsub("image/1/", "", output_zarr_replace))
+  expect_true(file.exists(output_zarr_replace))
+  path(mat_list) <- gsub("image/1/", "", output_zarr_replace)
+  expect_true(file.exists(path(mat_list)))
+  expect_equal(normalizePath(path(mat_list)),
+               normalizePath(output_zarr_replace))
+  
 })

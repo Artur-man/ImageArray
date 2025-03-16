@@ -32,7 +32,18 @@ setReplaceMethod("path",
                  function(object, value){
                    n.series <- length(object)
                    for(i in seq_len(n.series)){
-                     object[[i]]@seed@filepath <- value
+                     object[[i]] <- 
+                       modify_seeds(object[[i]],
+                                    function(x) {
+                                      path.name <- slotNames(x)[grepl("path", slotNames(x))]
+                                      file_path <- slot(x, name = path.name)
+                                      if(grepl(".zarr", file_path)){
+                                        name <- strsplit(file_path, split = "\\.zarr")[[1]][2]
+                                        value <- file.path(value, name)
+                                      } 
+                                      slot(x, name = path.name) <- value
+                                      x
+                                    })
                    }
                    return(object)
                  }
@@ -45,3 +56,21 @@ setReplaceMethod("path",
 .isSingleString <- function (x) {
   is.character(x) && length(x) == 1L && !is.na(x)
 }
+
+#' modify_seeds
+#'
+#' @noRd
+.modify_seeds <- function (x, FUN, ...) 
+{
+  if (is(x, "DelayedUnaryOp")) {
+    x@seed <- modify_seeds(x@seed, FUN, ...)
+  }
+  else if (is(x, "DelayedNaryOp")) {
+    x@seeds <- lapply(x@seeds, modify_seeds, FUN, ...)
+  }
+  else {
+    x <- FUN(x, ...)
+  }
+  return(x)
+}
+
