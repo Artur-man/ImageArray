@@ -2,15 +2,15 @@
 # Objects and Classes ####
 ####
 
-#' The Image_Array Class
+#' The ImgArray Class
 #'
 #' @slot series a list of DelayedArray
 #'
-#' @name Image_Array-class
-#' @rdname Image_Array-class
-#' @exportClass Image_Array
+#' @name ImgArray-class
+#' @rdname ImgArray-class
+#' @exportClass ImgArray
 setClass(
-  Class="Image_Array",
+  Class="ImgArray",
   slots=c(
     series="list"
   )
@@ -20,30 +20,44 @@ setClass(
 # Methods ####
 ####
 
-#' len
+#' Methods for ImgArray
 #'
-#' @param object An object of Image_Array class
-#' 
-#' @export
-len <- function(object){
-  return(length(object@series))
-}
+#' Methods for \code{ImgArray} objects
+#'
+#' @param x An ImgArray object
+#' @param i,value Depends on the usage
+#' \describe{
+#'  \item{\code{[[}, \code{[[<-}}{
+#'    Here \code{i} is the level of the image pyramid. You can use the \code{length} function to get the number of the layers in the pyramid
+#'  }
+#' }
+#' @param ... Arguments passed to other methods
+#'
+#' @name ImgArray-methods
+#' @rdname ImgArray-methods
+#'
+#' @concept ImgArray
+NULL
 
+#' @describeIn ImgArray-methods Layer access for \code{ImgArray} objects
+#' 
 #' @importFrom methods slot
-#' @noRd
+#' @export
 setMethod(
   f = '[[',
-  signature = 'Image_Array',
+  signature = c('ImgArray', "numeric"),
   definition = function(x, i){
     return(x@series[[i]])
   }
 )
 
+#' @describeIn ImgArray-methods Layer access for \code{ImgArray} objects
+#' 
 #' @importFrom methods slot
-#' @noRd
+#' @export
 setMethod(
   f = '[[<-',
-  signature = c('Image_Array'),
+  signature = c('ImgArray', "numeric"),
   definition = function(x, i, ..., value){
     x@series[[i]] <- value
     return(x)
@@ -54,11 +68,11 @@ setMethod(
 #' @noRd
 setMethod(
   f = 'show',
-  signature = c('Image_Array'),
+  signature = c('ImgArray'),
   definition = function(object){
     cat(class(x = object), "Object \n")
-    n.series <- len(object)
-    for(i in 1:n.series){
+    n.series <- length(object)
+    for(i in seq_len(n.series)){
       dim_image <- dim(object@series[[i]])
       dim_image <- paste(dim_image, collapse = ",")
       cat(paste0("Series ", i, " of size (", dim_image, ") \n"))
@@ -66,9 +80,9 @@ setMethod(
   }
 )
 
-#' createImageArray
+#' createImgArray
 #'
-#' creates an object of ImageArray class
+#' creates an object of ImgArray class
 #' 
 #' @param image the image
 #' @param n.series the number of series if the image supposed to be pyrimadil
@@ -79,7 +93,7 @@ setMethod(
 #' @importFrom DelayedArray DelayedArray
 #' 
 #' @export
-createImageArray <- function(image, n.series = NULL, verbose = FALSE)
+createImgArray <- function(image, n.series = NULL, verbose = FALSE)
 {
   # convert images
   if(is.integer(image)){
@@ -127,10 +141,10 @@ createImageArray <- function(image, n.series = NULL, verbose = FALSE)
   }
   
   # return
-  methods::new("Image_Array", series = image_list)
+  methods::new("ImgArray", series = image_list)
 }
 
-#' writeImageArray
+#' writeImgArray
 #' 
 #' Writing image arrays on disk
 #'
@@ -139,27 +153,27 @@ createImageArray <- function(image, n.series = NULL, verbose = FALSE)
 #' @param name name of the group
 #' @param format on disk format
 #' @param replace Should the existing file be removed or not
-#' @param n.series the number of series in the Image_Array
+#' @param n.series the number of series in the ImgArray
 #' @param chunkdim chunkdim
 #' @param level level
 #' @param as.sparse as.sparse 
 #' @param verbose verbose
 #'
 #' @importFrom HDF5Array writeHDF5Array
-#' @importFrom ZarrArray writeZarrArray
+#' @importFrom Rarr writeZarrArray
 #' @import DelayedArray
 #' 
 #' @export
-writeImageArray <- function(image, 
-                            output = "my_image",
-                            name = "",
-                            format = c("InMemoryImageArray", "HDF5ImageArray", "ZarrImageArray"), 
-                            replace = FALSE, 
-                            n.series = NULL,
-                            chunkdim=NULL, 
-                            level=NULL,
-                            as.sparse=NA,
-                            verbose=FALSE)
+writeImgArray <- function(image, 
+                          output = "my_image",
+                          name = "",
+                          format = c("InMemoryImgArray", "HDF5ImgArray", "ZarrImgArray"), 
+                          replace = FALSE, 
+                          n.series = NULL,
+                          chunkdim=NULL, 
+                          level=NULL,
+                          as.sparse=NA,
+                          verbose=FALSE)
 {
   # check arguements
   if (!(is.logical(as.sparse) && length(as.sparse) == 1L))
@@ -167,10 +181,10 @@ writeImageArray <- function(image,
   verbose <- DelayedArray:::normarg_verbose(verbose)
   
   # path
-  ondisk_path <- paste0(output, ifelse(format == "HDF5ImageArray", ".h5", ".zarr"))
+  ondisk_path <- paste0(output, ifelse(format == "HDF5ImgArray", ".h5", ".zarr"))
   
   # create or replace output folder
-  if (!isTRUEorFALSE(replace)) 
+  if (!.isTRUEorFALSE(replace)) 
     stop("'replace' must be TRUE or FALSE")
   if(replace){
     if(file.exists(ondisk_path))
@@ -178,43 +192,46 @@ writeImageArray <- function(image,
   }
   
   # make Image Array
-  if(!inherits(image, "Image_Array")){
-    image_list <- createImageArray(image, n.series = n.series, verbose = verbose)
+  if(!inherits(image, "ImgArray")){
+    image_list <- createImgArray(image, n.series = n.series, verbose = verbose)
   } else {
     image_list <- image
   }
 
   # open ondisk store
   switch(format,
-         HDF5ImageArray = {
+         HDF5ImgArray = {
            if(!file.exists(ondisk_path))
             rhdf5::h5createFile(ondisk_path)
            rhdf5::h5createGroup(ondisk_path, group = name)
          }, 
-         ZarrImageArray = {
-           zarr.array <- pizzarr::zarr_open(store = ondisk_path)
-           zarr.array$create_group(name)
+         ZarrImgArray = {
+           dir.zarr <- gsub(paste0(basename(ondisk_path), "$"), "", ondisk_path)
+           open_zarr(dir = dir.zarr, name = basename(ondisk_path))
+           zarrcreateGroup(ondisk_path, name)
          })
   
   # write all series
-  for(i in 1:len(image_list)){
+  for(i in seq_len(length(image_list))){
     img <- array(as.integer(image_list[[i]]), dim = dim(image_list[[i]]))
 
     # write array
     switch(format,
-           HDF5ImageArray = {
-             image_list[[i]] <- HDF5Array::writeHDF5Array(img, filepath = ondisk_path, name = paste0(name,"/",i), 
+           HDF5ImgArray = {
+             image_list[[i]] <- HDF5Array::writeHDF5Array(img, filepath = ondisk_path, 
+                                                          name = paste0(name,"/",i), 
                                                           chunkdim = chunkdim, 
                                                           level = level, as.sparse = as.sparse, 
-                                                          with.dimnames = FALSE,verbose = verbose)
+                                                          with.dimnames = FALSE, verbose = verbose)
            }, 
-           ZarrImageArray = {
-             image_list[[i]] <- ZarrArray::writeZarrArray(img, filepath = ondisk_path, name = paste0(name, "/",i), 
-                                                          chunkdim = chunkdim, 
-                                                          level = level, as.sparse = as.sparse, 
-                                                          with.dimnames = FALSE,verbose = verbose)
+           ZarrImgArray = {
+             image_list[[i]] <- Rarr::writeZarrArray(img, 
+                                                     zarr_array_path = file.path(ondisk_path, paste0(name, "/",i)), 
+                                                     chunk_dim = c(dim(img)[1], 
+                                                                   min(dim(img)[2], 2000), 
+                                                                   min(dim(img)[3], 2000)))
            }, 
-           InMemoryImageArray = {
+           InMemoryImgArray = {
              image_list[[i]] <- img
            })
   }

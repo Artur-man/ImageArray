@@ -21,15 +21,17 @@ mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
 mat_image <- magick::image_read(mat_raster)
 
 # create image array
-mat_list <- writeImageArray(mat_image, 
-                            format = "HDF5ImageArray", 
-                            output = "data/my_image", 
-                            replace = TRUE)
+dir.create(td <- tempfile())
+output_h5ad <- file.path(td, "h5test")
+mat_list <- writeImgArray(mat_image, 
+                          format = "HDF5ImgArray", 
+                          output = output_h5ad, 
+                          replace = TRUE)
 mat_list
 ```
 
 ```
-Image_Array Object 
+ImgArray Object 
 Series 1 of size (3,5000,2000) 
 Series 2 of size (3,2500,1000) 
 Series 3 of size (3,1250,500) 
@@ -44,7 +46,7 @@ mat_list_rotated
 ```
 
 ```
-Image_Array Object 
+ImgArray Object 
 Series 1 of size (3,2000,5000) 
 Series 2 of size (3,1000,2500) 
 Series 3 of size (3,500,1250) 
@@ -59,7 +61,7 @@ You can even crop images
 ```
 
 ```
-Image_Array Object 
+ImgArray Object 
 Series 1 of size (3,1000,500) 
 Series 2 of size (3,501,251) 
 Series 3 of size (3,251,126) 
