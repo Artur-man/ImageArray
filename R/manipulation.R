@@ -1,9 +1,25 @@
-#' rotate.ImgArray
+#' ImageArray Methods
 #'
-#' rotate ImgArray image
+#' Manipulating images stored as ImgArray objects 
 #'
-#' @param object an ImgArray object
-#' @param degrees value between 0 and 360 for how many degrees to rotate
+#' @param object A VoltRon object
+#' @param degrees value between 0 and 360 for how many degrees to rotate 
+#' @param perm perm
+#' @param ind index list
+#'
+#' @name ImgArray-manipulation
+#' @rdname ImgArray-manipulation
+#'
+#' @concept ImgArray
+#' 
+#' @examples
+#' # example code
+#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' imgarray <- createImgArray(img.file, n.series = 3)
+NULL
+
+#' @describeIn ImgArray-manipulation
+#'
 #' @export
 setMethod("rotate", 
           signature = "ImgArray",
@@ -33,12 +49,8 @@ setMethod("rotate",
             object
           })
 
-#' aperm
-#'
-#' aperm ImgArray image
+#' @describeIn ImgArray-manipulation
 #' 
-#' @param a an ImgArray object
-#' @param perm perm
 #' @export
 setMethod("aperm", 
           signature = "ImgArray",
@@ -50,9 +62,8 @@ setMethod("aperm",
             a
           })
 
-#' negate ImgArray image
+#' @describeIn ImgArray-manipulation
 #'
-#' @param object an ImgArray object
 #' @export
 setMethod("negate", 
           signature = "ImgArray",
@@ -65,9 +76,8 @@ setMethod("negate",
             object
           })
 
-#' flip ImgArray image
+#' @describeIn ImgArray-manipulation
 #'
-#' @param object an ImgArray object
 #' @export
 setMethod("flip", 
           signature = "ImgArray",
@@ -81,7 +91,7 @@ setMethod("flip",
             object
           })
 
-#' flop ImgArray image
+#' @describeIn ImgArray-manipulation
 #'
 #' @param object an ImgArray object
 #' @export
@@ -97,10 +107,8 @@ setMethod("flop",
             object
           })
 
-#' crop ImgArray image
+#' @describeIn ImgArray-manipulation
 #'
-#' @param object an ImgArray object
-#' @param ind index list
 #' @importFrom utils head tail
 #' @export
 setMethod("crop", 
