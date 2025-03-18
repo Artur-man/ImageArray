@@ -25,6 +25,7 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
           return(S4Arrays::as.array.Array(x[[i]]))
         }
       }
+      return(S4Arrays::as.array.Array(x[[i]]))
     } else {
       stop("'max.pixel.size' should be an integer!")
     }
@@ -38,6 +39,7 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
             return(S4Arrays::as.array.Array(x[[i-1]]))
           }
         }
+        return(S4Arrays::as.array.Array(x[[i-1]]))
         # if no min check was attained, return the last image
         return(S4Arrays::as.array.Array(x[[i]]))
       } else {

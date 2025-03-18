@@ -23,7 +23,7 @@
 \S4method{crop}{ImgArray}(object, ind)
 }
 \arguments{
-\item{object}{an ImgArray object}
+\item{object}{A VoltRon object}
 
 \item{degrees}{value between 0 and 360 for how many degrees to rotate}
 
@@ -36,22 +36,30 @@ Manipulating images stored as ImgArray objects
 }
 \section{Functions}{
 \itemize{
-\item \code{rotate(ImgArray)}: 
+\item \code{rotate(ImgArray)}: rotate image array to 90, 180, 270 degrees
 
-\item \code{aperm(ImgArray)}: 
+\item \code{aperm(ImgArray)}: permute image array
 
-\item \code{negate(ImgArray)}: 
+\item \code{negate(ImgArray)}: negate image
 
-\item \code{flip(ImgArray)}: 
+\item \code{flip(ImgArray)}: vertical flipping image
 
-\item \code{flop(ImgArray)}: 
+\item \code{flop(ImgArray)}: horizontal flipping image
 
-\item \code{crop(ImgArray)}: 
+\item \code{crop(ImgArray)}: cropping image
 
 }}
 \examples{
-# example code
+# get image
 img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+
+# create ImgArray
 imgarray <- createImgArray(img.file, n.series = 3)
+
+# manipulate images
+imgarray <- crop(imgarray, ind = list(100:200, 100:200))
+imgarray <- rotate(imgarray, degrees = 90)
+imgarray <- flip(imgarray)
+imgarray <- flop(imgarray)
 }
 \concept{ImgArray}

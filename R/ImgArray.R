@@ -93,6 +93,16 @@ setMethod(
 #' @importFrom DelayedArray DelayedArray
 #' 
 #' @export
+#' 
+#' @examples
+#' # get image
+#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' 
+#' # create ImgArray
+#' imgarray <- createImgArray(img.file, n.series = 3)
+#' imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
+#' plot(imgarray_raster)
+#' 
 createImgArray <- function(image, n.series = NULL, verbose = FALSE)
 {
   # convert images
@@ -164,6 +174,22 @@ createImgArray <- function(image, n.series = NULL, verbose = FALSE)
 #' @import DelayedArray
 #' 
 #' @export
+#' 
+#' @examples
+#' # get image
+#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' 
+#' # create ImgArray
+#' dir.create(td <- tempfile())
+#' output_h5ad <- file.path(td, "h5test")
+#' imgarray <- writeImgArray(img.file, 
+#'                           output = output_h5ad, 
+#'                           name = "image",
+#'                           format = "HDF5ImgArray", 
+#'                           replace = TRUE, verbose = FALSE)
+#' imgarray_raster <- as.raster(imgarray)
+#' plot(imgarray_raster)
+#' 
 writeImgArray <- function(image, 
                           output = "my_image",
                           name = "",

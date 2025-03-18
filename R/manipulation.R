@@ -13,14 +13,21 @@
 #' @concept ImgArray
 #' 
 #' @examples
-#' # example code
+#' # get image
 #' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' 
+#' # create ImgArray
 #' imgarray <- createImgArray(img.file, n.series = 3)
+#' 
+#' # manipulate images
+#' imgarray <- crop(imgarray, ind = list(100:200, 100:200))
+#' imgarray <- rotate(imgarray, degrees = 90)
+#' imgarray <- flip(imgarray)
+#' imgarray <- flop(imgarray)
 NULL
 
-#' @describeIn ImgArray-manipulation
+#' @describeIn ImgArray-manipulation rotate image array to 90, 180, 270 degrees
 #'
-#' @export
 setMethod("rotate", 
           signature = "ImgArray",
           function(object, degrees){
@@ -49,9 +56,8 @@ setMethod("rotate",
             object
           })
 
-#' @describeIn ImgArray-manipulation
+#' @describeIn ImgArray-manipulation permute image array
 #' 
-#' @export
 setMethod("aperm", 
           signature = "ImgArray",
           function(a, perm){
@@ -62,9 +68,8 @@ setMethod("aperm",
             a
           })
 
-#' @describeIn ImgArray-manipulation
+#' @describeIn ImgArray-manipulation negate image
 #'
-#' @export
 setMethod("negate", 
           signature = "ImgArray",
           function(object){
@@ -76,9 +81,8 @@ setMethod("negate",
             object
           })
 
-#' @describeIn ImgArray-manipulation
+#' @describeIn ImgArray-manipulation vertical flipping image
 #'
-#' @export
 setMethod("flip", 
           signature = "ImgArray",
           function(object){
@@ -91,10 +95,8 @@ setMethod("flip",
             object
           })
 
-#' @describeIn ImgArray-manipulation
+#' @describeIn ImgArray-manipulation horizontal flipping image
 #'
-#' @param object an ImgArray object
-#' @export
 setMethod("flop", 
           signature = "ImgArray",
           function(object){
@@ -107,10 +109,9 @@ setMethod("flop",
             object
           })
 
-#' @describeIn ImgArray-manipulation
+#' @describeIn ImgArray-manipulation cropping image
 #'
 #' @importFrom utils head tail
-#' @export
 setMethod("crop", 
           signature = "ImgArray",
           function(object, ind){

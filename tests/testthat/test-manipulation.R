@@ -72,10 +72,9 @@ test_that("manipulate zarr ImgArray", {
   mat_list_cropped <- crop(mat_list, ind = list(2001:3000, 1001:2000))
   expect_equal(dim(mat_list_cropped), c(3,1000,1000))
   
-  # negate, TODO: realize doesnt work for pizzarr since as.array is overriden
-  # mat_list_negated <- negate(mat_list)
-  # tmp <- realize(mat_list[[1]]) + realize(mat_list_negated[[1]])
-  # expect_equal(unique(as.vector(tmp)), 255)
+  mat_list_negated <- negate(mat_list)
+  tmp <- realize(mat_list[[1]]) + realize(mat_list_negated[[1]])
+  expect_equal(unique(as.vector(tmp)), 255)
   
   # rotate
   mat_list_rotated <- rotate(mat_list, degrees = 90)

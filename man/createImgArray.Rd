@@ -16,3 +16,13 @@ createImgArray(image, n.series = NULL, verbose = FALSE)
 \description{
 creates an object of ImgArray class
 }
+\examples{
+# get image
+img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+
+# create ImgArray
+imgarray <- createImgArray(img.file, n.series = 3)
+imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
+plot(imgarray_raster)
+
+}
