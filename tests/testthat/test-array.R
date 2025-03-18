@@ -1,4 +1,6 @@
 library(magick)
+skip_if_not_installed("ggplot2")
+library(ggplot2)
 
 # image file
 img.file <- system.file("extdata", "bird.png", package = "ImageArray")

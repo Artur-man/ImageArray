@@ -19,6 +19,10 @@
 #' # create ImgArray
 #' imgarray <- createImgArray(img.file, n.series = 3)
 #' 
+#' # features
+#' dim(imgarray)
+#' length(imgarray)
+#' 
 #' # manipulate images
 #' imgarray <- crop(imgarray, ind = list(100:200, 100:200))
 #' imgarray <- rotate(imgarray, degrees = 90)
@@ -27,7 +31,7 @@
 NULL
 
 #' @describeIn ImgArray-manipulation rotate image array to 90, 180, 270 degrees
-#'
+#' @export
 setMethod("rotate", 
           signature = "ImgArray",
           function(object, degrees){
@@ -56,8 +60,8 @@ setMethod("rotate",
             object
           })
 
-#' @describeIn ImgArray-manipulation permute image array
-#' 
+#' @describeIn ImgArray-manipulation permute image
+#' @export
 setMethod("aperm", 
           signature = "ImgArray",
           function(a, perm){
@@ -69,7 +73,7 @@ setMethod("aperm",
           })
 
 #' @describeIn ImgArray-manipulation negate image
-#'
+#' @export
 setMethod("negate", 
           signature = "ImgArray",
           function(object){
@@ -82,7 +86,7 @@ setMethod("negate",
           })
 
 #' @describeIn ImgArray-manipulation vertical flipping image
-#'
+#' @export
 setMethod("flip", 
           signature = "ImgArray",
           function(object){
@@ -96,7 +100,7 @@ setMethod("flip",
           })
 
 #' @describeIn ImgArray-manipulation horizontal flipping image
-#'
+#' @export
 setMethod("flop", 
           signature = "ImgArray",
           function(object){
@@ -110,8 +114,8 @@ setMethod("flop",
           })
 
 #' @describeIn ImgArray-manipulation cropping image
-#'
 #' @importFrom utils head tail
+#' @export
 setMethod("crop", 
           signature = "ImgArray",
           function(object, ind){

@@ -38,7 +38,7 @@ Manipulating images stored as ImgArray objects
 \itemize{
 \item \code{rotate(ImgArray)}: rotate image array to 90, 180, 270 degrees
 
-\item \code{aperm(ImgArray)}: permute image array
+\item \code{aperm(ImgArray)}: permute image
 
 \item \code{negate(ImgArray)}: negate image
 
@@ -55,6 +55,10 @@ img.file <- system.file("extdata", "bird.png", package = "ImageArray")
 
 # create ImgArray
 imgarray <- createImgArray(img.file, n.series = 3)
+
+# features
+dim(imgarray)
+length(imgarray)
 
 # manipulate images
 imgarray <- crop(imgarray, ind = list(100:200, 100:200))

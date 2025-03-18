@@ -37,11 +37,25 @@ setClass(
 #' @rdname ImgArray-methods
 #'
 #' @concept ImgArray
+#' 
+#' @examples
+#' # get image
+#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' 
+#' # create ImgArray
+#' imgarray <- createImgArray(img.file, n.series = 3)
+#' 
+#' # access layers
+#' imgarray[[1]]
+#' imgarray[[2]]
+#' 
+#' # dimensions and length
+#' dim(imgarray)
+#' length(imgarray)
 NULL
 
 #' @describeIn ImgArray-methods Layer access for \code{ImgArray} objects
 #' 
-#' @importFrom methods slot
 #' @export
 setMethod(
   f = '[[',
@@ -53,7 +67,6 @@ setMethod(
 
 #' @describeIn ImgArray-methods Layer access for \code{ImgArray} objects
 #' 
-#' @importFrom methods slot
 #' @export
 setMethod(
   f = '[[<-',
@@ -64,7 +77,6 @@ setMethod(
   }
 )
 
-#' @importFrom methods slot
 #' @noRd
 setMethod(
   f = 'show',
@@ -79,6 +91,14 @@ setMethod(
     }
   }
 )
+
+#' @describeIn ImgArray-methods dimensions of an ImgArray
+#' @export
+setMethod("dim", "ImgArray", function(x) dim(x[[1]]))
+
+#' @describeIn ImgArray-methods length of an ImgArray
+#' @export
+setMethod("length", signature = "ImgArray", function(x) length(x@series))
 
 #' createImgArray
 #'
