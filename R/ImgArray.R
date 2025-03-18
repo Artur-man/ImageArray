@@ -37,11 +37,25 @@ setClass(
 #' @rdname ImgArray-methods
 #'
 #' @concept ImgArray
+#' 
+#' @examples
+#' # get image
+#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' 
+#' # create ImgArray
+#' imgarray <- createImgArray(img.file, n.series = 3)
+#' 
+#' # access layers
+#' imgarray[[1]]
+#' imgarray[[2]]
+#' 
+#' # dimensions and length
+#' dim(imgarray)
+#' length(imgarray)
 NULL
 
 #' @describeIn ImgArray-methods Layer access for \code{ImgArray} objects
 #' 
-#' @importFrom methods slot
 #' @export
 setMethod(
   f = '[[',
@@ -53,7 +67,6 @@ setMethod(
 
 #' @describeIn ImgArray-methods Layer access for \code{ImgArray} objects
 #' 
-#' @importFrom methods slot
 #' @export
 setMethod(
   f = '[[<-',
@@ -64,7 +77,6 @@ setMethod(
   }
 )
 
-#' @importFrom methods slot
 #' @noRd
 setMethod(
   f = 'show',
@@ -80,6 +92,14 @@ setMethod(
   }
 )
 
+#' @describeIn ImgArray-methods dimensions of an ImgArray
+#' @export
+setMethod("dim", "ImgArray", function(x) dim(x[[1]]))
+
+#' @describeIn ImgArray-methods length of an ImgArray
+#' @export
+setMethod("length", signature = "ImgArray", function(x) length(x@series))
+
 #' createImgArray
 #'
 #' creates an object of ImgArray class
@@ -93,6 +113,16 @@ setMethod(
 #' @importFrom DelayedArray DelayedArray
 #' 
 #' @export
+#' 
+#' @examples
+#' # get image
+#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' 
+#' # create ImgArray
+#' imgarray <- createImgArray(img.file, n.series = 3)
+#' imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
+#' plot(imgarray_raster)
+#' 
 createImgArray <- function(image, n.series = NULL, verbose = FALSE)
 {
   # convert images
@@ -164,6 +194,22 @@ createImgArray <- function(image, n.series = NULL, verbose = FALSE)
 #' @import DelayedArray
 #' 
 #' @export
+#' 
+#' @examples
+#' # get image
+#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' 
+#' # create ImgArray
+#' dir.create(td <- tempfile())
+#' output_h5ad <- file.path(td, "h5test")
+#' imgarray <- writeImgArray(img.file, 
+#'                           output = output_h5ad, 
+#'                           name = "image",
+#'                           format = "HDF5ImgArray", 
+#'                           replace = TRUE, verbose = FALSE)
+#' imgarray_raster <- as.raster(imgarray)
+#' plot(imgarray_raster)
+#' 
 writeImgArray <- function(image, 
                           output = "my_image",
                           name = "",

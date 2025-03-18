@@ -1,9 +1,36 @@
-#' rotate.ImgArray
+#' ImageArray Methods
 #'
-#' rotate ImgArray image
+#' Manipulating images stored as ImgArray objects 
 #'
-#' @param object an ImgArray object
-#' @param degrees value between 0 and 360 for how many degrees to rotate
+#' @param object A VoltRon object
+#' @param degrees value between 0 and 360 for how many degrees to rotate 
+#' @param perm perm
+#' @param ind index list
+#'
+#' @name ImgArray-manipulation
+#' @rdname ImgArray-manipulation
+#'
+#' @concept ImgArray
+#' 
+#' @examples
+#' # get image
+#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' 
+#' # create ImgArray
+#' imgarray <- createImgArray(img.file, n.series = 3)
+#' 
+#' # features
+#' dim(imgarray)
+#' length(imgarray)
+#' 
+#' # manipulate images
+#' imgarray <- crop(imgarray, ind = list(100:200, 100:200))
+#' imgarray <- rotate(imgarray, degrees = 90)
+#' imgarray <- flip(imgarray)
+#' imgarray <- flop(imgarray)
+NULL
+
+#' @describeIn ImgArray-manipulation rotate image array to 90, 180, 270 degrees
 #' @export
 setMethod("rotate", 
           signature = "ImgArray",
@@ -33,12 +60,7 @@ setMethod("rotate",
             object
           })
 
-#' aperm
-#'
-#' aperm ImgArray image
-#' 
-#' @param a an ImgArray object
-#' @param perm perm
+#' @describeIn ImgArray-manipulation permute image
 #' @export
 setMethod("aperm", 
           signature = "ImgArray",
@@ -50,9 +72,7 @@ setMethod("aperm",
             a
           })
 
-#' negate ImgArray image
-#'
-#' @param object an ImgArray object
+#' @describeIn ImgArray-manipulation negate image
 #' @export
 setMethod("negate", 
           signature = "ImgArray",
@@ -65,9 +85,7 @@ setMethod("negate",
             object
           })
 
-#' flip ImgArray image
-#'
-#' @param object an ImgArray object
+#' @describeIn ImgArray-manipulation vertical flipping image
 #' @export
 setMethod("flip", 
           signature = "ImgArray",
@@ -81,9 +99,7 @@ setMethod("flip",
             object
           })
 
-#' flop ImgArray image
-#'
-#' @param object an ImgArray object
+#' @describeIn ImgArray-manipulation horizontal flipping image
 #' @export
 setMethod("flop", 
           signature = "ImgArray",
@@ -97,10 +113,7 @@ setMethod("flop",
             object
           })
 
-#' crop ImgArray image
-#'
-#' @param object an ImgArray object
-#' @param ind index list
+#' @describeIn ImgArray-manipulation cropping image
 #' @importFrom utils head tail
 #' @export
 setMethod("crop", 

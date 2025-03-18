@@ -7,6 +7,20 @@
 #' @param min.pixel.size minimum pixel size
 #' @importFrom S4Arrays as.array.Array
 #' @export
+#' 
+#' @examples
+#' # get image
+#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' 
+#' # create ImgArray
+#' dir.create(td <- tempfile())
+#' output_h5ad <- file.path(td, "h5test")
+#' imgarray <- writeImgArray(img.file, 
+#'                           output = output_h5ad, 
+#'                           name = "image",
+#'                           format = "HDF5ImgArray", 
+#'                           replace = TRUE, verbose = FALSE)
+#' imgarray <- realize(imgarray)
 setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, min.pixel.size = NULL){
   
   # get parameter
@@ -25,6 +39,7 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
           return(S4Arrays::as.array.Array(x[[i]]))
         }
       }
+      return(S4Arrays::as.array.Array(x[[i]]))
     } else {
       stop("'max.pixel.size' should be an integer!")
     }
@@ -38,6 +53,7 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
             return(S4Arrays::as.array.Array(x[[i-1]]))
           }
         }
+        return(S4Arrays::as.array.Array(x[[i-1]]))
         # if no min check was attained, return the last image
         return(S4Arrays::as.array.Array(x[[i]]))
       } else {
@@ -86,6 +102,20 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
 #' @param max.pixel.size maximum pixel size 
 #' @param min.pixel.size minimum pixel size
 #' @export
+#' 
+#' @examples
+#' # get image
+#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' 
+#' # create ImgArray
+#' dir.create(td <- tempfile())
+#' output_h5ad <- file.path(td, "h5test")
+#' imgarray <- writeImgArray(img.file, 
+#'                           output = output_h5ad, 
+#'                           name = "image",
+#'                           format = "HDF5ImgArray", 
+#'                           replace = TRUE, verbose = FALSE)
+#' imgarray_raster <- as.raster(imgarray)
 setMethod("as.raster", signature = "ImgArray", function(x, max.pixel.size = NULL, min.pixel.size = NULL) {
   x <- realize(x, max.pixel.size = max.pixel.size, min.pixel.size = min.pixel.size)
   x <- .as_raster_array(aperm(x, perm = c(3,2,1)), max = 255)
