@@ -26,6 +26,8 @@ Imports:
 Suggests: 
     testthat (>= 3.0.0),
     knitr
+Remotes:
+  Artur-man/Rarr@voltron
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://github.com/BIMSBbioinfo/ImageArray
