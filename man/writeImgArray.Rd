@@ -13,7 +13,6 @@ writeImgArray(
   n.series = NULL,
   chunkdim = NULL,
   level = NULL,
-  as.sparse = NA,
   verbose = FALSE
 )
 }
@@ -30,11 +29,9 @@ writeImgArray(
 
 \item{n.series}{the number of series in the ImgArray}
 
-\item{chunkdim}{chunkdim}
+\item{chunkdim}{The dimensions of the chunks to use for writing the data to disk.}
 
-\item{level}{level}
-
-\item{as.sparse}{as.sparse}
+\item{level}{The compression level to use for writing the data to disk.}
 
 \item{verbose}{verbose}
 }

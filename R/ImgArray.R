@@ -1,22 +1,4 @@
 ####
-# Objects and Classes ####
-####
-
-#' The ImgArray Class
-#'
-#' @slot series a list of DelayedArray
-#'
-#' @name ImgArray-class
-#' @rdname ImgArray-class
-#' @exportClass ImgArray
-setClass(
-  Class="ImgArray",
-  slots=c(
-    series="list"
-  )
-)
-
-####
 # Methods ####
 ####
 
@@ -35,8 +17,6 @@ setClass(
 #'
 #' @name ImgArray-methods
 #' @rdname ImgArray-methods
-#'
-#' @concept ImgArray
 #' 
 #' @examples
 #' # get image
@@ -100,12 +80,21 @@ setMethod("dim", "ImgArray", function(x) dim(x[[1]]))
 #' @export
 setMethod("length", signature = "ImgArray", function(x) length(x@series))
 
+#' @export
+#' @importFrom S4Vectors new2
+ImgArray <- function(series){
+  S4Vectors::new2("ImgArray",
+                  series = series)
+}
+
 #' createImgArray
 #'
 #' creates an object of ImgArray class
 #' 
 #' @param image the image
 #' @param n.series the number of series if the image supposed to be pyrimadil
+#' @param resolution resolution
+#' @param min.pixel.threshold the minimum pixel width or height used for the series
 #' @param verbose verbose
 #'
 #' @importFrom magick image_read image_info image_resize image_data geometry_size_percent
@@ -123,55 +112,68 @@ setMethod("length", signature = "ImgArray", function(x) length(x@series))
 #' imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 #' plot(imgarray_raster)
 #' 
-createImgArray <- function(image, n.series = NULL, verbose = FALSE)
+createImgArray <- function(image, n.series = 1, resolution = 1, min.pixel.threshold = 700, verbose = FALSE)
 {
   # convert images
   if(is.integer(image)){
     image <- array(as.raw(image), dim = c(3,2,1))
   }
-  if(!inherits(image, "magick-image")){
-    image <- magick::image_read(image)
-  }
   
-  # get image info
-  image_info <- magick::image_info(image)
-  dim_image <- c(image_info$width, image_info$height)
-  
-  # series
-  if(is.null(n.series)){
-    
-    # get image size and resolution
-    image_maxsize_id <- which.max(dim_image)
-    image_maxsize <- dim_image[image_maxsize_id]
-    
-    # get number of series
-    # how many series of power of 2 required to get a maximum pixel size of 700 on either width or height
-    n.series <- ceiling(log2(image_maxsize/700)) + 1
-  } else if(n.series < 1){
-    stop("'n.series' has to be 1 or a larger integer value!")
-  }
-  
-  # create image series
-  if(verbose)
-    cat(paste0("Creating Series ", 1, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
-  image_data <- magick::image_data(image, channels = "rgb")
-  image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
-  if(n.series > 1){
-    cur_image <- image
-    for(i in 2:n.series){
-      dim_image <- ceiling(dim_image/2)
-      if(verbose)
-        cat(paste0("Creating Series ", i, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
-      cur_image <- magick::image_resize(cur_image, 
-                                        geometry = magick::geometry_size_percent(50), 
-                                        filter = "Gaussian")
-      image_data <- magick::image_data(cur_image, channels = "rgb")
-      image_list[[i]] <- DelayedArray::DelayedArray(as.array(image_data))
+  # check if ome.tiff or qptiff
+  if(is(image, "character")){
+    if(grepl(".ome.tiff$|.ome.tif$|.qptiff$|.qptif", image)){
+      image_list <- lapply(resolution, function(res){
+        BFArray(image, series = n.series, resolution = res)
+      })
     }
+    return(ImgArray(series = image_list))
   }
+
+  # check if regular image or array
+  if(inherits(image, c("array", "character"))){
+    
+    # read as 
+    image <- magick::image_read(image)
   
-  # return
-  methods::new("ImgArray", series = image_list)
+    # get image info
+    image_info <- magick::image_info(image)
+    dim_image <- c(image_info$width, image_info$height)
+    
+    # series
+    if(is.null(n.series)){
+      
+      # get image size and resolution
+      image_maxsize_id <- which.max(dim_image)
+      image_maxsize <- dim_image[image_maxsize_id]
+      
+      # get number of series
+      # how many series of power of 2 required to get a maximum pixel size of 700 on either width or height
+      n.series <- ceiling(log2(image_maxsize/min.pixel.threshold)) + 1
+    } else if(n.series < 1){
+      stop("'n.series' has to be 1 or a larger integer value!")
+    }
+    
+    # create image series
+    if(verbose)
+      cat(paste0("Creating Series ", 1, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
+    image_data <- magick::image_data(image, channels = "rgb")
+    image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
+    if(n.series > 1){
+      cur_image <- image
+      for(i in 2:n.series){
+        dim_image <- ceiling(dim_image/2)
+        if(verbose)
+          cat(paste0("Creating Series ", i, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
+        cur_image <- magick::image_resize(cur_image, 
+                                          geometry = magick::geometry_size_percent(50), 
+                                          filter = "Gaussian")
+        image_data <- magick::image_data(cur_image, channels = "rgb")
+        image_list[[i]] <- DelayedArray::DelayedArray(as.array(image_data))
+      }
+    }
+    return(ImgArray(series = image_list))
+  }
+  stop("The image should either be a file path or an image array!")
 }
 
 #' writeImgArray
@@ -184,9 +186,8 @@ createImgArray <- function(image, n.series = NULL, verbose = FALSE)
 #' @param format on disk format
 #' @param replace Should the existing file be removed or not
 #' @param n.series the number of series in the ImgArray
-#' @param chunkdim chunkdim
-#' @param level level
-#' @param as.sparse as.sparse 
+#' @param chunkdim The dimensions of the chunks to use for writing the data to disk.
+#' @param level The compression level to use for writing the data to disk.
 #' @param verbose verbose
 #'
 #' @importFrom HDF5Array writeHDF5Array
@@ -211,19 +212,16 @@ createImgArray <- function(image, n.series = NULL, verbose = FALSE)
 #' plot(imgarray_raster)
 #' 
 writeImgArray <- function(image, 
-                          output = "my_image",
-                          name = "",
-                          format = c("InMemoryImgArray", "HDF5ImgArray", "ZarrImgArray"), 
-                          replace = FALSE, 
-                          n.series = NULL,
+                          output="my_image",
+                          name="",
+                          format=c("InMemoryImgArray", "HDF5ImgArray", "ZarrImgArray"), 
+                          replace=FALSE, 
+                          n.series=NULL,
                           chunkdim=NULL, 
                           level=NULL,
-                          as.sparse=NA,
                           verbose=FALSE)
 {
-  # check arguements
-  if (!(is.logical(as.sparse) && length(as.sparse) == 1L))
-    message("'as.sparse' must be NA, TRUE or FALSE")
+  # verbose
   verbose <- DelayedArray:::normarg_verbose(verbose)
   
   # path
@@ -267,7 +265,7 @@ writeImgArray <- function(image,
              image_list[[i]] <- HDF5Array::writeHDF5Array(img, filepath = ondisk_path, 
                                                           name = paste0(name,"/",i), 
                                                           chunkdim = chunkdim, 
-                                                          level = level, as.sparse = as.sparse, 
+                                                          level = level, as.sparse = FALSE, 
                                                           with.dimnames = FALSE, verbose = verbose)
            }, 
            ZarrImgArray = {

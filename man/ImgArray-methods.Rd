@@ -2,15 +2,15 @@
 % Please edit documentation in R/ImgArray.R
 \name{ImgArray-methods}
 \alias{ImgArray-methods}
-\alias{[[,ImgArray,numeric,ANY-method}
-\alias{[[<-,ImgArray,numeric,ANY,ANY-method}
+\alias{[[,ImgArray,numeric-method}
+\alias{[[<-,ImgArray,numeric-method}
 \alias{dim,ImgArray-method}
 \alias{length,ImgArray-method}
 \title{Methods for ImgArray}
 \usage{
-\S4method{[[}{ImgArray,numeric,ANY}(x, i)
+\S4method{[[}{ImgArray,numeric}(x, i)
 
-\S4method{[[}{ImgArray,numeric,ANY,ANY}(x, i, j, ...) <- value
+\S4method{[[}{ImgArray,numeric}(x, i, j, ...) <- value
 
 \S4method{dim}{ImgArray}(x)
 
@@ -35,7 +35,7 @@ Methods for \code{ImgArray} objects
 \itemize{
 \item \code{x[[i}: Layer access for \code{ImgArray} objects
 
-\item \code{`[[`(x = ImgArray, i = numeric, j = ANY) <- value}: Layer access for \code{ImgArray} objects
+\item \code{`[[`(x = ImgArray, i = numeric) <- value}: Layer access for \code{ImgArray} objects
 
 \item \code{dim(ImgArray)}: dimensions of an ImgArray
 
@@ -57,4 +57,3 @@ imgarray[[2]]
 dim(imgarray)
 length(imgarray)
 }
-\concept{ImgArray}

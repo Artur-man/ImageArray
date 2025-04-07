@@ -4,12 +4,22 @@
 \alias{createImgArray}
 \title{createImgArray}
 \usage{
-createImgArray(image, n.series = NULL, verbose = FALSE)
+createImgArray(
+  image,
+  n.series = 1,
+  resolution = 1,
+  min.pixel.threshold = 700,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{image}{the image}
 
 \item{n.series}{the number of series if the image supposed to be pyrimadil}
+
+\item{resolution}{resolution}
+
+\item{min.pixel.threshold}{the minimum pixel width or height used for the series}
 
 \item{verbose}{verbose}
 }
