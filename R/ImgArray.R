@@ -87,14 +87,96 @@ ImgArray <- function(series){
                   series = series)
 }
 
+#' createBFArray
+#'
+#' creates an object of BFArray class
+#' 
+#' @param image the image
+#' @param series the number of series if the image supposed to be pyrimadil
+#' @param resolution resolution
+#' @param verbose verbose
+#' 
+#' @export
+#' 
+#' @examples
+#' 
+createBFArray <- function(image, series = NULL, resolution = NULL, verbose = FALSE){
+  
+  # check for nulls
+  if(is.null(series)) series <- 1
+  if(is.null(resolution)) resolution <- 1
+  
+  # make list
+  image_list <- lapply(resolution, function(res){
+    BFArray(image, series = series, resolution = res)
+  })
+  ImgArray(series = image_list)
+}
+
+#' createMagickArray
+#'
+#' creates an object of ImgArray class from magick image
+#' 
+#' @param image the image
+#' @param series the number of series if the image supposed to be pyrimadil
+#' @param resolution resolution
+#' @param verbose verbose
+#' 
+#' @export
+#' 
+#' @examples
+#' 
+createMagickArray <- function(image, n.series = NULL, resolution = NULL, max.pixel.threshold = 700, verbose = FALSE){
+  
+  # get image info
+  image_info <- magick::image_info(image)
+  dim_image <- c(image_info$width, image_info$height)
+  
+  # series
+  if(is.null(n.series)){
+    
+    # get image size and resolution
+    image_maxsize_id <- which.max(dim_image)
+    image_maxsize <- dim_image[image_maxsize_id]
+    
+    # get number of series
+    # how many series of power of 2 required to get a maximum pixel size of 700 on either width or height
+    n.series <- ceiling(log2(image_maxsize/max.pixel.threshold)) + 1
+  } else if(n.series < 1){
+    stop("'n.series' has to be 1 or a larger integer value!")
+  }
+  
+  # create image series
+  if(verbose)
+    cat(paste0("Creating Series ", 1, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
+  image_data <- magick::image_data(image, channels = "rgb")
+  image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
+  if(n.series > 1){
+    cur_image <- image
+    for(i in 2:n.series){
+      dim_image <- ceiling(dim_image/2)
+      if(verbose)
+        cat(paste0("Creating Series ", i, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
+      cur_image <- magick::image_resize(cur_image, 
+                                        geometry = magick::geometry_size_percent(50), 
+                                        filter = "Gaussian")
+      image_data <- magick::image_data(cur_image, channels = "rgb")
+      image_list[[i]] <- DelayedArray::DelayedArray(as.array(image_data))
+    }
+  }
+  
+  # return
+  ImgArray(series = image_list)
+}
+
 #' createImgArray
 #'
 #' creates an object of ImgArray class
 #' 
 #' @param image the image
 #' @param n.series the number of series if the image supposed to be pyrimadil
-#' @param resolution resolution
-#' @param min.pixel.threshold the minimum pixel width or height used for the series
+#' @param resolution
+#' @param max.pixel.threshold
 #' @param verbose verbose
 #'
 #' @importFrom magick image_read image_info image_resize image_data geometry_size_percent
@@ -112,68 +194,34 @@ ImgArray <- function(series){
 #' imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 #' plot(imgarray_raster)
 #' 
-createImgArray <- function(image, n.series = 1, resolution = 1, min.pixel.threshold = 700, verbose = FALSE)
+createImgArray <- function(image, n.series = NULL, resolution = NULL, max.pixel.threshold = 700, verbose = FALSE)
 {
-  # convert images
+  # convert to bitmap array if integer
   if(is.integer(image)){
     image <- array(as.raw(image), dim = c(3,2,1))
-  }
-  
-  # check if ome.tiff or qptiff
-  if(is(image, "character")){
-    if(grepl(".ome.tiff$|.ome.tif$|.qptiff$|.qptif", image)){
-      image_list <- lapply(resolution, function(res){
-        BFArray(image, series = n.series, resolution = res)
-      })
-    }
-    return(ImgArray(series = image_list))
-  }
-
-  # check if regular image or array
-  if(inherits(image, c("array", "character"))){
-    
-    # read as 
     image <- magick::image_read(image)
-  
-    # get image info
-    image_info <- magick::image_info(image)
-    dim_image <- c(image_info$width, image_info$height)
-    
-    # series
-    if(is.null(n.series)){
-      
-      # get image size and resolution
-      image_maxsize_id <- which.max(dim_image)
-      image_maxsize <- dim_image[image_maxsize_id]
-      
-      # get number of series
-      # how many series of power of 2 required to get a maximum pixel size of 700 on either width or height
-      n.series <- ceiling(log2(image_maxsize/min.pixel.threshold)) + 1
-    } else if(n.series < 1){
-      stop("'n.series' has to be 1 or a larger integer value!")
-    }
-    
-    # create image series
-    if(verbose)
-      cat(paste0("Creating Series ", 1, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
-    image_data <- magick::image_data(image, channels = "rgb")
-    image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
-    if(n.series > 1){
-      cur_image <- image
-      for(i in 2:n.series){
-        dim_image <- ceiling(dim_image/2)
-        if(verbose)
-          cat(paste0("Creating Series ", i, " of size (", dim_image[1], ",", dim_image[2], ") \n"))
-        cur_image <- magick::image_resize(cur_image, 
-                                          geometry = magick::geometry_size_percent(50), 
-                                          filter = "Gaussian")
-        image_data <- magick::image_data(cur_image, channels = "rgb")
-        image_list[[i]] <- DelayedArray::DelayedArray(as.array(image_data))
-      }
-    }
-    return(ImgArray(series = image_list))
   }
-  stop("The image should either be a file path or an image array!")
+  
+  # create ImgArray from magick
+  if(inherits(image, "magick-image")){
+    return(createMagickArray(image, 
+                             n.series = n.series, 
+                             max.pixel.threshold = max.pixel.threshold, 
+                             verbose = verbose))
+  }
+  
+  # check image format
+  if(inherits(image, "character")){
+    if(grepl(".ome.tiff$|.ome.tif$|.qptiff$|.qptif$", image)){
+      createBFArray(image, series = n.series, resolution = resolution)
+    } else {
+      image <- magick::image_read(image)
+      createMagickArray(image, 
+                        n.series = n.series, 
+                        max.pixel.threshold = max.pixel.threshold, 
+                        verbose = verbose)
+    }
+  }
 }
 
 #' writeImgArray

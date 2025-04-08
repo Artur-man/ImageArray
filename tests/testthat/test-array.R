@@ -65,5 +65,4 @@ test_that("magick input", {
   imgarray_vis <- flop(imgarray)
   imgarray_vis <- as.raster(imgarray_vis)
   plot(imgarray_vis)
-  
 })

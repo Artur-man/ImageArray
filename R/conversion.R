@@ -65,7 +65,7 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
   }
 })
 
-#' as_raster_array
+#' .as_raster_array
 #' 
 #' custom as_raster_array function for ImgArray 
 #' 
@@ -118,6 +118,12 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
 #' imgarray_raster <- as.raster(imgarray)
 setMethod("as.raster", signature = "ImgArray", function(x, max.pixel.size = NULL, min.pixel.size = NULL) {
   x <- realize(x, max.pixel.size = max.pixel.size, min.pixel.size = min.pixel.size)
-  x <- .as_raster_array(aperm(x, perm = c(3,2,1)), max = 255)
+  d <- length(dim(x))
+  if(d == 3){
+    x <- aperm(x, perm = c(3,2,1))
+  } else {
+    x <- array(x, dim = c(dim(x),1))
+  }
+  x <- .as_raster_array(x, max = 255)
   x
 })
