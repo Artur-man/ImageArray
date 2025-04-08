@@ -9,6 +9,9 @@ getImageInfo(object)
 \arguments{
 \item{object}{an ImgArray object}
 }
+\value{
+a data frame of width and height info
+}
 \description{
 get information of an ImgArray object
 }

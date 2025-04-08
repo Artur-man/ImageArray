@@ -3,7 +3,9 @@
 #' get information of an ImgArray object
 #'
 #' @param object an ImgArray object
+#' 
 #' @export
+#' @returns a data frame of width and height info
 #' 
 #' @examples
 #' # get image

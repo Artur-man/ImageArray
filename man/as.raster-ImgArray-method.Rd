@@ -13,6 +13,9 @@
 
 \item{min.pixel.size}{minimum pixel size}
 }
+\value{
+A raster array
+}
 \description{
 as.raster method for ImgArray object
 }

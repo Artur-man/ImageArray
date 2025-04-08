@@ -6,7 +6,7 @@
 \alias{.ImgArray}
 \title{The ImgArray Class}
 \description{
-The ImgArray Class
+A class for uni-layer and multi-layer DelayedArray-based images
 }
 \section{Slots}{
 

@@ -2,7 +2,8 @@
 #'
 #' Manipulating images stored as ImgArray objects 
 #'
-#' @param object A VoltRon object
+#' @param object An ImgArray object
+#' @param a An ImgArray object
 #' @param degrees value between 0 and 360 for how many degrees to rotate 
 #' @param perm perm
 #' @param ind index list
@@ -32,6 +33,7 @@ NULL
 
 #' @describeIn ImgArray-manipulation rotate image array to 90, 180, 270 degrees
 #' @export
+#' @returns An ImgArray object
 setMethod("rotate", 
           signature = "ImgArray",
           function(object, degrees){
@@ -62,6 +64,7 @@ setMethod("rotate",
 
 #' @describeIn ImgArray-manipulation permute image
 #' @export
+#' @returns An ImgArray object
 setMethod("aperm", 
           signature = "ImgArray",
           function(a, perm){
@@ -74,10 +77,10 @@ setMethod("aperm",
 
 #' @describeIn ImgArray-manipulation negate image
 #' @export
+#' @returns An ImgArray object
 setMethod("negate", 
           signature = "ImgArray",
           function(object){
-            
             n.series <- length(object)
             for(i in seq_len(n.series)){
               object[[i]] <- 255 - object[[i]]
@@ -87,6 +90,7 @@ setMethod("negate",
 
 #' @describeIn ImgArray-manipulation vertical flipping image
 #' @export
+#' @returns An ImgArray object
 setMethod("flip", 
           signature = "ImgArray",
           function(object){
@@ -101,6 +105,7 @@ setMethod("flip",
 
 #' @describeIn ImgArray-manipulation horizontal flipping image
 #' @export
+#' @returns An ImgArray object
 setMethod("flop", 
           signature = "ImgArray",
           function(object){
@@ -116,6 +121,7 @@ setMethod("flop",
 #' @describeIn ImgArray-manipulation cropping image
 #' @importFrom utils head tail
 #' @export
+#' @returns An ImgArray object
 setMethod("crop", 
           signature = "ImgArray",
           function(object, ind){
@@ -131,7 +137,8 @@ setMethod("crop",
             for(i in seq_len(n.series)){
               img <- object[[i]]
               cur_ind <- lapply(ind, function(curind){
-                seq(floor(utils::head(curind,1)/(2^(i-1))), ceiling(utils::tail(curind,1)/(2^(i-1))))
+                seq(floor(utils::head(curind,1)/(2^(i-1))), 
+                    ceiling(utils::tail(curind,1)/(2^(i-1))))
               })
               object[[i]] <- img[, cur_ind[[1]], cur_ind[[2]], drop = FALSE]
             }

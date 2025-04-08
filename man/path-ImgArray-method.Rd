@@ -9,6 +9,9 @@
 \arguments{
 \item{object}{an ImgArray object}
 }
+\value{
+the path to ImgArray object store
+}
 \description{
 path of ImgArray image
 }

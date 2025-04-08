@@ -11,6 +11,9 @@
 
 \item{value}{the new path}
 }
+\value{
+does not return a value, updates the path of the ImgArray object
+}
 \description{
 path of ImgArray image
 }

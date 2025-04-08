@@ -25,22 +25,30 @@ writeImgArray(
 
 \item{format}{on disk format}
 
-\item{replace}{Should the existing file be removed or not}
+\item{replace}{Should the existing file be 
+removed or not}
 
-\item{n.series}{the number of series in the ImgArray}
+\item{n.series}{the number of series in the 
+ImgArray}
 
-\item{chunkdim}{The dimensions of the chunks to use for writing the data to disk.}
+\item{chunkdim}{The dimensions of the chunks 
+to use for writing the data to disk.}
 
-\item{level}{The compression level to use for writing the data to disk.}
+\item{level}{The compression level to use for 
+writing the data to disk.}
 
 \item{verbose}{verbose}
+}
+\value{
+An ImgArray object
 }
 \description{
 Writing image arrays on disk
 }
 \examples{
 # get image
-img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+img.file <- system.file("extdata", 
+"bird.png", package = "ImageArray")
 
 # create ImgArray
 dir.create(td <- tempfile())

@@ -1,5 +1,7 @@
 #' The ImgArray Class
 #'
+#' A class for uni-layer and multi-layer DelayedArray-based images 
+#' 
 #' @slot series a list of DelayedArray
 #'
 #' @name ImgArray-class
@@ -12,6 +14,7 @@
   )
 )
 
+#' @describeIn BFArray-class BFArraySeed class
 #' @exportClass BFArraySeed BFArray
 .BFArraySeed <- setClass("BFArraySeed",
                               contains="Array",
@@ -19,7 +22,8 @@
                                 filepath="character",
                                 series="numeric",
                                 resolution="numeric",
-                                shape="numeric"
+                                shape="numeric",
+                                type="character"
                               ))
 
 setClassUnion(
@@ -29,7 +33,9 @@ setClassUnion(
 
 #' The BFArray Class
 #'
-#' @slot series a list of DelayedArray
+#' A class for image arrays read by RBioFormats
+#' 
+#' @slot seed DelayedArray seed
 #'
 #' @name BFArray-class
 #' @rdname BFArray-class
@@ -41,7 +47,10 @@ setClassUnion(
 
 #' The BFMatrix Class
 #' 
-#' @name BFMatrix
+#' A Matrix class for two dimensional BFArray objects
+#' 
+#' @name BFMatrix-class
+#' @rdname BFMatrix-class
 #' @exportClass BFMatrix
 setClass("BFMatrix", 
          contains=c("BFArray", "DelayedMatrix"))

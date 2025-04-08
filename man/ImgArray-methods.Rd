@@ -2,19 +2,25 @@
 % Please edit documentation in R/ImgArray.R
 \name{ImgArray-methods}
 \alias{ImgArray-methods}
-\alias{[[,ImgArray,numeric-method}
-\alias{[[<-,ImgArray,numeric-method}
+\alias{[[,ImgArray,numeric,ANY-method}
+\alias{[[<-,ImgArray,numeric,ANY,ANY-method}
 \alias{dim,ImgArray-method}
+\alias{type,ImgArray-method}
 \alias{length,ImgArray-method}
+\alias{ImgArray}
 \title{Methods for ImgArray}
 \usage{
-\S4method{[[}{ImgArray,numeric}(x, i)
+\S4method{[[}{ImgArray,numeric,ANY}(x, i)
 
-\S4method{[[}{ImgArray,numeric}(x, i, j, ...) <- value
+\S4method{[[}{ImgArray,numeric,ANY,ANY}(x, i, j, ...) <- value
 
 \S4method{dim}{ImgArray}(x)
 
+\S4method{type}{ImgArray}(x)
+
 \S4method{length}{ImgArray}(x)
+
+ImgArray(series)
 }
 \arguments{
 \item{x}{An ImgArray object}
@@ -22,32 +28,57 @@
 \item{i, value}{Depends on the usage
 \describe{
  \item{\code{[[}, \code{[[<-}}{
-   Here \code{i} is the level of the image pyramid. You can use the \code{length} function to get the number of the layers in the pyramid
+   Here \code{i} is the level of the image pyramid. 
+   You can use the \code{length} function to get the 
+   number of the layers in the pyramid
  }
 }}
 
 \item{...}{Arguments passed to other methods}
+
+\item{series}{the series IDs of the pyramidal image, 
+typical an integer starting from 1}
+}
+\value{
+dim of the first series of the ImgArray object
+
+type of ImgArray object
+
+length of ImgArray object
+
+An ImgArray object
 }
 \description{
 Methods for \code{ImgArray} objects
 }
 \section{Functions}{
 \itemize{
-\item \code{x[[i}: Layer access for \code{ImgArray} objects
+\item \code{x[[i}: Layer access 
+for \code{ImgArray} objects
 
-\item \code{`[[`(x = ImgArray, i = numeric) <- value}: Layer access for \code{ImgArray} objects
+\item \code{`[[`(x = ImgArray, i = numeric, j = ANY) <- value}: Layer access 
+for \code{ImgArray} objects
 
 \item \code{dim(ImgArray)}: dimensions of an ImgArray
 
+\item \code{type(ImgArray)}: dimensions of an ImgArray
+
 \item \code{length(ImgArray)}: length of an ImgArray
+
+\item \code{ImgArray()}: ImgArray constructor method
+
+A function for creating objects of ImgArray class
 
 }}
 \examples{
 # get image
-img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+img.file <- system.file("extdata", 
+"bird.png", 
+package = "ImageArray")
 
 # create ImgArray
-imgarray <- createImgArray(img.file, n.series = 3)
+imgarray <- createImgArray(img.file, 
+n.series = 3)
 
 # access layers
 imgarray[[1]]

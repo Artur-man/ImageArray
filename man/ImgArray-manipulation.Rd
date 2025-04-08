@@ -23,13 +23,28 @@
 \S4method{crop}{ImgArray}(object, ind)
 }
 \arguments{
-\item{object}{A VoltRon object}
+\item{object}{An ImgArray object}
 
 \item{degrees}{value between 0 and 360 for how many degrees to rotate}
+
+\item{a}{An ImgArray object}
 
 \item{perm}{perm}
 
 \item{ind}{index list}
+}
+\value{
+An ImgArray object
+
+An ImgArray object
+
+An ImgArray object
+
+An ImgArray object
+
+An ImgArray object
+
+An ImgArray object
 }
 \description{
 Manipulating images stored as ImgArray objects

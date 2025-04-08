@@ -18,11 +18,14 @@ Imports:
   methods, 
   grDevices, 
   S4Arrays, 
+  S4Vectors,
   DelayedArray, 
   magick, 
   rhdf5,
   HDF5Array,
-  Rarr
+  Rarr,
+  RBioFormats,
+  EBImage
 Suggests: 
   testthat (>= 3.0.0),
   knitr

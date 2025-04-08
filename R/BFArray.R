@@ -1,7 +1,27 @@
-BFArray <- function(data, series, resolution)
+#' BFArray constructor method
+#'
+#' A function for creating objects of BFArray class
+#' 
+#' @param x A BFArray object
+#' @param image.file the path to the image read by 
+#' RBioFormats
+#' @param series the series IDs of the pyramidal image, 
+#' typical an integer starting from 1
+#' @param resolution the resolution IDs of the 
+#' pyramidal image, typical an integer starting from 1
+#'
+#' @name BFArray-methods
+#' @rdname BFArray-methods
+#' @importFrom RBioFormats read.metadata
+#' 
+#' @export
+#' @return A BFArray object
+BFArray <- function(image.file, series, resolution)
 {
   # get metadata
-  meta <- RBioFormats::read.metadata(file = data, filter.metadata = TRUE, proprietary.metadata = TRUE)
+  meta <- RBioFormats::read.metadata(file = image.file, 
+                                     filter.metadata = TRUE, 
+                                     proprietary.metadata = TRUE)
   len_meta <- vapply(meta@.Data, length, integer(1))
   meta@.Data <- meta@.Data[which(len_meta > 0)]
 
@@ -10,7 +30,9 @@ BFArray <- function(data, series, resolution)
     if(!is.null(cm <- x$coreMetadata)) x <- cm
     c(x$series, x$resolutionLevel)
   }, integer(2))
-  series_index <- which(series_res_meta[1,] == series & series_res_meta[2,] == resolution)
+  series_index <- 
+    which(series_res_meta[1,] == series & 
+            series_res_meta[2,] == resolution)
   if(length(series_index) > 0){
     shape <- vapply(c("sizeX", "sizeY"), function(x){
       md <- meta@.Data[[series_index]]
@@ -18,7 +40,11 @@ BFArray <- function(data, series, resolution)
       md[[x]]
     }, integer(1), USE.NAMES = FALSE)
     
-    seed <- BFArraySeed(filepath = data, series = series, resolution = resolution, shape = shape)
+    seed <- BFArraySeed(filepath = image.file, 
+                        series = series, 
+                        resolution = resolution, 
+                        shape = shape, 
+                        type = "double")
     return(.BFArray(seed = DelayedArray(seed)))
   } else {
     stop("Specified resolution was not found in the image!")
@@ -26,29 +52,42 @@ BFArray <- function(data, series, resolution)
 }
 
 #' @importFrom S4Vectors new2
-BFArraySeed <- function(filepath, series, resolution, shape)
+BFArraySeed <- function(filepath, series, resolution, shape, type)
 {
   S4Vectors::new2("BFArraySeed", 
                   filepath=filepath,
                   series=series, 
                   resolution=resolution, 
-                  shape = shape)
+                  shape = shape, 
+                  type = type)
 }
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### dim() getter
 ###
 
+#' @describeIn BFArray-methods dim function for BFArray objects
 setMethod("dim", "BFArraySeed", function(x) x@shape)
+
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### type() getter
+###
+
+#' @describeIn BFArray-methods type function for BFArray objects
+setMethod("type", "BFArraySeed", function(x) x@type)
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### extract_array()
 ###
 
+#' @importFrom RBioFormats read.metadata read.image
+#' @importFrom EBImage imageData
 .extract_array_from_BFArraySeed <- function(x, index)
 {
   # get metadata
-  meta <- RBioFormats::read.metadata(file = x@filepath, filter.metadata = TRUE, proprietary.metadata = TRUE)
+  meta <- RBioFormats::read.metadata(file = x@filepath, 
+                                     filter.metadata = TRUE, 
+                                     proprietary.metadata = TRUE)
 
   # check for index length
   if(length(index) > 2)
@@ -57,7 +96,7 @@ setMethod("dim", "BFArraySeed", function(x) x@shape)
   # create slices
   ind <- mapply(function(x,y){
     if(is.null(x)){
-      return(1:y)
+      return(seq_len(y))
     } else if(length(x) == 0){
       return(integer(0))
     } else if(length(x) > 0){
@@ -69,18 +108,22 @@ setMethod("dim", "BFArraySeed", function(x) x@shape)
   len_ind <- vapply(ind, length, length(ind))
   if(any(len_ind==0)){
     res <- array(dim = len_ind)
+    type(res) <- x@type
   } else{
-    res <- RBioFormats::read.image(file = x@filepath, 
-                                   series = x@series, 
-                                   resolution = x@resolution, 
-                                   subset = list(X = ind[[1]], Y = ind[[2]]))
+    res <- RBioFormats::read.image(
+      file = x@filepath, 
+      series = x@series, 
+      resolution = x@resolution, 
+      subset = list(X = ind[[1]], 
+                    Y = ind[[2]]))
     res <- EBImage::imageData(res)
   }
   
   return(res)
 }
 
-setMethod("extract_array", "BFArraySeed", .extract_array_from_BFArraySeed)
+setMethod("extract_array", "BFArraySeed", 
+          .extract_array_from_BFArraySeed)
 
 ### - - - - - - - - - - - - - - - - - -
 ### Constructor
@@ -96,9 +139,14 @@ setMethod("DelayedArray", "BFArraySeed",
 ## for internal use only.
 setMethod("matrixClass", "BFArray", function(x) "BFMatrix")
 
+#' @importFrom methods as new
 #' @export
-setAs("BFArray", "BFMatrix", function(from) new("BFMatrix", from))
-setAs("BFMatrix", "BFArray", function(from) from)
+setAs("BFArray", 
+      "BFMatrix", 
+      function(from) methods::new("BFMatrix", from))
+setAs("BFMatrix", 
+      "BFArray", 
+      function(from) from)
 setAs(
   "ANY", "BFMatrix",
-  function(from) as(as(from, "BFArray"), "BFMatrix"))
+  function(from) methods::as(methods::as(from, "BFArray"), "BFMatrix"))

@@ -33,8 +33,9 @@ test_that("bfarray based ImgArray", {
   img <- createImgArray(img.file, n.series = 1, resolution = 1:2)
   
   # get image info
-  getImageInfo(img)
+  expect_equal(getImageInfo(img), data.frame(width = 512, height = 512))
   
   # construct imagearray
   bfa.raster <- as.raster(img)
+  plot(bfa.raster)
 })
