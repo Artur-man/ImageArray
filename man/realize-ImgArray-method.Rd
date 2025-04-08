@@ -13,6 +13,9 @@
 
 \item{min.pixel.size}{minimum pixel size}
 }
+\value{
+An array object
+}
 \description{
 as.array method for ImgArray object
 }

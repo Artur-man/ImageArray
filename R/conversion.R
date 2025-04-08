@@ -6,7 +6,9 @@
 #' @param max.pixel.size maximum pixel size 
 #' @param min.pixel.size minimum pixel size
 #' @importFrom S4Arrays as.array.Array
+#' 
 #' @export
+#' @return An array object
 #' 
 #' @examples
 #' # get image
@@ -21,7 +23,11 @@
 #'                           format = "HDF5ImgArray", 
 #'                           replace = TRUE, verbose = FALSE)
 #' imgarray <- realize(imgarray)
-setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, min.pixel.size = NULL){
+setMethod("realize", 
+          signature = "ImgArray", 
+          function(x, 
+                   max.pixel.size = NULL, 
+                   min.pixel.size = NULL){
   
   # get parameter
   if(!is.null(max.pixel.size) && !is.null(min.pixel.size)){
@@ -65,7 +71,7 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
   }
 })
 
-#' as_raster_array
+#' .as_raster_array
 #' 
 #' custom as_raster_array function for ImgArray 
 #' 
@@ -85,11 +91,14 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
   if (length(d <- dim(x)) != 3L) 
     stop("a raster array must have exactly 3 dimensions")
   r <- array(if (d[3L] == 3L) 
-    grDevices::rgb(t(x[, , 1L]), t(x[, , 2L]), t(x[, , 3L]), maxColorValue = max)
+    grDevices::rgb(t(x[, , 1L]), t(x[, , 2L]), t(x[, , 3L]), 
+                   maxColorValue = max)
     else if (d[3L] == 4L) 
-      grDevices::rgb(t(x[, , 1L]), t(x[, , 2L]), t(x[, , 3L]), t(x[, , 4L]), maxColorValue = max)
+      grDevices::rgb(t(x[, , 1L]), t(x[, , 2L]), t(x[, , 3L]), t(x[, , 4L]), 
+                     maxColorValue = max)
     else if (d[3L] == 1L) 
-      grDevices::rgb(t(x[, , 1L]), t(x[, , 1L]), t(x[, , 1L]), maxColorValue = max)
+      grDevices::rgb(t(x[, , 1L]), t(x[, , 1L]), t(x[, , 1L]), 
+                     maxColorValue = max)
     else stop("a raster array must have exactly 1, 3 or 4 planes"), 
     dim = d[seq_len(2)])
   class(r) <- "raster"
@@ -101,7 +110,9 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
 #' @param x an ImgArray object
 #' @param max.pixel.size maximum pixel size 
 #' @param min.pixel.size minimum pixel size
+#' 
 #' @export
+#' @return A raster array
 #' 
 #' @examples
 #' # get image
@@ -116,8 +127,20 @@ setMethod("realize", signature = "ImgArray", function(x, max.pixel.size = NULL, 
 #'                           format = "HDF5ImgArray", 
 #'                           replace = TRUE, verbose = FALSE)
 #' imgarray_raster <- as.raster(imgarray)
-setMethod("as.raster", signature = "ImgArray", function(x, max.pixel.size = NULL, min.pixel.size = NULL) {
-  x <- realize(x, max.pixel.size = max.pixel.size, min.pixel.size = min.pixel.size)
-  x <- .as_raster_array(aperm(x, perm = c(3,2,1)), max = 255)
-  x
+setMethod("as.raster", 
+          signature = "ImgArray", 
+          function(x, max.pixel.size = NULL, min.pixel.size = NULL) {
+  rx <- realize(x, 
+                max.pixel.size = max.pixel.size, 
+                min.pixel.size = min.pixel.size)
+  d <- length(dim(x))
+  if(d == 3){
+    rx <- aperm(rx, perm = c(3,2,1))
+  } else {
+    rx <- array(rx, dim = c(dim(rx),1))
+  }
+  rx <- .as_raster_array(
+    rx, 
+    max = if(type(x) == "double") 1 else 255)
+  rx
 })

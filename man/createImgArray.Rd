@@ -4,25 +4,44 @@
 \alias{createImgArray}
 \title{createImgArray}
 \usage{
-createImgArray(image, n.series = NULL, verbose = FALSE)
+createImgArray(
+  image,
+  n.series = NULL,
+  resolution = NULL,
+  max.pixel.threshold = 700,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{image}{the image}
 
-\item{n.series}{the number of series if the image supposed to be pyrimadil}
+\item{n.series}{the number of series if the image supposed to be 
+pyramidal, or the the series IDs of the pyramidal image, 
+typical an integer starting from 1}
+
+\item{resolution}{the resolution IDs of the pyramidal image, 
+typical an integer starting from 1}
+
+\item{max.pixel.threshold}{the maximum width or height pixel 
+length for output image}
 
 \item{verbose}{verbose}
+}
+\value{
+An ImgArray object
 }
 \description{
 creates an object of ImgArray class
 }
 \examples{
 # get image
-img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+img.file <- system.file("extdata", 
+"bird.png", package = "ImageArray")
 
 # create ImgArray
 imgarray <- createImgArray(img.file, n.series = 3)
-imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
+imgarray_raster <- as.raster(imgarray,
+ max.pixel.size = 300)
 plot(imgarray_raster)
 
 }

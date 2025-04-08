@@ -23,11 +23,13 @@ library(ImageArray)
 
 # Introduction
 
-ImageArray is a package for Pyramidal and non-pyramidal images in DelayedArray format 
+ImageArray is a package for Pyramidal and non-pyramidal 
+images in DelayedArray format 
 
 # Usage
 
-The main usage of the ImageArray is to deliver DelayedArray operations for images or a list of images in Pyramidal format 
+The main usage of the ImageArray is to deliver DelayedArray 
+operations for images or a list of images in Pyramidal format 
 
 ```{r read}
 # make random magick image
@@ -46,7 +48,8 @@ mat_list <- writeImgArray(mat_image,
 mat_list
 ```
 
-Operations such as rotate, flip, flop or negate will be conducted on all series
+Operations such as rotate, flip, flop or negate will be 
+conducted on all series
 
 ```{r rotate}
 mat_list_rotated <- rotate(mat_list, degrees = 90)

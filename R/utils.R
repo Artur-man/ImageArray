@@ -3,6 +3,7 @@
 #' @param object an ImgArray object
 #' @importFrom DelayedArray path
 #' @export
+#' @returns the path to ImgArray object store
 setMethod("path", 
           signature = "ImgArray",
           function(object){
@@ -16,26 +17,31 @@ setMethod("path",
 #' @param value the new path
 #' @importFrom methods slotNames slot slot<-
 #' @export
-setReplaceMethod("path", 
-                 signature = "ImgArray",
-                 function(object, value){
-                   n.series <- length(object)
-                   for(i in seq_len(n.series)){
-                     object[[i]] <- 
-                       modify_seeds(object[[i]],
-                                    function(x) {
-                                      path.name <- methods::slotNames(x)[grepl("path", slotNames(x))]
-                                      file_path <- methods::slot(x, name = path.name)
-                                      if(grepl(".zarr", file_path)){
-                                        name <- strsplit(file_path, split = "\\.zarr")[[1]][2]
-                                        value <- file.path(value, name)
-                                      } 
-                                      methods::slot(x, name = path.name) <- value
-                                      x
-                                    })
-                   }
-                   return(object)
-                 }
+#' @return does not return a value, updates the path of the ImgArray object
+setReplaceMethod(
+  "path", 
+  signature = "ImgArray",
+  function(object, value){
+    n.series <- length(object)
+    for(i in seq_len(n.series)){
+      object[[i]] <- 
+        modify_seeds(
+          object[[i]],
+          function(x) {
+            ind <- grepl("path", slotNames(x))
+            path.name <- methods::slotNames(x)[ind]
+            file_path <- methods::slot(x, name = path.name)
+            if(grepl(".zarr", file_path)){
+              name <- strsplit(file_path, 
+                               split = "\\.zarr")[[1]][2]
+              value <- file.path(value, name)
+            } 
+            methods::slot(x, name = path.name) <- value
+            x
+          })
+    }
+    return(object)
+  }
 )
 
 #' @noRd
