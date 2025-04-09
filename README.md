@@ -12,9 +12,9 @@ devtools::install_github("BIMSBbioinfo/ImageArray")
 
 ## Usage
 
-The main usage of the ImageArray is to deliver DelayedArray operations for 
-images or a list of images in Pyramidal format. Here, we first store the image
-in HDF5. 
+The main purpose of the ImageArray is to deliver DelayedArray operations 
+for a list of images in Pyramidal format. Here, we first store the 
+image in HDF5. 
 
 ``` r
 # make random magick image
