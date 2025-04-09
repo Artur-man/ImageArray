@@ -39,6 +39,18 @@
 #' length(imgarray)
 NULL
 
+#' @describeIn ImgArray-methods subset and crop
+#' for \code{ImgArray} objects
+#' 
+#' @export
+setMethod(
+  f = '[',
+  signature = c('ImgArray', "numeric", "numeric"),
+  definition = function(x, i, j, ...){
+    crop(x, ind = list(i, j))
+  }
+)
+
 #' @describeIn ImgArray-methods Layer access 
 #' for \code{ImgArray} objects
 #' 

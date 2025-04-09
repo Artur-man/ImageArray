@@ -71,7 +71,11 @@ test_that("manipulate zarr ImgArray", {
   # crop
   mat_list_cropped <- crop(mat_list, ind = list(2001:3000, 1001:2000))
   expect_equal(dim(mat_list_cropped), c(3,1000,1000))
-  
+  mat_list_cropped <- mat_list[2001:3000, 1001:2000]
+  expect_equal(mat_list_cropped,
+               crop(mat_list, ind = list(2001:3000, 1001:2000)))
+  expect_error(crop(mat_list, ind = list(2001:3000, c(10,20))))
+    
   mat_list_negated <- negate(mat_list)
   tmp <- realize(mat_list[[1]]) + realize(mat_list_negated[[1]])
   expect_equal(unique(as.vector(tmp)), 255)
