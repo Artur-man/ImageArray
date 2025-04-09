@@ -71,3 +71,9 @@ setReplaceMethod(
   return(x)
 }
 
+#' is.sequential
+#' @noRd
+is.sequential <- function(x){
+  all(abs(diff(x)) == 1)
+}  
+

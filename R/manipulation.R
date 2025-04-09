@@ -131,6 +131,9 @@ setMethod("crop",
               stop("'ind' should be a list of integers")
             if((length(dim(object[[1]])) - 1) != length(ind))
               stop("'ind' should be a list of integers")
+            check_sequential <- all(vapply(ind, is.sequential, logical(1)))
+            if(!check_sequential)
+              stop("'ind' should be a list of sequantial integer vectors (hence slice)")
             
             # crop all images
             n.series <- length(object)

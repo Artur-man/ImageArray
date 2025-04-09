@@ -59,7 +59,8 @@ mat_list_rotated
 You can even crop images
 
 ```{r crop}
-mat_list_cropped <- crop(mat_list, ind = list(2001:3000, 501:1000))
+# crop(mat_list, ind = list(2001:3000, 501:1000))
+mat_list_cropped <- mat_list[2001:3000, 501:1000]
 mat_list_cropped
 ```
 
