@@ -174,6 +174,10 @@ createMagickArray <- function(image,
                               max.pixel.threshold = 700, 
                               verbose = FALSE){
   
+  if(inherits(image, "bitmap")){
+    image <- magick::image_read(image)
+  }
+  
   # get image info
   image_info <- magick::image_info(image)
   dim_image <- c(image_info$width, image_info$height)
@@ -272,7 +276,7 @@ createImgArray <- function(image,
   }
   
   # create ImgArray from magick
-  if(inherits(image, "magick-image")){
+  if(inherits(image, c("magick-image", "bitmap"))){
     return(createMagickArray(
       image, 
       n.series = n.series, 
