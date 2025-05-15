@@ -5,7 +5,7 @@ Version: 0.99.1
 Date: 2025-03-15
 Authors@R: 
 	person("Artür", "Manukyan", 
-		     role=c("aut", "cre"),
+		     role=c("aut", "cre", "fnd"),
 	       email="artur-man@hotmail.com", 
 	       comment=c(ORCID="0000-0002-0441-9517"))
 Description: ImageArray provides a framework for on-disk and in-memory image arrays, 
@@ -28,7 +28,8 @@ Imports:
   EBImage
 Suggests: 
   testthat (>= 3.0.0),
-  knitr
+  knitr,
+  ggplot2
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://github.com/BIMSBbioinfo/ImageArray
