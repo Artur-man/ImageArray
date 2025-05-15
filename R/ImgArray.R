@@ -6,7 +6,7 @@
 #'
 #' Methods for \code{ImgArray} objects
 #'
-#' @param x An ImgArray object
+#' @param x,a,object An ImgArray object
 #' @param i,j,value Depends on the usage
 #' \describe{
 #'  \item{\code{[[}, \code{[[<-}}{
@@ -17,14 +17,28 @@
 #'    associated with indices of image dimensions (e.g. width, height)
 #'  }
 #' }
+#' @param drop ignored
+#' @param degrees value between 0 and 360 for how many degrees to rotate 
+#' @param perm perm
+#' @param ind index list
 #' @param ... Arguments passed to other methods
 #'
 #' @name ImgArray-methods
 #' @rdname ImgArray-methods
 #' 
 #' @aliases 
-#' [[,ImgArray-methods-method
-#' [[<-,ImgArray-methods-method
+#' [[,ImgArray,numeric-method
+#' [[<-,ImgArray,numeric-method
+#' rotate
+#' rotate,ImgArray-method
+#' crop
+#' crop,ImgArray-method
+#' flip
+#' flip,ImgArray-method
+#' flop
+#' flop,ImgArray-method
+#' negate
+#' negate,ImgArray-method
 #' 
 #' @examples
 #' # get image
@@ -42,6 +56,12 @@
 #' # dimensions and length
 #' dim(imgarray)
 #' length(imgarray)
+#' 
+#' # manipulate images
+#' imgarray <- crop(imgarray, ind = list(100:200, 100:200))
+#' imgarray <- rotate(imgarray, degrees = 90)
+#' imgarray <- flip(imgarray)
+#' imgarray <- flop(imgarray)
 NULL
 
 #' @describeIn ImgArray-methods subset and crop
@@ -51,7 +71,7 @@ NULL
 setMethod(
   f = '[',
   signature = c('ImgArray', "numeric", "numeric"),
-  definition = function(x, i, j, ...){
+  definition = function(x, i, j, ..., drop = FALSE){
     crop(x, ind = list(i, j))
   }
 )

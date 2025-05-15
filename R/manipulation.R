@@ -1,47 +1,5 @@
-#' ImageArray Methods
-#'
-#' Manipulating images stored as ImgArray objects 
-#'
-#' @param object An ImgArray object
-#' @param a An ImgArray object
-#' @param degrees value between 0 and 360 for how many degrees to rotate 
-#' @param perm perm
-#' @param ind index list
-#'
-#' @name ImgArray-manipulation
-#' @rdname ImgArray-manipulation
-#'
-#' @concept ImgArray
-#' 
-#' @aliases
-#' rotate,ImgArray-manipulation-method
-#' crop,ImgArray-manipulation-method
-#' flip,ImgArray-manipulation-method
-#' flop,ImgArray-manipulation-method
-#' negate,ImgArray-manipulation-method
-#' 
-#' @returns An ImgArray object
-#' 
-#' @examples
-#' # get image
-#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
-#' 
-#' # create ImgArray
-#' imgarray <- createImgArray(img.file, n.series = 3)
-#' 
-#' # features
-#' dim(imgarray)
-#' length(imgarray)
-#' 
-#' # manipulate images
-#' imgarray <- crop(imgarray, ind = list(100:200, 100:200))
-#' imgarray <- rotate(imgarray, degrees = 90)
-#' imgarray <- flip(imgarray)
-#' imgarray <- flop(imgarray)
-NULL
-
-#' @describeIn ImgArray-manipulation rotate image array to 90, 180, 270 degrees
-#' @export
+#' @describeIn ImgArray-methods rotate image array to 90, 180, 270 degrees
+#' @exportMethod rotate
 setMethod("rotate", 
           signature = "ImgArray",
           function(object, degrees){
@@ -70,8 +28,8 @@ setMethod("rotate",
             object
           })
 
-#' @describeIn ImgArray-manipulation permute image
-#' @export
+#' @describeIn ImgArray-methods permute image
+#' @exportMethod aperm
 setMethod("aperm", 
           signature = "ImgArray",
           function(a, perm){
@@ -82,8 +40,8 @@ setMethod("aperm",
             a
           })
 
-#' @describeIn ImgArray-manipulation negate image
-#' @export
+#' @describeIn ImgArray-methods negate image
+#' @exportMethod negate
 setMethod("negate", 
           signature = "ImgArray",
           function(object){
@@ -94,8 +52,8 @@ setMethod("negate",
             object
           })
 
-#' @describeIn ImgArray-manipulation vertical flipping image
-#' @export
+#' @describeIn ImgArray-methods vertical flipping image
+#' @exportMethod flip
 setMethod("flip", 
           signature = "ImgArray",
           function(object){
@@ -108,8 +66,8 @@ setMethod("flip",
             object
           })
 
-#' @describeIn ImgArray-manipulation horizontal flipping image
-#' @export
+#' @describeIn ImgArray-methods horizontal flipping image
+#' @exportMethod flop
 setMethod("flop", 
           signature = "ImgArray",
           function(object){
@@ -122,9 +80,9 @@ setMethod("flop",
             object
           })
 
-#' @describeIn ImgArray-manipulation cropping image
+#' @describeIn ImgArray-methods cropping image
 #' @importFrom utils head tail
-#' @export
+#' @exportMethod crop
 setMethod("crop", 
           signature = "ImgArray",
           function(object, ind){
