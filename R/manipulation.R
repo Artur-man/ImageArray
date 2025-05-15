@@ -13,6 +13,15 @@
 #'
 #' @concept ImgArray
 #' 
+#' @aliases
+#' rotate,ImgArray-manipulation-method
+#' crop,ImgArray-manipulation-method
+#' flip,ImgArray-manipulation-method
+#' flop,ImgArray-manipulation-method
+#' negate,ImgArray-manipulation-method
+#' 
+#' @returns An ImgArray object
+#' 
 #' @examples
 #' # get image
 #' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
@@ -33,7 +42,6 @@ NULL
 
 #' @describeIn ImgArray-manipulation rotate image array to 90, 180, 270 degrees
 #' @export
-#' @returns An ImgArray object
 setMethod("rotate", 
           signature = "ImgArray",
           function(object, degrees){
@@ -64,7 +72,6 @@ setMethod("rotate",
 
 #' @describeIn ImgArray-manipulation permute image
 #' @export
-#' @returns An ImgArray object
 setMethod("aperm", 
           signature = "ImgArray",
           function(a, perm){
@@ -77,7 +84,6 @@ setMethod("aperm",
 
 #' @describeIn ImgArray-manipulation negate image
 #' @export
-#' @returns An ImgArray object
 setMethod("negate", 
           signature = "ImgArray",
           function(object){
@@ -90,7 +96,6 @@ setMethod("negate",
 
 #' @describeIn ImgArray-manipulation vertical flipping image
 #' @export
-#' @returns An ImgArray object
 setMethod("flip", 
           signature = "ImgArray",
           function(object){
@@ -105,7 +110,6 @@ setMethod("flip",
 
 #' @describeIn ImgArray-manipulation horizontal flipping image
 #' @export
-#' @returns An ImgArray object
 setMethod("flop", 
           signature = "ImgArray",
           function(object){
@@ -121,7 +125,6 @@ setMethod("flop",
 #' @describeIn ImgArray-manipulation cropping image
 #' @importFrom utils head tail
 #' @export
-#' @returns An ImgArray object
 setMethod("crop", 
           signature = "ImgArray",
           function(object, ind){

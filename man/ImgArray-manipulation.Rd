@@ -2,6 +2,11 @@
 % Please edit documentation in R/manipulation.R
 \name{ImgArray-manipulation}
 \alias{ImgArray-manipulation}
+\alias{rotate,ImgArray-manipulation-method}
+\alias{crop,ImgArray-manipulation-method}
+\alias{flip,ImgArray-manipulation-method}
+\alias{flop,ImgArray-manipulation-method}
+\alias{negate,ImgArray-manipulation-method}
 \alias{rotate,ImgArray-method}
 \alias{aperm,ImgArray-method}
 \alias{negate,ImgArray-method}
@@ -34,16 +39,6 @@
 \item{ind}{index list}
 }
 \value{
-An ImgArray object
-
-An ImgArray object
-
-An ImgArray object
-
-An ImgArray object
-
-An ImgArray object
-
 An ImgArray object
 }
 \description{

@@ -24,12 +24,12 @@ library(ImageArray)
 # Introduction
 
 ImageArray is a package for Pyramidal and non-pyramidal 
-images in DelayedArray format 
+images in DelayedArray format.
 
 # Usage
 
 The main usage of the ImageArray is to deliver DelayedArray 
-operations for images or a list of images in Pyramidal format 
+operations for images or a list of images in Pyramidal format.
 
 ```{r read}
 # make random magick image
@@ -40,10 +40,10 @@ mat_image <- magick::image_read(mat_raster)
 
 # create image array
 dir.create(td <- tempfile())
-output_h5ad <- file.path(td, "h5test")
+output_h5 <- file.path(td, "h5test")
 mat_list <- writeImgArray(mat_image, 
                           format = "HDF5ImgArray", 
-                          output = output_h5ad, 
+                          output = output_h5, 
                           replace = TRUE)
 mat_list
 ```
@@ -56,12 +56,45 @@ mat_list_rotated <- rotate(mat_list, degrees = 90)
 mat_list_rotated
 ```
 
-You can even crop images
+You can even crop images, either by using `crop` or `[` method.
 
 ```{r crop}
-# crop(mat_list, ind = list(2001:3000, 501:1000))
 mat_list_cropped <- mat_list[2001:3000, 501:1000]
 mat_list_cropped
+```
+
+```{r crop2}
+mat_list_cropped <- crop(mat_list, ind = list(2001:3000, 501:1000))
+mat_list_cropped
+```
+
+# Using OME.TIFF
+
+You can create `ImgArray` objects from OME.TIFF files with already defined
+layers. 
+
+```{r ometiff}
+ome.tiff.file <- system.file("extdata", "xy_12bit__plant.ome.tiff", 
+                             package = "ImageArray")
+img <- createImgArray(ome.tiff.file, n.series = 1, resolution = 1:2)
+img
+```
+
+Depending on the requested pixel size, functions may return the desired
+resolution from the pyramid.
+
+```{r ometiffvis, out.width="50%"}
+bfa.raster <- as.raster(img)
+plot(bfa.raster)
+dim(bfa.raster)
+```
+
+You can use either `max.pixel.size` or `min.pixel.size` to control the output
+
+```{r ometiffvis2, out.width="50%"}
+bfa.raster <- as.raster(img, max.pixel.size = 300)
+plot(bfa.raster)
+dim(bfa.raster)
 ```
 
 # Session info

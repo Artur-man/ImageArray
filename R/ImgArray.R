@@ -7,18 +7,24 @@
 #' Methods for \code{ImgArray} objects
 #'
 #' @param x An ImgArray object
-#' @param i,value Depends on the usage
+#' @param i,j,value Depends on the usage
 #' \describe{
 #'  \item{\code{[[}, \code{[[<-}}{
 #'    Here \code{i} is the level of the image pyramid. 
 #'    You can use the \code{length} function to get the 
-#'    number of the layers in the pyramid
+#'    number of the layers in the pyramid. 
+#'    When used with \code{crop}, arguments \code{i} and \code{j} are 
+#'    associated with indices of image dimensions (e.g. width, height)
 #'  }
 #' }
 #' @param ... Arguments passed to other methods
 #'
 #' @name ImgArray-methods
 #' @rdname ImgArray-methods
+#' 
+#' @aliases 
+#' [[,ImgArray-methods-method
+#' [[<-,ImgArray-methods-method
 #' 
 #' @examples
 #' # get image
@@ -27,8 +33,7 @@
 #' package = "ImageArray")
 #' 
 #' # create ImgArray
-#' imgarray <- createImgArray(img.file, 
-#' n.series = 3)
+#' imgarray <- createImgArray(img.file, n.series = 3)
 #' 
 #' # access layers
 #' imgarray[[1]]
