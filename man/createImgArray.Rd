@@ -9,6 +9,7 @@ createImgArray(
   n.series = NULL,
   resolution = NULL,
   max.pixel.threshold = 700,
+  engine = "EBImage",
   verbose = FALSE
 )
 }
@@ -24,6 +25,9 @@ typical an integer starting from 1}
 
 \item{max.pixel.threshold}{the maximum width or height pixel 
 length for output image}
+
+\item{engine}{the package to use for each image layer: either
+\code{EBImage} or \code{magick-image}}
 
 \item{verbose}{verbose}
 }

@@ -18,7 +18,11 @@ knitr::opts_chunk$set(cache=FALSE, message=FALSE, warning=FALSE)
 ```
 
 ```{r load-libs}
+library(BiocFileCache)
+library(EBImage)
 library(ImageArray)
+library(ggplot2)
+library(shiny)
 ```
 
 # Introduction
@@ -28,15 +32,16 @@ images in DelayedArray format.
 
 # Usage
 
-The main usage of the ImageArray is to deliver DelayedArray 
-operations for images or a list of images in Pyramidal format.
+The main usage of the ImageArray is to deliver DelayedArray operations for 
+images or a list of images in Pyramidal format. You can also use
+`magick-image` objects.
 
 ```{r read}
-# make random magick image
+# make random EBImage image
 mat <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), 
              dim=c(3, 2000, 5000))
 mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
-mat_image <- magick::image_read(mat_raster)
+mat_image <- as.Image(mat_raster)
 
 # create image array
 dir.create(td <- tempfile())
@@ -95,6 +100,113 @@ You can use either `max.pixel.size` or `min.pixel.size` to control the output
 bfa.raster <- as.raster(img, max.pixel.size = 300)
 plot(bfa.raster)
 dim(bfa.raster)
+```
+# Using with Shiny
+
+The pyramid scheme introduced by `ImgArray` objects can also be used to 
+generate scalable plots and interactive Shiny application for visualizing 
+large images. 
+
+For this example, we will use a large H&E image used by 10x Genomics, 
+generated after a Xenium in Situ platform run. 
+
+```{r he}
+image_file <- paste(
+    "https://cf.10xgenomics.com/samples/xenium/1.0.1",
+    "Xenium_FFPE_Human_Breast_Cancer_Rep1", 
+    "Xenium_FFPE_Human_Breast_Cancer_Rep1_he_image.ome.tif",
+    sep="/")
+library(BiocFileCache)
+bfc <- BiocFileCache()
+image_file <- bfcrpath(bfc, image_file)
+```
+
+Let us create an `ImgArray` object first with the image above. The ome.tiff 
+file includes multiple resolutions that we can ask `ImgArray` object to include.
+
+```{r he_imgarray}
+imgarray <- createImgArray(image_file, 
+                           n.series = 1, 
+                           resolution = 1:6)
+imgarray
+```
+You can visualize subsets of large images really quickly using `crop` and
+`as.raster`. Again, here we use `max.pixel.size` to regularize the resolution
+parsed from the pyramid; that is, as defined below, only resolutions with
+max pixel size 800 would be returned.
+
+```{r speedy_vis, out.width="70%"}
+# crop image
+imgarray_sub <- crop(imgarray, ind = list(16000:19000, 7000:10000))
+
+# convert to raster
+img_raster <- as.raster(imgarray_sub, max.pixel.size = 800)
+
+# plot with ggplot
+imgggplot <- ggplot2::ggplot(data.frame(x = 0, y = 0), 
+                             ggplot2::aes_string("x", "y")) + 
+  ggplot2::coord_fixed(expand = FALSE, 
+                       xlim = c(0, dim(img_raster)[2]), 
+                       ylim = c(0, dim(img_raster)[1])) + 
+  ggplot2::annotation_raster(img_raster, 0, dim(img_raster)[2], 
+                             dim(img_raster)[1], 0, interpolate = FALSE)
+imgggplot
+```
+
+Now let us create a shiny application where we can interactively define 
+subsetting and visualize the image quickly. 
+
+The Shiny application will react quickly to regardless of the size of the 
+image subset. This is because `as.raster` determines the layer that has the
+highest resolution without exceeding the threshold (`max.pixel.size`) 
+automatically.
+
+```{r speedy_vis_shiny}
+if(interactive()){
+  
+  # variables
+  dimimg <- dim(imgarray)
+  max.pixel.size <- 800
+  
+  # Define UI
+  ui <- fluidPage(
+    sliderInput("x_slider", label = "X", min = 1, 
+                max = dimimg[2], value = c(16000,19000)),
+    sliderInput("y_slider", label = "Y", min = 1, 
+                max = dimimg[3], value = c(7000,10000)),
+    mainPanel(
+      plotOutput(outputId = "scatterPlot")
+    )
+  )
+  
+  # Define server logic
+  server <- function(input, output) {
+    
+    output$scatterPlot <- renderPlot({
+      
+      # crop image
+      indx <- seq(input$x_slider[1], input$x_slider[2])
+      indy <- seq(input$y_slider[1], input$y_slider[2])
+      imgarray_sub <- crop(imgarray, ind = list(indx, indy))
+      
+      # convert to raster
+      img_raster <- as.raster(imgarray_sub, max.pixel.size = max.pixel.size)
+      
+      # plot with ggplot
+      imgggplot <- ggplot2::ggplot(data.frame(x = 0, y = 0), 
+                                   ggplot2::aes_string("x", "y")) + 
+        ggplot2::coord_fixed(expand = FALSE, 
+                             xlim = c(0, dim(img_raster)[2]), 
+                             ylim = c(0, dim(img_raster)[1])) + 
+        ggplot2::annotation_raster(img_raster, 0, dim(img_raster)[2], 
+                                   dim(img_raster)[1], 0, interpolate = FALSE)
+      imgggplot
+    })
+  }
+  
+  # Run the app
+  shinyApp(ui = ui, server = server)
+}
 ```
 
 # Session info
