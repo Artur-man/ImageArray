@@ -101,9 +101,12 @@ setMethod("crop",
             n.series <- length(object)
             for(i in seq_len(n.series)){
               img <- object[[i]]
-              cur_ind <- lapply(ind, function(curind){
-                seq(floor(utils::head(curind,1)/(2^(i-1))), 
-                    ceiling(utils::tail(curind,1)/(2^(i-1))))
+              dim_img <- dim(img)
+              cur_ind <- lapply(seq_len(length(ind)), function(j){
+                curind <- ind[[j]]
+                id <- c(floor(utils::head(curind,1)/(2^(i-1))), 
+                          ceiling(utils::tail(curind,1)/(2^(i-1))))
+                seq(max(id[1],1), min(id[2],dim_img[j+1]))
               })
               object[[i]] <- img[, cur_ind[[1]], cur_ind[[2]], drop = FALSE]
             }

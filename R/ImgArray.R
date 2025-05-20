@@ -193,6 +193,12 @@ createBFArray <- function(image,
 #' or height pixel length for output image 
 #' @param verbose verbose
 #' 
+#' @importFrom magick image_read 
+#' @importFrom magick image_info 
+#' @importFrom magick image_resize 
+#' @importFrom magick image_data
+#' @importFrom magick geometry_size_percent
+#' 
 #' @noRd
 createMagickArray <- function(image, 
                               n.series = NULL, 
@@ -252,6 +258,74 @@ createMagickArray <- function(image,
   ImgArray(series = image_list)
 }
 
+#' createMagickArray
+#'
+#' creates an object of ImgArray class from magick image
+#' 
+#' @param image the image
+#' @param n.series the number of series if the 
+#' image supposed to be pyramidal
+#' @param max.pixel.threshold the maximum width 
+#' or height pixel length for output image 
+#' @param verbose verbose
+#' 
+#' @importFrom EBImage readImage 
+#' @importFrom EBImage resize
+#' 
+#' @noRd
+createEBImageArray <- function(image, 
+                               n.series = NULL, 
+                               max.pixel.threshold = 700, 
+                               verbose = FALSE){
+  
+  # get image info
+  image_info <- dim(image)
+  dim_image <- c(image_info[1], image_info[2])
+  
+  # series
+  if(is.null(n.series)){
+    
+    # get image size and resolution
+    image_maxsize_id <- which.max(dim_image)
+    image_maxsize <- dim_image[image_maxsize_id]
+    
+    # get number of series
+    # how many series of power of 2 required to 
+    # get a maximum pixel size of 700 on either width or height
+    n.series <- ceiling(log2(image_maxsize/max.pixel.threshold)) + 1
+  } else if(n.series < 1){
+    stop("'n.series' has to be 1 or a larger integer value!")
+  }
+  
+  # create image series
+  if(verbose)
+    cat(paste0("Creating Series ", 1, 
+               " of size (", dim_image[1], 
+               ",", dim_image[2], ") \n"))
+  img <- aperm(as.array(image), perm = c(3,2,1))
+  image_list <- list(DelayedArray::DelayedArray(as.array(img)))
+  if(n.series > 1){
+    cur_image <- image
+    for(i in 2:n.series){
+      dim_image <- ceiling(dim_image/2)
+      if(verbose)
+        cat(paste0("Creating Series ", i, 
+                   " of size (", dim_image[1], 
+                   ",", dim_image[2], ") \n"))
+      resize_factor <- dim_image
+      cur_image <- EBImage::resize(cur_image, 
+                                   w = dim_image[1], 
+                                   h = dim_image[2])
+      cur_img <- aperm(as.array(cur_image), perm = c(3,2,1))
+      image_list[[i]] <- 
+        DelayedArray::DelayedArray(as.array(cur_img))
+    }
+  }
+  
+  # return
+  ImgArray(series = image_list)
+}
+
 #' createImgArray
 #'
 #' creates an object of ImgArray class
@@ -264,13 +338,10 @@ createMagickArray <- function(image,
 #' typical an integer starting from 1
 #' @param max.pixel.threshold the maximum width or height pixel 
 #' length for output image 
+#' @param engine the package to use for each image layer: either
+#' \code{EBImage} or \code{magick-image}
 #' @param verbose verbose
 #'
-#' @importFrom magick image_read 
-#' @importFrom magick image_info 
-#' @importFrom magick image_resize 
-#' @importFrom magick image_data
-#' @importFrom magick geometry_size_percent
 #' @importFrom methods new
 #' @importFrom DelayedArray DelayedArray
 #' 
@@ -292,12 +363,14 @@ createImgArray <- function(image,
                            n.series = NULL, 
                            resolution = NULL, 
                            max.pixel.threshold = 700, 
+                           engine = "EBImage",
                            verbose = FALSE)
 {
   # convert to bitmap array if integer
   if(is.integer(image)){
-    image <- array(as.raw(image), dim = c(3,2,1))
-    image <- magick::image_read(image)
+    if(engine == "magick-image")
+      image <- array(as.raw(image), dim = c(3,2,1))
+    image <- read_image(image, engine = engine)
   }
   
   # create ImgArray from magick
@@ -309,18 +382,34 @@ createImgArray <- function(image,
       verbose = verbose))
   }
   
+  # create ImgArray from EBImage
+  if(inherits(image, c("Image"))){
+    return(createEBImageArray(
+      image, 
+      n.series = n.series, 
+      max.pixel.threshold = max.pixel.threshold, 
+      verbose = verbose))
+  }
+  
   # check image format
   if(inherits(image, "character")){
     if(grepl(".ome.tiff$|.ome.tif$|.qptiff$|.qptif$", image)){
-      createBFArray(image, 
+      image <- createBFArray(image, 
                     series = n.series, 
                     resolution = resolution)
     } else {
-      image <- magick::image_read(image)
-      createMagickArray(image, 
-                        n.series = n.series, 
-                        max.pixel.threshold = max.pixel.threshold, 
-                        verbose = verbose)
+      image <- read_image(image, engine = engine)
+      if(inherits(image, "magick-image")){
+        createMagickArray(image, 
+                          n.series = n.series, 
+                          max.pixel.threshold = max.pixel.threshold, 
+                          verbose = verbose) 
+      } else if(inherits(image, "Image")){
+        createEBImageArray(image, 
+                           n.series = n.series, 
+                           max.pixel.threshold = max.pixel.threshold, 
+                           verbose = verbose)
+      }
     }
   }
 }
@@ -341,6 +430,8 @@ createImgArray <- function(image,
 #' to use for writing the data to disk.
 #' @param level The compression level to use for 
 #' writing the data to disk.
+#' @param engine the package to use for each image layer: either
+#' \code{EBImage} or \code{magick-image}
 #' @param verbose verbose
 #'
 #' @importFrom HDF5Array writeHDF5Array
@@ -376,6 +467,7 @@ writeImgArray <- function(image,
                           n.series=NULL,
                           chunkdim=NULL, 
                           level=NULL,
+                          engine = "EBImage",
                           verbose=FALSE)
 {
   # verbose
@@ -398,7 +490,8 @@ writeImgArray <- function(image,
   if(!inherits(image, "ImgArray")){
     image_list <- createImgArray(image, 
                                  n.series = n.series, 
-                                 verbose = verbose)
+                                 verbose = verbose, 
+                                 engine = engine)
   } else {
     image_list <- image
   }

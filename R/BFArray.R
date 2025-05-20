@@ -34,7 +34,7 @@ BFArray <- function(image.file, series, resolution)
     which(series_res_meta[1,] == series & 
             series_res_meta[2,] == resolution)
   if(length(series_index) > 0){
-    shape <- vapply(c("sizeX", "sizeY"), function(x){
+    shape <- vapply(c("sizeC", "sizeX", "sizeY"), function(x){
       md <- meta@.Data[[series_index]]
       if(!is.null(cm <- md$coreMetadata)) md <- cm
       md[[x]]
@@ -84,15 +84,19 @@ setMethod("type", "BFArraySeed", function(x) x@type)
 #' @importFrom EBImage imageData
 .extract_array_from_BFArraySeed <- function(x, index)
 {
+  temp(x, index)
+}
+
+temp <- function(x, index){
   # get metadata
   meta <- RBioFormats::read.metadata(file = x@filepath, 
                                      filter.metadata = TRUE, 
                                      proprietary.metadata = TRUE)
-
+  
   # check for index length
-  if(length(index) > 2)
+  if(length(index) > 3)
     stop("You cannot get BFArray slices more than 2 dimensions!")
-    
+  
   # create slices
   ind <- mapply(function(x,y){
     if(is.null(x)){
@@ -103,7 +107,7 @@ setMethod("type", "BFArraySeed", function(x) x@type)
       return(x)
     }
   }, index, x@shape, SIMPLIFY = FALSE)
-
+  
   # get slices
   len_ind <- vapply(ind, length, length(ind))
   if(any(len_ind==0)){
@@ -114,9 +118,15 @@ setMethod("type", "BFArraySeed", function(x) x@type)
       file = x@filepath, 
       series = x@series, 
       resolution = x@resolution, 
-      subset = list(X = ind[[1]], 
-                    Y = ind[[2]]))
+      subset = list(C = ind[[1]],
+                    X = ind[[2]], 
+                    Y = ind[[3]]))
     res <- EBImage::imageData(res)
+    if(length(dim(res)) != 3){
+      res <- array(res, dim = c(1, dim(res)))
+    } else{
+      res <- aperm(res, perm = c(3,1,2))
+    }
   }
   
   return(res)

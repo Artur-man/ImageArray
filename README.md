@@ -20,7 +20,7 @@ image in HDF5.
 # make random magick image
 mat <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), dim=c(3, 2000, 5000))
 mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
-mat_image <- magick::image_read(mat_raster)
+mat_image <- as.Image(mat_raster)
 
 # create image array
 dir.create(td <- tempfile())

@@ -13,6 +13,7 @@ writeImgArray(
   n.series = NULL,
   chunkdim = NULL,
   level = NULL,
+  engine = "EBImage",
   verbose = FALSE
 )
 }
@@ -36,6 +37,9 @@ to use for writing the data to disk.}
 
 \item{level}{The compression level to use for 
 writing the data to disk.}
+
+\item{engine}{the package to use for each image layer: either
+\code{EBImage} or \code{magick-image}}
 
 \item{verbose}{verbose}
 }

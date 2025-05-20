@@ -34,3 +34,26 @@ getImageInfo <- function(object){
   }
   as.data.frame(imginfo)
 }
+
+#' read_image
+#' 
+#' @param image the image
+#' @param engine the package to use for each image layer: either
+#' \code{ebimage} or \code{magick}
+#' 
+#' @importFrom magick image_read 
+#' @importFrom EBImage readImage
+#' 
+#' @noRd
+#' @keywords internal
+read_image <- function(image, engine){
+  # if(engine == "magick-image"){
+  #   image <- magick::image_read(image)
+  # } else {
+  #   image <- EBImage::readImage(image)
+  # }
+  switch(engine,
+         `magick-image` = magick::image_read(image),
+         `EBImage` = EBImage::readImage(image)
+  )
+}
