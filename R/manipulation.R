@@ -47,7 +47,7 @@ setMethod("negate",
           function(object){
             n.series <- length(object)
             for(i in seq_len(n.series)){
-              object[[i]] <- 255 - object[[i]]
+              object[[i]] <- 255L - object[[i]]
             }
             object
           })

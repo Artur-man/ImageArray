@@ -22,7 +22,8 @@ test_that("manipulate h5 ImgArray", {
                               output = output_h5ad, 
                               name = "image",
                               format = "HDF5ImgArray", 
-                              replace = TRUE, verbose = FALSE)
+                              replace = TRUE, 
+                              verbose = FALSE)
   expect_equal(dim(mat_list), c(3,5000,2000))
   
   # aperm
@@ -37,6 +38,7 @@ test_that("manipulate h5 ImgArray", {
   mat_list_negated <- negate(mat_list)
   tmp <- realize(mat_list[[1]]) + realize(mat_list_negated[[1]])
   expect_equal(unique(as.vector(tmp)), 255)
+  expect_equal(type(mat_list_negated[[1]]), "integer")
   
   # rotate
   mat_list_rotated <- rotate(mat_list, degrees = 90)
