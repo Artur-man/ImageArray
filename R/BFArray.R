@@ -84,10 +84,6 @@ setMethod("type", "BFArraySeed", function(x) x@type)
 #' @importFrom EBImage imageData
 .extract_array_from_BFArraySeed <- function(x, index)
 {
-  temp(x, index)
-}
-
-temp <- function(x, index){
   # get metadata
   meta <- RBioFormats::read.metadata(file = x@filepath, 
                                      filter.metadata = TRUE, 
