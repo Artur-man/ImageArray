@@ -107,7 +107,7 @@ setMethod(
   signature = c('ImgArray'),
   definition = function(object){
     cat(class(x = object), "Object \n")
-    n.series <- length(object)
+    n.series <- length(object@series)
     for(i in seq_len(n.series)){
       dim_image <- dim(object@series[[i]])
       dim_image <- paste(dim_image, collapse = ",")
@@ -512,7 +512,7 @@ writeImgArray <- function(image,
          })
   
   # write all series
-  for(i in seq_len(length(image_list))){
+  for(i in seq_len(length(image_list@series))){
     img <- array(as.integer(image_list[[i]]), 
                  dim = dim(image_list[[i]]))
 

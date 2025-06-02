@@ -33,7 +33,7 @@ setMethod("rotate",
 setMethod("aperm", 
           signature = "ImgArray",
           function(a, perm){
-            n.series <- length(a)
+            n.series <- length(a@series)
             for(i in seq_len(n.series)){
               a[[i]] <- aperm(a[[i]], perm = perm)
             }
@@ -45,7 +45,7 @@ setMethod("aperm",
 setMethod("negate", 
           signature = "ImgArray",
           function(object){
-            n.series <- length(object)
+            n.series <- length(object@series)
             for(i in seq_len(n.series)){
               object[[i]] <- 255L - object[[i]]
             }
@@ -57,7 +57,7 @@ setMethod("negate",
 setMethod("flip", 
           signature = "ImgArray",
           function(object){
-            n.series <- length(object)
+            n.series <- length(object@series)
             for(i in seq_len(n.series)){
               img <- object[[i]]
               dim_img <- dim(img)
@@ -71,7 +71,7 @@ setMethod("flip",
 setMethod("flop", 
           signature = "ImgArray",
           function(object){
-            n.series <- length(object)
+            n.series <- length(object@series)
             for(i in seq_len(n.series)){
               img <- object[[i]]
               dim_img <- dim(img)
@@ -98,7 +98,7 @@ setMethod("crop",
                    vectors (hence slice)")
             
             # crop all images
-            n.series <- length(object)
+            n.series <- length(object@series)
             for(i in seq_len(n.series)){
               img <- object[[i]]
               dim_img <- dim(img)

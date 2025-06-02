@@ -38,7 +38,7 @@ setMethod("realize",
     return(S4Arrays::as.array.Array(x[[1]]))
   } else if(!is.null(max.pixel.size)){
     if(max.pixel.size %% 1 == 0){
-      n.series <- length(x)
+      n.series <- length(x@series)
       for(i in seq_len(n.series)){
         dim_img <- dim(x[[i]])
         if(max.pixel.size >= max(rev(dim_img)[c(1,2)])){
@@ -51,7 +51,7 @@ setMethod("realize",
     }
   } else if(!is.null(min.pixel.size)){
     if(min.pixel.size %% 1 == 0){
-      n.series <- length(x)
+      n.series <- length(x@series)
       if(n.series > 1){
         for(i in 2:n.series){
           dim_img <- dim(x[[i]])
