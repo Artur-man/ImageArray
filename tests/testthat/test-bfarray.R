@@ -25,6 +25,13 @@ test_that("bfarray object", {
   img <- createImgArray(img.file, n.series = 1, resolution = 1:2)
   img <- createImgArray(img.file2, n.series = 1, resolution = 1)
   expect_error(img <- createImgArray(img.file2, n.series = 1, resolution = 1:2))
+  
+  # single channel modulate
+  img_modulated <- modulate(img, brightness = 200)
+  orig <- realize(img[1:10,1:10])*2
+  orig[orig > 1] <- 1
+  newmat <- realize(img_modulated[1:10,1:10])
+  expect_identical(orig, newmat)
 })
 
 test_that("bfarray based ImgArray", {

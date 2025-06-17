@@ -39,6 +39,8 @@
 #' flop,ImgArray-method
 #' negate
 #' negate,ImgArray-method
+#' modulate
+#' modulate,ImgArray-method
 #' 
 #' @examples
 #' # get image
