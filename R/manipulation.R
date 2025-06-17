@@ -52,6 +52,26 @@ setMethod("negate",
             object
           })
 
+#' @describeIn ImgArray-methods modulate image
+#' @exportMethod modulate
+setMethod("modulate", 
+          signature = "ImgArray",
+          function(object, brightness){
+            if(brightness < 0)
+              stop("Brightness should be more than 0, typically more than 100")
+            dim_img <- dim(object[[1]])
+            if(dim_img[1] > 1)
+              stop("Only the single channel images can be modulated!")
+            n.series <- length(object@series)
+            for(i in seq_len(n.series)){
+              tmp <- ceiling(object[[i]] * (brightness/100))
+              max <- if(type(object[[i]]) == "double") 1 else 255
+              tmp[tmp > max] <- max
+              object[[i]] <- tmp
+            }
+            object
+          })
+
 #' @describeIn ImgArray-methods vertical flipping image
 #' @exportMethod flip
 setMethod("flip", 

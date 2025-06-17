@@ -14,9 +14,9 @@
 \alias{flop,ImgArray-method}
 \alias{negate}
 \alias{negate,ImgArray-method}
+\alias{modulate}
+\alias{modulate,ImgArray-method}
 \alias{[,ImgArray,numeric,numeric,ANY-method}
-\alias{[[,ImgArray,numeric,ANY-method}
-\alias{[[<-,ImgArray,numeric,ANY,ANY-method}
 \alias{dim,ImgArray-method}
 \alias{type,ImgArray-method}
 \alias{length,ImgArray-method}
@@ -26,9 +26,9 @@
 \usage{
 \S4method{[}{ImgArray,numeric,numeric,ANY}(x, i, j, ..., drop = FALSE)
 
-\S4method{[[}{ImgArray,numeric,ANY}(x, i)
+\S4method{[[}{ImgArray,numeric}(x, i)
 
-\S4method{[[}{ImgArray,numeric,ANY,ANY}(x, i, j, ...) <- value
+\S4method{[[}{ImgArray,numeric}(x, i, j, ...) <- value
 
 \S4method{dim}{ImgArray}(x)
 
@@ -43,6 +43,8 @@ ImgArray(series)
 \S4method{aperm}{ImgArray}(a, perm)
 
 \S4method{negate}{ImgArray}(object)
+
+\S4method{modulate}{ImgArray}(object, brightness)
 
 \S4method{flip}{ImgArray}(object)
 
@@ -97,7 +99,7 @@ for \code{ImgArray} objects
 \item \code{x[[i}: Layer access 
 for \code{ImgArray} objects
 
-\item \code{`[[`(x = ImgArray, i = numeric, j = ANY) <- value}: Layer access 
+\item \code{`[[`(x = ImgArray, i = numeric) <- value}: Layer access 
 for \code{ImgArray} objects
 
 \item \code{dim(ImgArray)}: dimensions of an ImgArray
@@ -115,6 +117,8 @@ A function for creating objects of ImgArray class
 \item \code{aperm(ImgArray)}: permute image
 
 \item \code{negate(ImgArray)}: negate image
+
+\item \code{modulate(ImgArray)}: modulate image
 
 \item \code{flip(ImgArray)}: vertical flipping image
 
