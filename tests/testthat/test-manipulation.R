@@ -12,8 +12,13 @@ set.seed(1)
 mat <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), dim=c(3, 2000, 5000))
 mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
 
+# build image array, one dimensions
+# mat1dim <- array(data=sample(1:255, 2000*5000*1, replace = TRUE), dim=c(1, 2000, 5000))
+# mat1dim_raster <- as.raster(aperm(mat1dim, perm = c(2,3,1)), max = 255)
+
 # read as magick object
 mat_image <- magick::image_read(mat_raster)
+# mat1dim_image <- magick::image_read(mat1dim_raster)
 
 test_that("manipulate h5 ImgArray", {
   
@@ -54,6 +59,23 @@ test_that("manipulate h5 ImgArray", {
   expect_equal(realize(mat_list_flipflop)[1,,][1,], rev(realize(mat_list)[1,,][1,]))
   mat_list_flipflop <- flop(mat_list)
   expect_equal(realize(mat_list_flipflop)[1,,][,1], rev(realize(mat_list)[1,,][,1]))
+  
+  # modulate
+  mat_list <- writeImgArray(mat_image, 
+                            output = output_h5ad, 
+                            name = "image",
+                            format = "HDF5ImgArray", 
+                            engine = "EBImage",
+                            replace = TRUE, 
+                            verbose = FALSE)
+  expect_equal(dim(mat_list), c(3,5000,2000))
+  mat_list_modulated <- modulate(mat_list, brightness = 200)
+  expect_equal(type(mat_list_modulated[[1]]), "integer")
+  expect_equal(type(mat_list_modulated), "integer")
+  orig <- realize(mat_list[1:10,1:10])*2
+  orig[orig > 255] <- 255
+  newmat <- realize(mat_list_modulated[1:10,1:10])
+  expect_equal(orig, newmat)
 })
 
 test_that("manipulate zarr ImgArray", {
@@ -97,4 +119,20 @@ test_that("manipulate zarr ImgArray", {
   expect_equal(realize(mat_list_flipflop)[1,,][1,], rev(realize(mat_list)[1,,][1,]))
   mat_list_flipflop <- flop(mat_list)
   expect_equal(realize(mat_list_flipflop)[1,,][,1], rev(realize(mat_list)[1,,][,1]))
+  
+  # modulate
+  mat_list <- writeImgArray(mat_image, 
+                            output = output_zarr, 
+                            name = "image",
+                            format = "ZarrImgArray", 
+                            replace = TRUE, 
+                            verbose = FALSE)
+  expect_equal(dim(mat_list), c(3,5000,2000))
+  mat_list_modulated <- modulate(mat_list, brightness = 200)
+  expect_equal(type(mat_list_modulated[[1]]), "integer")
+  expect_equal(type(mat_list_modulated), "integer")
+  orig <- realize(mat_list[1:10,1:10])*2
+  orig[orig > 255] <- 255
+  newmat <- realize(mat_list_modulated[1:10,1:10])
+  expect_equal(orig, newmat)
 })

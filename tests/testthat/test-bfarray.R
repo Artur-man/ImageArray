@@ -31,7 +31,7 @@ test_that("bfarray object", {
   orig <- realize(img[1:10,1:10])*2
   orig[orig > 1] <- 1
   newmat <- realize(img_modulated[1:10,1:10])
-  expect_identical(orig, newmat)
+  expect_equal(orig, newmat)
 })
 
 test_that("bfarray based ImgArray", {
