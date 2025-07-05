@@ -9,6 +9,7 @@ test_that("file input, with EBImage", {
   
   # create ImgArray
   imgarray <- createImgArray(img.file, n.series = 2)
+  expect_equal(length(imgarray), 2)
   imgarray2 <- as.raster(imgarray, max.pixel.size = 300)
   plot(imgarray2)
   
@@ -39,6 +40,7 @@ test_that("file input, with magick", {
   
   # create ImgArray
   imgarray <- createImgArray(img.file, n.series = 2, engine = "magick-image")
+  expect_equal(length(imgarray), 2)
   imgarray2 <- as.raster(imgarray, max.pixel.size = 300)
   plot(imgarray2)
   
@@ -72,6 +74,7 @@ test_that("magick input", {
   
   # create ImgArray
   imgarray <- createImgArray(img, n.series = 2)
+  expect_equal(length(imgarray), 2)
   imgarray2 <- as.raster(imgarray, max.pixel.size = 300)
   plot(imgarray2)
   
@@ -105,6 +108,7 @@ test_that("bitmap input", {
   
   # create ImgArray
   imgarray <- createImgArray(img, n.series = 2)
+  expect_equal(length(imgarray), 2)
   imgarray2 <- as.raster(imgarray, max.pixel.size = 300)
   plot(imgarray2)
   

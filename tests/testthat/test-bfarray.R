@@ -23,7 +23,9 @@ test_that("bfarray object", {
   
   # construct imagearray
   img <- createImgArray(img.file, n.series = 1, resolution = 1:2)
+  expect_equal(length(img), 2)
   img <- createImgArray(img.file2, n.series = 1, resolution = 1)
+  expect_equal(length(img), 1)
   expect_error(img <- createImgArray(img.file2, n.series = 1, resolution = 1:2))
   
   # single channel modulate
@@ -38,6 +40,7 @@ test_that("bfarray based ImgArray", {
   
   # create array
   img <- createImgArray(img.file, n.series = 1, resolution = 1:2)
+  expect_equal(length(img), 2)
   
   # get image info
   expect_equal(getImageInfo(img), data.frame(width = 512, height = 512))

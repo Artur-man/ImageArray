@@ -23,6 +23,7 @@ test_that("path hdf5", {
                               name = "image",
                               format = "HDF5ImgArray", 
                               replace = TRUE, verbose = FALSE)
+  expect_equal(length(mat_list),1)
   expect_true(file.exists(path(mat_list)))
   
   # change path
@@ -42,6 +43,7 @@ test_that("path zarr", {
                               name = "image",
                               format = "ZarrImgArray", 
                               replace = TRUE, verbose = FALSE)
+  expect_equal(length(mat_list),1)
   expect_true(dir.exists(path(mat_list)))
   
   # change path

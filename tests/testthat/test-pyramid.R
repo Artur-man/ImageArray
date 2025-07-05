@@ -25,6 +25,7 @@ test_that("visualize h5 ImgArray", {
                               name = "image",
                               format = "HDF5ImgArray", 
                               replace = TRUE, verbose = FALSE)
+  expect_equal(length(mat_list),4)
 
   # create raster array
   img_raster <- as.raster(mat_list, max.pixel.size = 2000)
@@ -51,6 +52,7 @@ test_that("visualize zarr ImgArray", {
                             name = "image",
                             format = "ZarrImgArray", 
                             replace = TRUE, verbose = FALSE)
+  expect_equal(length(mat_list),4)
   
   # create raster array
   img_raster <- as.raster(mat_list, max.pixel.size = 2000)
