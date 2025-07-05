@@ -12,13 +12,8 @@ set.seed(1)
 mat <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), dim=c(3, 2000, 5000))
 mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
 
-# build image array, one dimensions
-# mat1dim <- array(data=sample(1:255, 2000*5000*1, replace = TRUE), dim=c(1, 2000, 5000))
-# mat1dim_raster <- as.raster(aperm(mat1dim, perm = c(2,3,1)), max = 255)
-
 # read as magick object
 mat_image <- magick::image_read(mat_raster)
-# mat1dim_image <- magick::image_read(mat1dim_raster)
 
 test_that("manipulate h5 ImgArray", {
   
@@ -29,6 +24,7 @@ test_that("manipulate h5 ImgArray", {
                               format = "HDF5ImgArray", 
                               replace = TRUE, 
                               verbose = FALSE)
+  expect_equal(length(mat_list),4)
   expect_equal(dim(mat_list), c(3,5000,2000))
   
   # aperm
@@ -68,6 +64,7 @@ test_that("manipulate h5 ImgArray", {
                             engine = "EBImage",
                             replace = TRUE, 
                             verbose = FALSE)
+  expect_equal(length(mat_list),4)
   expect_equal(dim(mat_list), c(3,5000,2000))
   mat_list_modulated <- modulate(mat_list, brightness = 200)
   expect_equal(type(mat_list_modulated[[1]]), "integer")
@@ -87,6 +84,8 @@ test_that("manipulate zarr ImgArray", {
                             name = "image",
                             format = "ZarrImgArray", 
                             replace = TRUE, verbose = FALSE)
+  expect_equal(length(mat_list),4)
+  expect_equal(dim(mat_list), c(3,5000,2000))
   
   # aperm
   mat_list_perm <- aperm(mat_list, perm = c(2,1,3))
@@ -127,6 +126,7 @@ test_that("manipulate zarr ImgArray", {
                             format = "ZarrImgArray", 
                             replace = TRUE, 
                             verbose = FALSE)
+  expect_equal(length(mat_list),4)
   expect_equal(dim(mat_list), c(3,5000,2000))
   mat_list_modulated <- modulate(mat_list, brightness = 200)
   expect_equal(type(mat_list_modulated[[1]]), "integer")

@@ -23,6 +23,8 @@ test_that("write image array to disk", {
                               name = "image",
                               format = "HDF5ImgArray", 
                               replace = TRUE, verbose = FALSE)
+  expect_equal(length(mat_list),4)
+  expect_equal(dim(mat_list), c(3,5000,2000))
 
   # create image array
   unlink(output_zarr, recursive = TRUE)
@@ -31,7 +33,10 @@ test_that("write image array to disk", {
                               name = "image",
                               format = "ZarrImgArray", 
                               replace = TRUE, verbose = FALSE)
-
-  # return
-  expect_equal(1,1L)
+  expect_equal(length(mat_list),4)
+  expect_equal(dim(mat_list), c(3,5000,2000))
+  
+  # refresh
+  unlink(output_zarr, recursive = TRUE)
+  file.remove(output_h5ad)
 })
