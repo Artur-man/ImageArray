@@ -16,14 +16,14 @@ createImgArray(
 \arguments{
 \item{image}{the image}
 
-\item{n.series}{the number of series if the image supposed to be 
-pyramidal, or the the series IDs of the pyramidal image, 
+\item{n.series}{the number of series if the image supposed to be
+pyramidal, or the the series IDs of the pyramidal image,
 typical an integer starting from 1}
 
-\item{resolution}{the resolution IDs of the pyramidal image, 
+\item{resolution}{the resolution IDs of the pyramidal image,
 typical an integer starting from 1}
 
-\item{max.pixel.threshold}{the maximum width or height pixel 
+\item{max.pixel.threshold}{the maximum width or height pixel
 length for output image}
 
 \item{engine}{the package to use for each image layer: either
@@ -39,7 +39,7 @@ creates an object of ImgArray class
 }
 \examples{
 # get image
-img.file <- system.file("extdata", 
+img.file <- system.file("extdata",
 "bird.png", package = "ImageArray")
 
 # create ImgArray
