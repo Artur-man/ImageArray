@@ -26,10 +26,10 @@ img.file <- system.file("extdata", "bird.png", package = "ImageArray")
 # create ImgArray
 dir.create(td <- tempfile())
 output_h5ad <- file.path(td, "h5test")
-imgarray <- writeImgArray(img.file, 
-                          output = output_h5ad, 
+imgarray <- writeImgArray(img.file,
+                          output = output_h5ad,
                           name = "image",
-                          format = "HDF5ImgArray", 
+                          format = "HDF5ImgArray",
                           replace = TRUE, verbose = FALSE)
 imgarray <- realize(imgarray)
 }

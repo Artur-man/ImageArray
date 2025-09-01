@@ -6,4 +6,3 @@ setGeneric("negate", function(object, ...) standardGeneric("negate"))
 setGeneric("flip", function(object, ...) standardGeneric("flip"))
 setGeneric("flop", function(object, ...) standardGeneric("flop"))
 setGeneric("modulate", function(object, ...) standardGeneric("modulate"))
-

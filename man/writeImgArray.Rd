@@ -26,16 +26,16 @@ writeImgArray(
 
 \item{format}{on disk format}
 
-\item{replace}{Should the existing file be 
+\item{replace}{Should the existing file be
 removed or not}
 
-\item{n.series}{the number of series in the 
+\item{n.series}{the number of series in the
 ImgArray}
 
-\item{chunkdim}{The dimensions of the chunks 
+\item{chunkdim}{The dimensions of the chunks
 to use for writing the data to disk.}
 
-\item{level}{The compression level to use for 
+\item{level}{The compression level to use for
 writing the data to disk.}
 
 \item{engine}{the package to use for each image layer: either
@@ -51,16 +51,16 @@ Writing image arrays on disk
 }
 \examples{
 # get image
-img.file <- system.file("extdata", 
+img.file <- system.file("extdata",
 "bird.png", package = "ImageArray")
 
 # create ImgArray
 dir.create(td <- tempfile())
 output_h5ad <- file.path(td, "h5test")
-imgarray <- writeImgArray(img.file, 
-                          output = output_h5ad, 
+imgarray <- writeImgArray(img.file,
+                          output = output_h5ad,
                           name = "image",
-                          format = "HDF5ImgArray", 
+                          format = "HDF5ImgArray",
                           replace = TRUE, verbose = FALSE)
 imgarray_raster <- as.raster(imgarray)
 plot(imgarray_raster)

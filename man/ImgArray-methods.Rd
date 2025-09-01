@@ -17,6 +17,8 @@
 \alias{modulate}
 \alias{modulate,ImgArray-method}
 \alias{[,ImgArray,numeric,numeric,ANY-method}
+\alias{[[,ImgArray,numeric,ANY-method}
+\alias{[[<-,ImgArray,numeric,ANY,ANY-method}
 \alias{dim,ImgArray-method}
 \alias{type,ImgArray-method}
 \alias{length,ImgArray-method}
@@ -26,9 +28,9 @@
 \usage{
 \S4method{[}{ImgArray,numeric,numeric,ANY}(x, i, j, ..., drop = FALSE)
 
-\S4method{[[}{ImgArray,numeric}(x, i)
+\S4method{[[}{ImgArray,numeric,ANY}(x, i)
 
-\S4method{[[}{ImgArray,numeric}(x, i, j, ...) <- value
+\S4method{[[}{ImgArray,numeric,ANY,ANY}(x, i, j, ...) <- value
 
 \S4method{dim}{ImgArray}(x)
 
@@ -58,10 +60,10 @@ ImgArray(series)
 \item{i, j, value}{Depends on the usage
 \describe{
  \item{\code{[[}, \code{[[<-}}{
-   Here \code{i} is the level of the image pyramid. 
-   You can use the \code{length} function to get the 
-   number of the layers in the pyramid. 
-   When used with \code{crop}, arguments \code{i} and \code{j} are 
+   Here \code{i} is the level of the image pyramid.
+   You can use the \code{length} function to get the
+   number of the layers in the pyramid.
+   When used with \code{crop}, arguments \code{i} and \code{j} are
    associated with indices of image dimensions (e.g. width, height)
  }
 }}
@@ -70,12 +72,14 @@ ImgArray(series)
 
 \item{drop}{ignored}
 
-\item{series}{the series IDs of the pyramidal image, 
+\item{series}{the series IDs of the pyramidal image,
 typical an integer starting from 1}
 
 \item{degrees}{value between 0 and 360 for how many degrees to rotate}
 
 \item{perm}{perm}
+
+\item{brightness}{the brightness of the new image in percentage, e.g. 120}
 
 \item{ind}{index list}
 }
@@ -96,10 +100,10 @@ Methods for \code{ImgArray} objects
 \item \code{x[i}: subset and crop
 for \code{ImgArray} objects
 
-\item \code{x[[i}: Layer access 
+\item \code{x[[i}: Layer access
 for \code{ImgArray} objects
 
-\item \code{`[[`(x = ImgArray, i = numeric) <- value}: Layer access 
+\item \code{`[[`(x = ImgArray, i = numeric, j = ANY) <- value}: Layer access
 for \code{ImgArray} objects
 
 \item \code{dim(ImgArray)}: dimensions of an ImgArray
@@ -129,8 +133,8 @@ A function for creating objects of ImgArray class
 }}
 \examples{
 # get image
-img.file <- system.file("extdata", 
-"bird.png", 
+img.file <- system.file("extdata",
+"bird.png",
 package = "ImageArray")
 
 # create ImgArray

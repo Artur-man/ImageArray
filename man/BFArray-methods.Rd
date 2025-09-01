@@ -14,13 +14,13 @@ BFArray(image.file, series, resolution)
 \S4method{type}{BFArraySeed}(x)
 }
 \arguments{
-\item{image.file}{the path to the image read by 
+\item{image.file}{the path to the image read by
 RBioFormats}
 
-\item{series}{the series IDs of the pyramidal image, 
+\item{series}{the series IDs of the pyramidal image,
 typical an integer starting from 1}
 
-\item{resolution}{the resolution IDs of the 
+\item{resolution}{the resolution IDs of the
 pyramidal image, typical an integer starting from 1}
 
 \item{x}{A BFArray object}
