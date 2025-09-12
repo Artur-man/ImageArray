@@ -30,6 +30,24 @@ library(shiny)
 ImageArray is a package for Pyramidal and non-pyramidal 
 images in DelayedArray format.
 
+## Installation
+
+Install using either **{BiocManager}** or from GitHub using **{devtools}**:
+
+```{r install-BiocManager, eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+BiocManager::install("ImageArray")
+```
+
+```{r install-pak, eval = FALSE}
+if (!require("devtools", quietly = TRUE)){
+    install.packages("devtools")
+}
+devtools::install_github("BIMSBbioinfo/ImageArray")
+```
+
 # Usage
 
 The main usage of the ImageArray is to deliver DelayedArray operations for 
