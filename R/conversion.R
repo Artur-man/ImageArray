@@ -12,7 +12,8 @@
 #'
 #' @examples
 #' # get image
-#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' library(EBImage)
+#' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
 #' # create ImgArray
 #' dir.create(td <- tempfile())
@@ -123,7 +124,8 @@ setMethod(
 #'
 #' @examples
 #' # get image
-#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' library(EBImage)
+#' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
 #' # create ImgArray
 #' dir.create(td <- tempfile())
@@ -148,6 +150,7 @@ setMethod(
       rx <- aperm(rx, perm = c(3, 2, 1))
     } else {
       rx <- array(rx, dim = c(dim(rx), 1))
+      rx <- aperm(rx, perm = c(2,1,3))
     }
     rx <- .as_raster_array(
       rx,

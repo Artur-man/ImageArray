@@ -1,9 +1,10 @@
 library(magick)
 skip_if_not_installed("ggplot2")
 library(ggplot2)
+library(EBImage)
 
 # image file
-img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+img.file <- system.file("images", "sample.png", package="EBImage")
 
 test_that("file input, with EBImage", {
   

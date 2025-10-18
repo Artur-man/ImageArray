@@ -8,7 +8,13 @@ setMethod("rotate", signature = "ImgArray", function(object, degrees) {
 
   # aperm
   if (degrees %in% c(90, 270)) {
-    object <- aperm(object, perm = c(1, 3, 2))
+    if(length(dim(object[[1]])) == 3){
+      object <- aperm(object, perm = c(1, 3, 2))
+    } else if(length(dim(object[[1]])) == 2){
+      object <- aperm(object, perm = c(2,1))
+    } else {
+      stop("Rotation is only supported for 2D and 3D image arrays!")
+    }
   }
 
   # flop
@@ -72,7 +78,13 @@ setMethod("flip", signature = "ImgArray", function(object) {
   for (i in seq_len(n.series)) {
     img <- object[[i]]
     dim_img <- dim(img)
-    object[[i]] <- img[,, dim_img[3]:1, drop = FALSE]
+    if(length(dim_img) == 3){
+      object[[i]] <- img[,,dim_img[3]:1, drop = FALSE]
+    } else if(length(dim_img) == 2){
+      object[[i]] <- img[,dim_img[2]:1, drop = FALSE]
+    } else {
+      stop("Flop is only supported for 2D and 3D image arrays!")
+    }
   }
   object
 })
@@ -84,7 +96,13 @@ setMethod("flop", signature = "ImgArray", function(object) {
   for (i in seq_len(n.series)) {
     img <- object[[i]]
     dim_img <- dim(img)
-    object[[i]] <- img[, dim_img[2]:1, , drop = FALSE]
+    if(length(dim_img) == 3){
+      object[[i]] <- img[, dim_img[2]:1, , drop = FALSE]
+    } else if(length(dim_img) == 2){
+      object[[i]] <- img[dim_img[1]:1, , drop = FALSE]
+    } else {
+      stop("Flop is only supported for 2D and 3D image arrays!")
+    }
   }
   object
 })
@@ -97,7 +115,7 @@ setMethod("crop", signature = "ImgArray", function(object, ind) {
   if (!is.list(ind)) {
     stop("'ind' should be a list of integers")
   }
-  if ((length(dim(object[[1]])) - 1) != length(ind)) {
+  if (!(length(ind) %in% c(2,3))) {
     stop("'ind' should be a list of integers")
   }
   check_sequential <- all(vapply(ind, is.sequential, logical(1)))
@@ -119,9 +137,14 @@ setMethod("crop", signature = "ImgArray", function(object, ind) {
         floor(utils::head(curind, 1) / (2^(i - 1))),
         ceiling(utils::tail(curind, 1) / (2^(i - 1)))
       )
-      seq(max(id[1], 1), min(id[2], dim_img[j + 1]))
+      seq(max(id[1], 1), 
+          min(id[2], if(length(dim_img) == 2) dim_img[j] else dim_img[j + 1]))
     })
-    object[[i]] <- img[, cur_ind[[1]], cur_ind[[2]], drop = FALSE]
+    if(length(dim_img) == 3){
+      object[[i]] <- img[, cur_ind[[1]], cur_ind[[2]], drop = FALSE]
+    } else {
+      object[[i]] <- img[cur_ind[[1]], cur_ind[[2]], drop = FALSE]
+    }
   }
 
   object

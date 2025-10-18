@@ -22,8 +22,8 @@ Here, we first store the image in HDF5.
 
 ``` r
 # make random magick image
-arr <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), dim=c(3, 2000, 5000))
-img_raster <- as.raster(aperm(arr, perm = c(2,3,1)), max = 255)
+arr <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), dim=c(2000, 5000, 3))
+img_raster <- as.raster(arr, max = 255)
 img <- as.Image(img_raster)
 
 # create image array
@@ -79,8 +79,8 @@ You can also use Zarr for storing the image.
 
 ``` r
 # make random magick image
-arr <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), dim=c(3, 2000, 5000))
-img_raster <- as.raster(aperm(arr, perm = c(2,3,1)), max = 255)
+arr <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), dim=c(2000, 5000, 3))
+img_raster <- as.raster(arr, max = 255)
 img <- magick::image_read(img_raster)
 
 # create image array
