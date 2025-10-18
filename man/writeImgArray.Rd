@@ -14,7 +14,8 @@ writeImgArray(
   chunkdim = NULL,
   level = NULL,
   engine = "EBImage",
-  verbose = FALSE
+  verbose = FALSE,
+  ...
 )
 }
 \arguments{
@@ -42,6 +43,8 @@ writing the data to disk.}
 \code{EBImage} or \code{magick-image}}
 
 \item{verbose}{verbose}
+
+\item{...}{additional parameters passed to \link[ImageArray]{createImgArray}.}
 }
 \value{
 An ImgArray object
