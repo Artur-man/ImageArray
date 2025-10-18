@@ -14,13 +14,14 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 biocViews: Software, Visualization
+Depends: 
+  EBImage
 Imports: 
   methods, 
   grDevices, 
   S4Arrays, 
   S4Vectors,
   DelayedArray, 
-  EBImage, 
   rhdf5,
   HDF5Array,
   Rarr,
@@ -31,7 +32,8 @@ Suggests:
   knitr,
   ggplot2,
   shiny,
-  BiocFileCache
+  BiocFileCache,
+  BiocStyle
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://github.com/BIMSBbioinfo/ImageArray
