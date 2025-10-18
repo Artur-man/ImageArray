@@ -28,11 +28,6 @@
   )
 )
 
-setClassUnion(
-  "Array_OR_ArraySeed",
-  c("Array", "BFArraySeed")
-)
-
 #' The BFArray Class
 #'
 #' A class for image arrays read by RBioFormats
@@ -45,7 +40,7 @@ setClassUnion(
 .BFArray <- setClass(
   Class = "BFArray",
   contains = c("DelayedArray"),
-  slots = c(seed = "Array_OR_ArraySeed")
+  slots = c(seed = "BFArraySeed")
 )
 
 #' The BFMatrix Class

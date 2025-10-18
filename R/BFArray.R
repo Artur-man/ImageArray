@@ -63,7 +63,7 @@ BFArray <- function(image.file, series, resolution) {
       shape = shape,
       type = "double"
     )
-    return(.BFArray(seed = DelayedArray(seed)))
+    return(.BFArray(seed = seed))
   } else {
     stop("Specified resolution was not found in the image!")
   }
