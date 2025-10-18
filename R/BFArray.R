@@ -162,20 +162,3 @@ setMethod("extract_array", "BFArraySeed", .extract_array_from_BFArraySeed)
 setMethod("DelayedArray", "BFArraySeed", function(seed) {
   new_DelayedArray(seed, Class = "BFArray")
 })
-
-### --------------------------------
-### BFMatrix
-### --------------------------------
-
-## for internal use only.
-setMethod("matrixClass", "BFArray", function(x) "BFMatrix")
-
-#' @importFrom methods as new
-#' @export
-setAs("BFArray", "BFMatrix", function(from) methods::new("BFMatrix", from))
-setAs("BFMatrix", "BFArray", function(from) from)
-setAs(
-  "ANY",
-  "BFMatrix",
-  function(from) methods::as(methods::as(from, "BFArray"), "BFMatrix")
-)

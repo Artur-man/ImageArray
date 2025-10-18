@@ -12,7 +12,7 @@ Description: ImageArray provides a framework for on-disk and in-memory image arr
              specifically for pyramidal images stored in either HDF5 files or Zarr stores.
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 biocViews: Software, Visualization
 Depends: 
   EBImage

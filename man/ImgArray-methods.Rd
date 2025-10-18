@@ -133,9 +133,7 @@ A function for creating objects of ImgArray class
 }}
 \examples{
 # get image
-img.file <- system.file("extdata",
-"bird.png",
-package = "ImageArray")
+img.file <- system.file("extdata", "bird.png", package = "ImageArray")
 
 # create ImgArray
 imgarray <- createImgArray(img.file, n.series = 3)
