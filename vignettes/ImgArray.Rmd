@@ -56,39 +56,39 @@ images or a list of images in Pyramidal format. You can also use
 
 ```{r read}
 # make random EBImage image
-mat <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), 
+arr <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), 
              dim=c(3, 2000, 5000))
-mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
-mat_image <- as.Image(mat_raster)
+img_raster <- as.raster(aperm(arr, perm = c(2,3,1)), max = 255)
+img <- as.Image(img_raster)
 
 # create image array
 dir.create(td <- tempfile())
 output_h5 <- file.path(td, "h5test")
-mat_list <- writeImgArray(mat_image, 
-                          format = "HDF5ImgArray", 
-                          output = output_h5, 
-                          replace = TRUE)
-mat_list
+imgarray <- writeImgArray(img, 
+                         format = "HDF5ImgArray", 
+                         output = output_h5, 
+                         replace = TRUE)
+imgarray
 ```
 
 Operations such as rotate, flip, flop or negate will be 
 conducted on all series
 
 ```{r rotate}
-mat_list_rotated <- rotate(mat_list, degrees = 90)
-mat_list_rotated
+imgarray_rotated <- rotate(imgarray, degrees = 90)
+imgarray_rotated
 ```
 
 You can even crop images, either by using `crop` or `[` method.
 
 ```{r crop}
-mat_list_cropped <- mat_list[2001:3000, 501:1000]
-mat_list_cropped
+imgarray_cropped <- imgarray[2001:3000, 501:1000]
+imgarray_cropped
 ```
 
 ```{r crop2}
-mat_list_cropped <- crop(mat_list, ind = list(2001:3000, 501:1000))
-mat_list_cropped
+imgarray_cropped <- crop(imgarray, ind = list(2001:3000, 501:1000))
+imgarray_cropped
 ```
 
 # Using OME.TIFF
@@ -99,15 +99,15 @@ layers.
 ```{r ometiff}
 ome.tiff.file <- system.file("extdata", "xy_12bit__plant.ome.tiff", 
                              package = "ImageArray")
-img <- createImgArray(ome.tiff.file, n.series = 1, resolution = 1:2)
-img
+imgarray <- createImgArray(ome.tiff.file, n.series = 1, resolution = 1:2)
+imgarray
 ```
 
 Depending on the requested pixel size, functions may return the desired
 resolution from the pyramid.
 
 ```{r ometiffvis, out.width="50%"}
-bfa.raster <- as.raster(img)
+bfa.raster <- as.raster(imgarray)
 plot(bfa.raster)
 dim(bfa.raster)
 ```
