@@ -27,12 +27,12 @@ library(shiny)
 
 # Introduction
 
-ImageArray is a package for Pyramidal and non-pyramidal 
-images in DelayedArray format.
+`r Biocpkg("ImageArray")` is a package for Pyramidal and non-pyramidal 
+images in `r Biocpkg("DelayedArray")` format.
 
 ## Installation
 
-Install using either **{BiocManager}** or from GitHub using **{devtools}**:
+You can install `r Biocpkg("ImageArray")` from Bioconductor with:
 
 ```{r install-BiocManager, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -43,7 +43,7 @@ BiocManager::install("ImageArray")
 
 # Usage
 
-The main usage of the ImageArray is to deliver DelayedArray operations for 
+The main usage of the `r Biocpkg("ImageArray")` is to deliver `r Biocpkg("DelayedArray")` operations for 
 images or a list of images in Pyramidal format. You can also use
 `magick-image` objects.
 

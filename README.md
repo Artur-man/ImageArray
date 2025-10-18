@@ -1,12 +1,13 @@
 # ImageArray
 
-Package for Pyramidal and non-pyramidal images in DelayedArray format 
+Package for Pyramidal and non-pyramidal images in 
+`r Biocpkg("DelayedArray")` format 
 
 ## Installation
 
-You can install **{ImageArray}** from Bioconductor using **BiocManager**:
+You can install `r Biocpkg("ImageArray")` from Bioconductor with:
 
-```r
+``` r 
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
@@ -15,9 +16,9 @@ BiocManager::install("ImageArray")
 
 ## Usage
 
-The main purpose of the ImageArray is to deliver DelayedArray operations 
-for a list of images in Pyramidal format. Here, we first store the 
-image in HDF5. 
+The main purpose of the `r Biocpkg("ImageArray")` is to deliver 
+`r Biocpkg("DelayedArray")` operations for a list of images in Pyramidal format. 
+Here, we first store the image in HDF5. 
 
 ``` r
 # make random magick image
