@@ -41,13 +41,6 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("ImageArray")
 ```
 
-```{r install-pak, eval = FALSE}
-if (!require("devtools", quietly = TRUE)){
-    install.packages("devtools")
-}
-devtools::install_github("BIMSBbioinfo/ImageArray")
-```
-
 # Usage
 
 The main usage of the ImageArray is to deliver DelayedArray operations for 
