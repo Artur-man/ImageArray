@@ -542,7 +542,9 @@ writeImgArray <- function(
       if (!file.exists(ondisk_path)) {
         rhdf5::h5createFile(ondisk_path)
       }
-      rhdf5::h5createGroup(ondisk_path, group = name)
+      suppressMessages({
+        rhdf5::h5createGroup(ondisk_path, group = name)
+      })
     },
     ZarrImgArray = {
       dir.zarr <- gsub(paste0(basename(ondisk_path), "$"), "", ondisk_path)
