@@ -9,7 +9,8 @@
 #'
 #' @examples
 #' # get image
-#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' library(EBImage)
+#' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
 #' # create ImgArray
 #' dir.create(td <- tempfile())
@@ -25,6 +26,7 @@
 #' imgarray <- createImgArray(img.file, n.series = 3)
 #' imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 #' getImageInfo(imgarray)
+#' 
 getImageInfo <- function(object) {
   dim_image <- dim(object[[1]])
   if (length(dim_image) == 2) {
@@ -47,11 +49,6 @@ getImageInfo <- function(object) {
 #' @noRd
 #' @keywords internal
 read_image <- function(image, engine) {
-  # if(engine == "magick-image"){
-  #   image <- magick::image_read(image)
-  # } else {
-  #   image <- EBImage::readImage(image)
-  # }
   switch(
     engine,
     `magick-image` = magick::image_read(image),

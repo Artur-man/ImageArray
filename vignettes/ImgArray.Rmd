@@ -45,10 +45,8 @@ images or a list of images in Pyramidal format. You can also use
 
 ```{r read}
 # make random EBImage image
-arr <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), 
-             dim=c(3, 2000, 5000))
-img_raster <- as.raster(aperm(arr, perm = c(2,3,1)), max = 255)
-img <- as.Image(img_raster)
+f = system.file("images", "sample.png", package="EBImage")
+img = readImage(f)
 
 # create image array
 dir.create(td <- tempfile())
@@ -57,7 +55,29 @@ imgarray <- writeImgArray(img,
                          format = "HDF5ImgArray", 
                          output = output_h5, 
                          replace = TRUE)
-imgarray
+```
+
+
+
+```{r visualize_read}
+# visualize 
+bfa.raster <- as.raster(imgarray, max.pixel.size = 300)
+plot(bfa.raster)
+# 
+# # make random EBImage image
+# arr <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), 
+#              dim=c(2000, 5000, 3))
+# img_raster <- as.raster(arr, max = 255)
+# img <- as.Image(img_raster)
+# 
+# # create image array
+# dir.create(td <- tempfile())
+# output_h5 <- file.path(td, "h5test")
+# imgarray <- writeImgArray(img, 
+#                          format = "HDF5ImgArray", 
+#                          output = output_h5, 
+#                          replace = TRUE)
+# imgarray
 ```
 
 Operations such as rotate, flip, flop or negate will be 
@@ -66,18 +86,49 @@ conducted on all series
 ```{r rotate}
 imgarray_rotated <- rotate(imgarray, degrees = 90)
 imgarray_rotated
+
+# visualize 
+bfa.raster <- as.raster(imgarray_rotated, max.pixel.size = 300)
+plot(bfa.raster)
 ```
 
 You can even crop images, either by using `crop` or `[` method.
 
 ```{r crop}
-imgarray_cropped <- imgarray[2001:3000, 501:1000]
+imgarray_cropped <- imgarray[300:500, 200:300]
 imgarray_cropped
+
+# visualize 
+bfa.raster <- as.raster(imgarray_cropped, max.pixel.size = 300)
+plot(bfa.raster)
 ```
 
 ```{r crop2}
-imgarray_cropped <- crop(imgarray, ind = list(2001:3000, 501:1000))
+imgarray_cropped <- crop(imgarray, ind = list(300:500, 200:300))
 imgarray_cropped
+
+# visualize 
+bfa.raster <- as.raster(imgarray_cropped, max.pixel.size = 300)
+plot(bfa.raster)
+```
+
+# Using magick 
+
+```{r read3}
+# make random EBImage image
+f = system.file("images", "sample.png", package="EBImage")
+img = magick::image_read(f)
+
+# create image array
+dir.create(td <- tempfile())
+output_h5 <- file.path(td, "h5test")
+imgarray <- writeImgArray(img, 
+                         format = "HDF5ImgArray", 
+                         output = output_h5, 
+                         replace = TRUE)
+
+bfa.raster <- as.raster(imgarray, max.pixel.size = 300)
+plot(bfa.raster)
 ```
 
 # Using OME.TIFF

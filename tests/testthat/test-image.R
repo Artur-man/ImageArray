@@ -1,9 +1,10 @@
 library(magick)
 skip_if_not_installed("ggplot2")
 library(ggplot2)
+library(EBImage)
 
 # image file
-img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+img.file <- system.file("images", "sample.png", package="EBImage")
 
 test_that("read image", {
   
@@ -16,5 +17,4 @@ test_that("read image", {
   img <- read_image(img.file, engine = "EBImage")
   expect_true(!is.null(img))
   expect_true(inherits(img, "Image"))
-  
 })

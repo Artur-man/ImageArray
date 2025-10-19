@@ -17,7 +17,8 @@ get information of an ImgArray object
 }
 \examples{
 # get image
-img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+library(EBImage)
+img.file <- system.file("images", "sample.png", package="EBImage")
 
 # create ImgArray
 dir.create(td <- tempfile())
@@ -33,4 +34,5 @@ getImageInfo(imgarray)
 imgarray <- createImgArray(img.file, n.series = 3)
 imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 getImageInfo(imgarray)
+
 }

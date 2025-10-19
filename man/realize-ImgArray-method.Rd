@@ -21,7 +21,8 @@ as.array method for ImgArray object
 }
 \examples{
 # get image
-img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+library(EBImage)
+img.file <- system.file("images", "sample.png", package="EBImage")
 
 # create ImgArray
 dir.create(td <- tempfile())

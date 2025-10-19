@@ -45,7 +45,8 @@
 #'
 #' @examples
 #' # get image
-#' img.file <- system.file("extdata", "bird.png", package = "ImageArray")
+#' library(EBImage)
+#' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
 #' # create ImgArray
 #' imgarray <- createImgArray(img.file, n.series = 3)
@@ -241,6 +242,7 @@ createMagickArray <- function(
     ))
   }
   image_data <- magick::image_data(image, channels = "rgb")
+  storage.mode(image_data) <- "integer"
   image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
   if (n.series > 1) {
     cur_image <- image
@@ -263,6 +265,7 @@ createMagickArray <- function(
         filter = "Gaussian"
       )
       image_data <- magick::image_data(cur_image, channels = "rgb")
+      storage.mode(image_data) <- "integer"
       image_list[[i]] <-
         DelayedArray::DelayedArray(as.array(image_data))
     }
@@ -326,8 +329,9 @@ createEBImageArray <- function(
       ") \n"
     ))
   }
-  img <- aperm(as.array(image), perm = c(3, 2, 1))
-  image_list <- list(DelayedArray::DelayedArray(as.array(img)))
+  img_perm <- if(length(dim(image)) == 2) c(1,2) else c(3, 1, 2)
+  img <- aperm(image, img_perm)
+  image_list <- list(DelayedArray::DelayedArray(img))
   if (n.series > 1) {
     cur_image <- image
     for (i in 2:n.series) {
@@ -349,9 +353,10 @@ createEBImageArray <- function(
         w = dim_image[1],
         h = dim_image[2]
       )
-      cur_img <- aperm(as.array(cur_image), perm = c(3, 2, 1))
+      img_perm <- if(length(dim(cur_image)) == 2) c(1,2) else c(3, 1, 2)
+      cur_img <- aperm(cur_image, img_perm)
       image_list[[i]] <-
-        DelayedArray::DelayedArray(as.array(cur_img))
+        DelayedArray::DelayedArray(cur_img)
     }
   }
 
@@ -386,13 +391,12 @@ createEBImageArray <- function(
 #'
 #' @examples
 #' # get image
-#' img.file <- system.file("extdata",
-#' "bird.png", package = "ImageArray")
+#' library(EBImage)
+#' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
 #' # create ImgArray
 #' imgarray <- createImgArray(img.file, n.series = 3)
-#' imgarray_raster <- as.raster(imgarray,
-#'  max.pixel.size = 300)
+#' imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 #' plot(imgarray_raster)
 #'
 createImgArray <- function(
@@ -486,8 +490,8 @@ createImgArray <- function(
 #'
 #' @examples
 #' # get image
-#' img.file <- system.file("extdata",
-#' "bird.png", package = "ImageArray")
+#' library(EBImage)
+#' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
 #' # create ImgArray
 #' dir.create(td <- tempfile())
@@ -564,8 +568,8 @@ writeImgArray <- function(
 
   # write all series
   for (i in seq_len(length(image_list@series))) {
-    img <- array(as.integer(image_list[[i]]), dim = dim(image_list[[i]]))
-
+    img <- image_list[[i]]
+    
     # write array
     switch(
       format,
