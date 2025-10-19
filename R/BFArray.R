@@ -14,7 +14,7 @@
 #' @rdname BFArray-methods
 #' @importFrom RBioFormats read.metadata
 #'
-#' @noRd
+#' @export
 #' @return A BFArray object
 BFArray <- function(image.file, series, resolution) {
   # get metadata
@@ -85,14 +85,14 @@ BFArraySeed <- function(filepath, series, resolution, shape, type) {
 ### dim() getter
 ###
 
-# #' @describeIn BFArray-methods dim function for BFArray objects
+#' @describeIn BFArray-methods dim function for BFArray objects
 setMethod("dim", "BFArraySeed", function(x) x@shape)
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### type() getter
 ###
 
-# #' @describeIn BFArray-methods type function for BFArray objects
+#' @describeIn BFArray-methods type function for BFArray objects
 setMethod("type", "BFArraySeed", function(x) x@type)
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

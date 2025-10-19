@@ -23,8 +23,11 @@ typical an integer starting from 1}
 \item{resolution}{the resolution IDs of the pyramidal image,
 typical an integer starting from 1}
 
-\item{max.pixel.threshold}{the maximum width or height pixel
-length for output image}
+\item{max.pixel.threshold}{the maximum width
+and height pixel dimension that the lowest level of the image pyramid
+should have, thus the image will be downscaled two folds until both width
+and height is below the threshold. Default is 700 pixels. 
+If \code{n.series} is provided, this parameter will be ignored.}
 
 \item{engine}{the package to use for each image layer: either
 \code{EBImage} or \code{magick-image}}

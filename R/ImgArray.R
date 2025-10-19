@@ -188,7 +188,10 @@ createBFArray <- function(
 #' @param n.series the number of series if the
 #' image supposed to be pyramidal
 #' @param max.pixel.threshold the maximum width
-#' or height pixel length for output image
+#' and height pixel dimension that the lowest level of the image pyramid
+#' should have, thus the image will be downscaled two folds until both width
+#' and height is below the threshold. Default is 700 pixels. 
+#' If \code{n.series} is provided, this parameter will be ignored.
 #' @param verbose verbose
 #'
 #' @importFrom magick image_read
@@ -280,7 +283,10 @@ createMagickArray <- function(
 #' @param n.series the number of series if the
 #' image supposed to be pyramidal
 #' @param max.pixel.threshold the maximum width
-#' or height pixel length for output image
+#' and height pixel dimension that the lowest level of the image pyramid
+#' should have, thus the image will be downscaled two folds until both width
+#' and height is below the threshold. Default is 700 pixels. 
+#' If \code{n.series} is provided, this parameter will be ignored.
 #' @param verbose verbose
 #'
 #' @importFrom EBImage readImage
@@ -368,8 +374,11 @@ createEBImageArray <- function(
 #' typical an integer starting from 1
 #' @param resolution the resolution IDs of the pyramidal image,
 #' typical an integer starting from 1
-#' @param max.pixel.threshold the maximum width or height pixel
-#' length for output image
+#' @param max.pixel.threshold the maximum width
+#' and height pixel dimension that the lowest level of the image pyramid
+#' should have, thus the image will be downscaled two folds until both width
+#' and height is below the threshold. Default is 700 pixels. 
+#' If \code{n.series} is provided, this parameter will be ignored.
 #' @param engine the package to use for each image layer: either
 #' \code{EBImage} or \code{magick-image}
 #' @param verbose verbose
@@ -470,6 +479,7 @@ createImgArray <- function(
 #' @param engine the package to use for each image layer: either
 #' \code{EBImage} or \code{magick-image}
 #' @param verbose verbose
+#' @param ... additional parameters passed to \link[ImageArray]{createImgArray}.
 #'
 #' @importFrom HDF5Array writeHDF5Array
 #' @importFrom Rarr writeZarrArray
@@ -504,7 +514,8 @@ writeImgArray <- function(
   chunkdim = NULL,
   level = NULL,
   engine = "EBImage",
-  verbose = FALSE
+  verbose = FALSE,
+  ...
 ) {
   # verbose
   verbose <- DelayedArray:::normarg_verbose(verbose)
