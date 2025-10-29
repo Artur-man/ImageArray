@@ -25,7 +25,7 @@
 #' getImageInfo(imgarray)
 #'
 #' # create ImgArray
-#' imgarray <- createImgArray(img.file, n.series = 3)
+#' imgarray <- createImgArray(img.file, n.levels = 3)
 #' imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 #' getImageInfo(imgarray)
 #' 

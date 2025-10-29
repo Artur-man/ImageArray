@@ -2,7 +2,7 @@
   Class = "ImgArray",
   slots = c(
     meta = "list",
-    series = "list"
+    levels = "list"
   )
 )
 

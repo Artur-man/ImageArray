@@ -39,8 +39,8 @@ setMethod("rotate", signature = "ImgArray", function(object, degrees) {
 #' @describeIn ImgArray-methods permute image
 #' @exportMethod aperm
 setMethod("aperm", signature = "ImgArray", function(a, perm) {
-  n.series <- length(a@series)
-  for (i in seq_len(n.series)) {
+  n.levels <- length(a@levels)
+  for (i in seq_len(n.levels)) {
     a[[i]] <- aperm(a[[i]], perm = perm)
   }
   a
@@ -49,8 +49,8 @@ setMethod("aperm", signature = "ImgArray", function(a, perm) {
 #' @describeIn ImgArray-methods negate image
 #' @exportMethod negate
 setMethod("negate", signature = "ImgArray", function(object) {
-  n.series <- length(object@series)
-  for (i in seq_len(n.series)) {
+  n.levels <- length(object@levels)
+  for (i in seq_len(n.levels)) {
     object[[i]] <- 255L - object[[i]]
   }
   object
@@ -63,8 +63,8 @@ setMethod("modulate", signature = "ImgArray", function(object, brightness) {
     stop("Brightness should be more than 0, typically more than 100")
   }
   dim_img <- dim(object[[1]])
-  n.series <- length(object@series)
-  for (i in seq_len(n.series)) {
+  n.levels <- length(object@levels)
+  for (i in seq_len(n.levels)) {
     tmp <- ceiling(object[[i]] * (brightness / 100))
     max <- if (type(object[[i]]) == "double") 1 else 255
     tmp[tmp > max] <- max
@@ -79,14 +79,14 @@ setMethod("modulate", signature = "ImgArray", function(object, brightness) {
 #' @importFrom stats setNames
 #' @noRd
 .flipflop <- function(object, direction = "x"){
-  n.series <- length(object@series)
+  n.levels <- length(object@levels)
   ax <- axes(object)
   
   # check dim
   .check_dim(object)
   
   # flip all
-  for (i in seq_len(n.series)) {
+  for (i in seq_len(n.levels)) {
     img <- object[[i]]
     dim_img <- stats::setNames(dim(img),ax)
     cur_ind <- stats::setNames(lapply(dim_img, seq_len), ax)
@@ -145,8 +145,8 @@ setMethod("crop", signature = "ImgArray", function(object, ind) {
   }
 
   # crop all images
-  n.series <- length(object@series)
-  for (i in seq_len(n.series)) {
+  n.levels <- length(object@levels)
+  for (i in seq_len(n.levels)) {
     img <- object[[i]]
     dim_img <- stats::setNames(dim(img),ax)[c("x", "y")]
     cur_ind <- ind

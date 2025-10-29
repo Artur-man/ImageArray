@@ -19,8 +19,8 @@ setReplaceMethod(
   "path",
   signature = "ImgArray",
   function(object, value) {
-    n.series <- length(object)
-    for (i in seq_len(n.series)) {
+    n.levels <- length(object)
+    for (i in seq_len(n.levels)) {
       object[[i]] <-
         modify_seeds(
           object[[i]],

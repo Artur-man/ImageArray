@@ -10,7 +10,7 @@ writeImgArray(
   name = "",
   format = c("InMemoryImgArray", "HDF5ImgArray", "ZarrImgArray"),
   replace = FALSE,
-  n.series = NULL,
+  n.levels = NULL,
   chunkdim = NULL,
   level = NULL,
   engine = "EBImage",
@@ -30,8 +30,8 @@ writeImgArray(
 \item{replace}{Should the existing file be
 removed or not}
 
-\item{n.series}{the number of series in the
-ImgArray}
+\item{n.levels}{the number of levels if the image supposed to be
+pyramidal.}
 
 \item{chunkdim}{The dimensions of the chunks
 to use for writing the data to disk.}

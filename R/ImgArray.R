@@ -51,7 +51,7 @@
 #' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
 #' # create ImgArray
-#' imgarray <- createImgArray(img.file, n.series = 3)
+#' imgarray <- createImgArray(img.file, n.levels = 3)
 #'
 #' # access layers
 #' imgarray[[1]]
@@ -88,7 +88,7 @@ setMethod(
   f = '[[',
   signature = c('ImgArray', "numeric"),
   definition = function(x, i) {
-    return(x@series[[i]])
+    return(x@levels[[i]])
   }
 )
 
@@ -100,7 +100,7 @@ setMethod(
   f = '[[<-',
   signature = c('ImgArray', "numeric"),
   definition = function(x, i, ..., value) {
-    x@series[[i]] <- value
+    x@levels[[i]] <- value
     return(x)
   }
 )
@@ -115,18 +115,18 @@ setMethod(
           "(", paste(object@meta[["axes"]], collapse = ","), ")"
         ), 
     "\n")
-    n.series <- length(object@series)
-    for (i in seq_len(n.series)) {
-      dim_image <- dim(object@series[[i]])
+    n.levels <- length(object@levels)
+    for (i in seq_len(n.levels)) {
+      dim_image <- dim(object@levels[[i]])
       dim_image <- paste(dim_image, collapse = ",")
-      cat(paste0("Series ", i, " of size (", dim_image, ") \n"))
+      cat(paste0("Level ", i, " of size (", dim_image, ") \n"))
     }
   }
 )
 
 #' @describeIn ImgArray-methods dimensions of an ImgArray
 #' @export
-#' @returns dim of the first series of the ImgArray object
+#' @returns dim of the first level of the ImgArray object
 setMethod("dim", "ImgArray", function(x) dim(x[[1]]))
 
 #' @describeIn ImgArray-methods dimensions of an ImgArray
@@ -137,21 +137,21 @@ setMethod("type", "ImgArray", function(x) type(x[[1]]))
 #' @describeIn ImgArray-methods length of an ImgArray
 #' @export
 #' @returns length of ImgArray object
-setMethod("length", signature = "ImgArray", function(x) length(x@series))
+setMethod("length", signature = "ImgArray", function(x) length(x@levels))
 
 #' @describeIn ImgArray-methods ImgArray constructor method
 #'
 #' A function for creating objects of ImgArray class
 #'
 #' @param meta the metadata of the ImgArray object. 
-#' @param series the series IDs of the pyramidal image,
-#' typical an integer starting from 1
+#' @param levels levels of the pyramid image, typically a vector of integers
+#' starting with 1
 #'
 #' @importFrom S4Vectors new2
 #' @export
 #' @return An ImgArray object
-ImgArray <- function(meta, series) {
-  S4Vectors::new2("ImgArray", meta = meta, series = series)
+ImgArray <- function(meta, levels) {
+  S4Vectors::new2("ImgArray", meta = meta, levels = levels)
 }
 
 #' createBFArray
@@ -159,7 +159,8 @@ ImgArray <- function(meta, series) {
 #' creates an object of BFArray class
 #'
 #' @param image the image
-#' @param series the series IDs of the pyramidal image,
+#' @param series the number of series if the image supposed to be
+#' pyramidal, or the the series IDs of the pyramidal image,
 #' typical an integer starting from 1
 #' @param resolution the resolution IDs of the pyramidal
 #' image, typical an integer starting from 1
@@ -184,7 +185,7 @@ createBFArray <- function(
   image_list <- lapply(resolution, function(res) {
     BFArray(image, series = series, resolution = res)
   })
-  ImgArray(meta = list(axes = c("x", "y", "c")), series = image_list)
+  ImgArray(meta = list(axes = c("x", "y", "c")), levels = image_list)
 }
 
 #' createMagickArray
@@ -192,13 +193,13 @@ createBFArray <- function(
 #' creates an object of ImgArray class from magick image
 #'
 #' @param image the image
-#' @param n.series the number of series if the
-#' image supposed to be pyramidal
+#' @param n.levels the number of levels of the pyramidal image,
+#' typical an integer starting from 1
 #' @param max.pixel.threshold the maximum width
 #' and height pixel dimension that the lowest level of the image pyramid
 #' should have, thus the image will be downscaled two folds until both width
 #' and height is below the threshold. Default is 700 pixels. 
-#' If \code{n.series} is provided, this parameter will be ignored.
+#' If \code{n.levels} is provided, this parameter will be ignored.
 #' @param verbose verbose
 #'
 #' @importFrom magick image_read
@@ -210,10 +211,11 @@ createBFArray <- function(
 #' @noRd
 createMagickArray <- function(
   image,
-  n.series = NULL,
+  n.levels = NULL,
   max.pixel.threshold = 700,
   verbose = FALSE
 ) {
+  # check image
   if (inherits(image, "bitmap")) {
     image <- magick::image_read(image)
   }
@@ -222,29 +224,29 @@ createMagickArray <- function(
   image_info <- magick::image_info(image)
   dim_image <- c(image_info$width, image_info$height)
 
-  # series
-  if (is.null(n.series)) {
+  # levels
+  if (is.null(n.levels)) {
     # get image size and resolution
     image_maxsize_id <- which.max(dim_image)
     image_maxsize <- dim_image[image_maxsize_id]
 
-    # get number of series
-    # how many series of power of 2 required to
+    # get number of levels
+    # how many levels of power of 2 required to
     # get a maximum pixel size of 700 on either width or height
-    n.series <- ceiling(log2(image_maxsize / max.pixel.threshold)) + 1
-  } else if (n.series < 1) {
-    stop("'n.series' has to be 1 or a larger integer value!")
+    n.levels <- ceiling(log2(image_maxsize / max.pixel.threshold)) + 1
+  } else if (n.levels < 1) {
+    stop("'n.levels' has to be 1 or a larger integer value!")
   }
 
-  # create image series
+  # create image levels
   if (verbose)
     .img_create_msg(dim(image), 1)
   image_data <- magick::image_data(image, channels = "rgb")
   storage.mode(image_data) <- "integer"
   image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
-  if (n.series > 1) {
+  if (n.levels > 1) {
     cur_image <- image
-    for (i in 2:n.series) {
+    for (i in 2:n.levels) {
       dim_image <- ceiling(dim_image / 2)
       if (verbose)
         .img_create_msg(dim_image, 1)
@@ -261,7 +263,7 @@ createMagickArray <- function(
   }
 
   # return
-  ImgArray(meta = list(axes = c("c", "x", "y")), series = image_list)
+  ImgArray(meta = list(axes = c("c", "x", "y")), levels = image_list)
 }
 
 #' createMagickArray
@@ -269,13 +271,13 @@ createMagickArray <- function(
 #' creates an object of ImgArray class from magick image
 #'
 #' @param image the image
-#' @param n.series the number of series if the
-#' image supposed to be pyramidal
+#' @param n.levels the number of levels of the pyramidal image,
+#' typical an integer starting from 1
 #' @param max.pixel.threshold the maximum width
 #' and height pixel dimension that the lowest level of the image pyramid
 #' should have, thus the image will be downscaled two folds until both width
 #' and height is below the threshold. Default is 700 pixels. 
-#' If \code{n.series} is provided, this parameter will be ignored.
+#' If \code{n.levels} is provided, this parameter will be ignored.
 #' @param verbose verbose
 #'
 #' @importFrom EBImage readImage
@@ -284,30 +286,29 @@ createMagickArray <- function(
 #' @noRd
 createEBImageArray <- function(
   image,
-  n.series = NULL,
+  n.levels = NULL,
   max.pixel.threshold = 700,
   verbose = FALSE
 ) {
-
   # get and image info
   image_info <- dim(image)
   dim_image <- c(image_info[1], image_info[2])
 
-  # series
-  if (is.null(n.series)) {
+  # levels
+  if (is.null(n.levels)) {
     # get image size and resolution
     image_maxsize_id <- which.max(dim_image)
     image_maxsize <- dim_image[image_maxsize_id]
 
-    # get number of series
-    # how many series of power of 2 required to
+    # get number of levels
+    # how many levels of power of 2 required to
     # get a maximum pixel size of 700 on either width or height
-    n.series <- ceiling(log2(image_maxsize / max.pixel.threshold)) + 1
-  } else if (n.series < 1) {
-    stop("'n.series' has to be 1 or a larger integer value!")
+    n.levels <- ceiling(log2(image_maxsize / max.pixel.threshold)) + 1
+  } else if (n.levels < 1) {
+    stop("'n.levels' has to be 1 or a larger integer value!")
   }
 
-  # create image series
+  # create image levels
   meta <- list(axes = c("x", "y", "c"))
   if (verbose)
     .img_create_msg(dim_image, 1)
@@ -316,9 +317,9 @@ createEBImageArray <- function(
   img_perm <- stats::setNames(img_perm, meta[["axes"]])
   img <- aperm(image, img_perm)
   image_list <- list(DelayedArray::DelayedArray(img))
-  if (n.series > 1) {
+  if (n.levels > 1) {
     cur_image <- image
-    for (i in 2:n.series) {
+    for (i in 2:n.levels) {
       dim_image <- ceiling(dim_image / 2)
       if (verbose)
         .img_create_msg(dim_image, i)
@@ -335,7 +336,7 @@ createEBImageArray <- function(
   }
 
   # return
-  ImgArray(meta = meta, series = image_list)
+  ImgArray(meta = meta, levels = image_list)
 }
 
 #' createImgArray
@@ -343,16 +344,17 @@ createEBImageArray <- function(
 #' creates an object of ImgArray class
 #'
 #' @param image the image
-#' @param n.series the number of series if the image supposed to be
-#' pyramidal, or the the series IDs of the pyramidal image,
+#' @param n.levels the number of levels of the pyramidal image,
 #' typical an integer starting from 1
+#' @param series the series IDs of the pyramidal image,
+#' typical an integer starting from 1. 
 #' @param resolution the resolution IDs of the pyramidal image,
-#' typical an integer starting from 1
+#' typical an integer starting from 1. 
 #' @param max.pixel.threshold the maximum width
 #' and height pixel dimension that the lowest level of the image pyramid
 #' should have, thus the image will be downscaled two folds until both width
 #' and height is below the threshold. Default is 700 pixels. 
-#' If \code{n.series} is provided, this parameter will be ignored.
+#' If \code{n.levels} is provided, this parameter will be ignored.
 #' @param engine the package to use for each image layer: either
 #' \code{EBImage} or \code{magick-image}
 #' @param verbose verbose
@@ -369,13 +371,14 @@ createEBImageArray <- function(
 #' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
 #' # create ImgArray
-#' imgarray <- createImgArray(img.file, n.series = 3)
+#' imgarray <- createImgArray(img.file, n.levels = 3)
 #' imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 #' plot(imgarray_raster)
 #'
 createImgArray <- function(
   image,
-  n.series = NULL,
+  n.levels = NULL,
+  series = NULL,
   resolution = NULL,
   max.pixel.threshold = 700,
   engine = "EBImage",
@@ -393,7 +396,7 @@ createImgArray <- function(
   if (inherits(image, c("magick-image", "bitmap"))) {
     return(createMagickArray(
       image,
-      n.series = n.series,
+      n.levels = n.levels,
       max.pixel.threshold = max.pixel.threshold,
       verbose = verbose
     ))
@@ -403,7 +406,7 @@ createImgArray <- function(
   if (inherits(image, c("Image"))) {
     return(createEBImageArray(
       image,
-      n.series = n.series,
+      n.levels = n.levels,
       max.pixel.threshold = max.pixel.threshold,
       verbose = verbose
     ))
@@ -412,20 +415,20 @@ createImgArray <- function(
   # check image format
   if (inherits(image, "character")) {
     if (grepl(".ome.tiff$|.ome.tif$|.qptiff$|.qptif$", image)) {
-      image <- createBFArray(image, series = n.series, resolution = resolution)
+      image <- createBFArray(image, series = series, resolution = resolution)
     } else {
       image <- read_image(image, engine = engine)
       if (inherits(image, "magick-image")) {
         createMagickArray(
           image,
-          n.series = n.series,
+          n.levels = n.levels,
           max.pixel.threshold = max.pixel.threshold,
           verbose = verbose
         )
       } else if (inherits(image, "Image")) {
         createEBImageArray(
           image,
-          n.series = n.series,
+          n.levels = n.levels,
           max.pixel.threshold = max.pixel.threshold,
           verbose = verbose
         )
@@ -444,8 +447,8 @@ createImgArray <- function(
 #' @param format on disk format
 #' @param replace Should the existing file be
 #' removed or not
-#' @param n.series the number of series in the
-#' ImgArray
+#' @param n.levels the number of levels if the image supposed to be
+#' pyramidal. 
 #' @param chunkdim The dimensions of the chunks
 #' to use for writing the data to disk.
 #' @param level The compression level to use for
@@ -485,7 +488,7 @@ writeImgArray <- function(
   name = "",
   format = c("InMemoryImgArray", "HDF5ImgArray", "ZarrImgArray"),
   replace = FALSE,
-  n.series = NULL,
+  n.levels = NULL,
   chunkdim = NULL,
   level = NULL,
   engine = "EBImage",
@@ -515,7 +518,7 @@ writeImgArray <- function(
   if (!inherits(image, "ImgArray")) {
     image_list <- createImgArray(
       image,
-      n.series = n.series,
+      n.levels = n.levels,
       verbose = verbose,
       engine = engine
     )
@@ -541,9 +544,9 @@ writeImgArray <- function(
     }
   )
 
-  # write all series
+  # write all levels
   ax <- axes(image_list)
-  for (i in seq_len(length(image_list@series))) {
+  for (i in seq_len(length(image_list@levels))) {
     img <- image_list[[i]]
     
     # write array
@@ -590,7 +593,7 @@ writeImgArray <- function(
 #' @noRd
 .img_create_msg <- function(dim_img, i){
   cat(paste0(
-    "Creating Series ",
+    "Creating level ",
     i,
     " of size ",
     paste0("(", paste(dim_img, collapse = ","), ")"),

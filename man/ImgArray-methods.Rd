@@ -40,7 +40,7 @@
 
 \S4method{length}{ImgArray}(x)
 
-ImgArray(meta, series)
+ImgArray(meta, levels)
 
 \S4method{rotate}{ImgArray}(object, degrees)
 
@@ -78,8 +78,8 @@ ImgArray(meta, series)
 
 \item{meta}{the metadata of the ImgArray object.}
 
-\item{series}{the series IDs of the pyramidal image,
-typical an integer starting from 1}
+\item{levels}{levels of the pyramid image, typically a vector of integers
+starting with 1}
 
 \item{degrees}{value between 0 and 360 for how many degrees to rotate}
 
@@ -90,7 +90,7 @@ typical an integer starting from 1}
 \item{ind}{index list}
 }
 \value{
-dim of the first series of the ImgArray object
+dim of the first level of the ImgArray object
 
 type of ImgArray object
 
@@ -145,7 +145,7 @@ library(EBImage)
 img.file <- system.file("images", "sample.png", package="EBImage")
 
 # create ImgArray
-imgarray <- createImgArray(img.file, n.series = 3)
+imgarray <- createImgArray(img.file, n.levels = 3)
 
 # access layers
 imgarray[[1]]

@@ -6,7 +6,8 @@
 \usage{
 createImgArray(
   image,
-  n.series = NULL,
+  n.levels = NULL,
+  series = NULL,
   resolution = NULL,
   max.pixel.threshold = 700,
   engine = "EBImage",
@@ -16,18 +17,20 @@ createImgArray(
 \arguments{
 \item{image}{the image}
 
-\item{n.series}{the number of series if the image supposed to be
-pyramidal, or the the series IDs of the pyramidal image,
+\item{n.levels}{the number of levels of the pyramidal image,
 typical an integer starting from 1}
 
+\item{series}{the series IDs of the pyramidal image,
+typical an integer starting from 1.}
+
 \item{resolution}{the resolution IDs of the pyramidal image,
-typical an integer starting from 1}
+typical an integer starting from 1.}
 
 \item{max.pixel.threshold}{the maximum width
 and height pixel dimension that the lowest level of the image pyramid
 should have, thus the image will be downscaled two folds until both width
 and height is below the threshold. Default is 700 pixels. 
-If \code{n.series} is provided, this parameter will be ignored.}
+If \code{n.levels} is provided, this parameter will be ignored.}
 
 \item{engine}{the package to use for each image layer: either
 \code{EBImage} or \code{magick-image}}
@@ -46,7 +49,7 @@ library(EBImage)
 img.file <- system.file("images", "sample.png", package="EBImage")
 
 # create ImgArray
-imgarray <- createImgArray(img.file, n.series = 3)
+imgarray <- createImgArray(img.file, n.levels = 3)
 imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 plot(imgarray_raster)
 

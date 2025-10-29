@@ -41,8 +41,8 @@ setMethod(
       return(S4Arrays::as.array.Array(x[[1]]))
     } else if (!is.null(max.pixel.size)) {
       if (max.pixel.size %% 1 == 0) {
-        n.series <- length(x@series)
-        for (i in seq_len(n.series)) {
+        n.levels <- length(x@levels)
+        for (i in seq_len(n.levels)) {
           dim_img <- stats::setNames(dim(x[[i]]), ax)
           if (max.pixel.size >= max(rev(dim_img)[c("x", "y")])) {
             return(S4Arrays::as.array.Array(x[[i]]))
@@ -54,9 +54,9 @@ setMethod(
       }
     } else if (!is.null(min.pixel.size)) {
       if (min.pixel.size %% 1 == 0) {
-        n.series <- length(x@series)
-        if (n.series > 1) {
-          for (i in 2:n.series) {
+        n.levels <- length(x@levels)
+        if (n.levels > 1) {
+          for (i in 2:n.levels) {
             dim_img <- dim(x[[i]])
             if (min.pixel.size > max(rev(dim_img)[c("x", "y")])) {
               return(S4Arrays::as.array.Array(x[[i - 1]]))

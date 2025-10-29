@@ -9,7 +9,7 @@ img.file <- system.file("images", "sample.png", package="EBImage")
 test_that("file input, with EBImage", {
   
   # create ImgArray
-  imgarray <- createImgArray(img.file, n.series = 2)
+  imgarray <- createImgArray(img.file, n.levels = 2)
   expect_equal(length(imgarray), 2)
   imgarray2 <- as.raster(imgarray, max.pixel.size = 300)
   plot(imgarray2)
@@ -40,7 +40,7 @@ test_that("file input, with EBImage", {
 test_that("file input, with magick", {
   
   # create ImgArray
-  imgarray <- createImgArray(img.file, n.series = 2, engine = "magick-image")
+  imgarray <- createImgArray(img.file, n.levels = 2, engine = "magick-image")
   expect_equal(length(imgarray), 2)
   imgarray2 <- as.raster(imgarray, max.pixel.size = 300)
   plot(imgarray2)
@@ -74,7 +74,7 @@ test_that("magick input", {
   img <- magick::image_read(img.file)
   
   # create ImgArray
-  imgarray <- createImgArray(img, n.series = 2)
+  imgarray <- createImgArray(img, n.levels = 2)
   expect_equal(length(imgarray), 2)
   imgarray2 <- as.raster(imgarray, max.pixel.size = 300)
   plot(imgarray2)
@@ -108,7 +108,7 @@ test_that("bitmap input", {
   img <- magick::image_data(img)
   
   # create ImgArray
-  imgarray <- createImgArray(img, n.series = 2)
+  imgarray <- createImgArray(img, n.levels = 2)
   expect_equal(length(imgarray), 2)
   imgarray2 <- as.raster(imgarray, max.pixel.size = 300)
   plot(imgarray2)

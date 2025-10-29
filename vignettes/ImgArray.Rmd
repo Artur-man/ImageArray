@@ -58,8 +58,6 @@ imgarray <- writeImgArray(img,
                          replace = TRUE)
 ```
 
-
-
 ```{r visualize_read}
 # visualize 
 bfa.raster <- as.raster(imgarray, max.pixel.size = 300)
@@ -67,7 +65,7 @@ plot(bfa.raster)
 ```
 
 Operations such as rotate, flip, flop or negate will be 
-conducted on all series
+conducted on all levels
 
 ```{r rotate}
 imgarray_rotated <- rotate(imgarray, degrees = 90)
@@ -125,7 +123,7 @@ layers.
 ```{r ometiff}
 ome.tiff.file <- system.file("extdata", "xy_12bit__plant.ome.tiff", 
                              package = "ImageArray")
-imgarray <- createImgArray(ome.tiff.file, n.series = 1, resolution = 1:2)
+imgarray <- createImgArray(ome.tiff.file, series = 1, resolution = 1:2)
 imgarray
 ```
 
@@ -170,7 +168,7 @@ file includes multiple resolutions that we can ask `ImgArray` object to include.
 
 ```{r he_imgarray}
 imgarray <- createImgArray(image_file, 
-                           n.series = 1, 
+                           series = 1, 
                            resolution = 1:6)
 imgarray
 ```
