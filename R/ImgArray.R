@@ -119,7 +119,7 @@ setMethod(
     for (i in seq_len(n.levels)) {
       dim_image <- dim(object@levels[[i]])
       dim_image <- paste(dim_image, collapse = ",")
-      cat(paste0("Level ", i, " of size (", dim_image, ") \n"))
+      cat(paste0("Level ", i, " (", dim_image, ") \n"))
     }
   }
 )
@@ -595,7 +595,7 @@ writeImgArray <- function(
   cat(paste0(
     "Creating level ",
     i,
-    " of size ",
+    " ",
     paste0("(", paste(dim_img, collapse = ","), ")"),
     "\n"
   ))
