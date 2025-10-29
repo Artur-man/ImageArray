@@ -457,6 +457,7 @@ createImgArray <- function(
 #'
 #' @importFrom HDF5Array writeHDF5Array
 #' @importFrom Rarr writeZarrArray
+#' @importFrom rhdf5 h5createFile h5createGroup
 #' @import DelayedArray
 #'
 #' @export
@@ -529,9 +530,9 @@ writeImgArray <- function(
       if (!file.exists(ondisk_path)) {
         rhdf5::h5createFile(ondisk_path)
       }
-      suppressMessages({
+      # TODO: is there a better way to check existing groups
+      if(!name %in% c("", "/"))
         rhdf5::h5createGroup(ondisk_path, group = name)
-      })
     },
     ZarrImgArray = {
       dir.zarr <- gsub(paste0(basename(ondisk_path), "$"), "", ondisk_path)

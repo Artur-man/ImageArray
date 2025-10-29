@@ -39,8 +39,9 @@ BiocManager::install("ImageArray")
 
 # Usage
 
-The main usage of the `r Biocpkg("ImageArray")` is to deliver `r Biocpkg("DelayedArray")` operations for 
-images or a list of images in Pyramidal format. You can also use
+The main usage of the `r Biocpkg("ImageArray")` is to deliver 
+`r Biocpkg("DelayedArray")` operations for images or a list of images in 
+Pyramidal format. You can also use
 `magick-image` objects.
 
 ```{r read}
