@@ -4,6 +4,8 @@
 #'
 #' @param object an ImgArray object
 #'
+#' @importFrom stats setNames
+#' 
 #' @export
 #' @returns a data frame of width and height info
 #'
@@ -28,13 +30,10 @@
 #' getImageInfo(imgarray)
 #' 
 getImageInfo <- function(object) {
-  dim_image <- dim(object[[1]])
-  if (length(dim_image) == 2) {
-    imginfo <- list(width = dim_image[1], height = dim_image[2])
-  } else {
-    imginfo <- list(width = dim_image[2], height = dim_image[3])
-  }
-  as.data.frame(imginfo)
+  ax <- axes(object)
+  dim_image <- stats::setNames(dim(object[[1]]),ax)
+  imginfo <- list(width = dim_image["x"], height = dim_image["y"])
+  as.data.frame(imginfo, row.names = NULL)
 }
 
 #' read_image

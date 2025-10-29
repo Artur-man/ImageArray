@@ -63,21 +63,6 @@ imgarray <- writeImgArray(img,
 # visualize 
 bfa.raster <- as.raster(imgarray, max.pixel.size = 300)
 plot(bfa.raster)
-# 
-# # make random EBImage image
-# arr <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), 
-#              dim=c(2000, 5000, 3))
-# img_raster <- as.raster(arr, max = 255)
-# img <- as.Image(img_raster)
-# 
-# # create image array
-# dir.create(td <- tempfile())
-# output_h5 <- file.path(td, "h5test")
-# imgarray <- writeImgArray(img, 
-#                          format = "HDF5ImgArray", 
-#                          output = output_h5, 
-#                          replace = TRUE)
-# imgarray
 ```
 
 Operations such as rotate, flip, flop or negate will be 
@@ -229,9 +214,9 @@ if(interactive()){
   # Define UI
   ui <- fluidPage(
     sliderInput("x_slider", label = "X", min = 1, 
-                max = dimimg[2], value = c(16000,19000)),
+                max = dimimg[1], value = c(16000,19000)),
     sliderInput("y_slider", label = "Y", min = 1, 
-                max = dimimg[3], value = c(7000,10000)),
+                max = dimimg[2], value = c(7000,10000)),
     mainPanel(
       plotOutput(outputId = "scatterPlot")
     )

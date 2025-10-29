@@ -42,6 +42,8 @@
 #' negate,ImgArray-method
 #' modulate
 #' modulate,ImgArray-method
+#' axes
+#' axes,ImgArray-method
 #'
 #' @examples
 #' # get image
@@ -108,7 +110,11 @@ setMethod(
   f = 'show',
   signature = c('ImgArray'),
   definition = function(object) {
-    cat(class(x = object), "Object \n")
+    cat(class(x = object), "Object", 
+        paste0(
+          "(", paste(object@meta[["axes"]], collapse = ","), ")"
+        ), 
+    "\n")
     n.series <- length(object@series)
     for (i in seq_len(n.series)) {
       dim_image <- dim(object@series[[i]])
@@ -137,14 +143,15 @@ setMethod("length", signature = "ImgArray", function(x) length(x@series))
 #'
 #' A function for creating objects of ImgArray class
 #'
+#' @param meta the metadata of the ImgArray object. 
 #' @param series the series IDs of the pyramidal image,
 #' typical an integer starting from 1
 #'
 #' @importFrom S4Vectors new2
 #' @export
 #' @return An ImgArray object
-ImgArray <- function(series) {
-  S4Vectors::new2("ImgArray", series = series)
+ImgArray <- function(meta, series) {
+  S4Vectors::new2("ImgArray", meta = meta, series = series)
 }
 
 #' createBFArray
@@ -177,7 +184,7 @@ createBFArray <- function(
   image_list <- lapply(resolution, function(res) {
     BFArray(image, series = series, resolution = res)
   })
-  ImgArray(series = image_list)
+  ImgArray(meta = list(axes = c("x", "y", "c")), series = image_list)
 }
 
 #' createMagickArray
@@ -230,17 +237,8 @@ createMagickArray <- function(
   }
 
   # create image series
-  if (verbose) {
-    cat(paste0(
-      "Creating Series ",
-      1,
-      " of size (",
-      dim_image[1],
-      ",",
-      dim_image[2],
-      ") \n"
-    ))
-  }
+  if (verbose)
+    .img_create_msg(dim(image), 1)
   image_data <- magick::image_data(image, channels = "rgb")
   storage.mode(image_data) <- "integer"
   image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
@@ -248,17 +246,8 @@ createMagickArray <- function(
     cur_image <- image
     for (i in 2:n.series) {
       dim_image <- ceiling(dim_image / 2)
-      if (verbose) {
-        cat(paste0(
-          "Creating Series ",
-          i,
-          " of size (",
-          dim_image[1],
-          ",",
-          dim_image[2],
-          ") \n"
-        ))
-      }
+      if (verbose)
+        .img_create_msg(dim_image, 1)
       cur_image <- magick::image_resize(
         cur_image,
         geometry = magick::geometry_size_percent(50),
@@ -272,7 +261,7 @@ createMagickArray <- function(
   }
 
   # return
-  ImgArray(series = image_list)
+  ImgArray(meta = list(axes = c("c", "x", "y")), series = image_list)
 }
 
 #' createMagickArray
@@ -299,7 +288,8 @@ createEBImageArray <- function(
   max.pixel.threshold = 700,
   verbose = FALSE
 ) {
-  # get image info
+
+  # get and image info
   image_info <- dim(image)
   dim_image <- c(image_info[1], image_info[2])
 
@@ -318,42 +308,26 @@ createEBImageArray <- function(
   }
 
   # create image series
-  if (verbose) {
-    cat(paste0(
-      "Creating Series ",
-      1,
-      " of size (",
-      dim_image[1],
-      ",",
-      dim_image[2],
-      ") \n"
-    ))
-  }
-  img_perm <- if(length(dim(image)) == 2) c(1,2) else c(3, 1, 2)
+  meta <- list(axes = c("x", "y", "c"))
+  if (verbose)
+    .img_create_msg(dim_image, 1)
+  img_perm <- if(length(dim(image)) == 2) c(1,2) else c(1, 2, 3)
+  meta[["axes"]] <- meta[["axes"]][img_perm]
+  img_perm <- stats::setNames(img_perm, meta[["axes"]])
   img <- aperm(image, img_perm)
   image_list <- list(DelayedArray::DelayedArray(img))
   if (n.series > 1) {
     cur_image <- image
     for (i in 2:n.series) {
       dim_image <- ceiling(dim_image / 2)
-      if (verbose) {
-        cat(paste0(
-          "Creating Series ",
-          i,
-          " of size (",
-          dim_image[1],
-          ",",
-          dim_image[2],
-          ") \n"
-        ))
-      }
+      if (verbose)
+        .img_create_msg(dim_image, i)
       resize_factor <- dim_image
       cur_image <- EBImage::resize(
         cur_image,
         w = dim_image[1],
         h = dim_image[2]
       )
-      img_perm <- if(length(dim(cur_image)) == 2) c(1,2) else c(3, 1, 2)
       cur_img <- aperm(cur_image, img_perm)
       image_list[[i]] <-
         DelayedArray::DelayedArray(cur_img)
@@ -361,7 +335,7 @@ createEBImageArray <- function(
   }
 
   # return
-  ImgArray(series = image_list)
+  ImgArray(meta = meta, series = image_list)
 }
 
 #' createImgArray
@@ -567,6 +541,7 @@ writeImgArray <- function(
   )
 
   # write all series
+  ax <- axes(image_list)
   for (i in seq_len(length(image_list@series))) {
     img <- image_list[[i]]
     
@@ -587,15 +562,14 @@ writeImgArray <- function(
           )
       },
       ZarrImgArray = {
+        chunk_dim <- stats::setNames(dim(img),ax)
+        chunk_dim["x"] <- min(chunk_dim["x"], 2000)
+        chunk_dim["y"] <- min(chunk_dim["y"], 2000)
         image_list[[i]] <-
           Rarr::writeZarrArray(
             img,
             zarr_array_path = file.path(ondisk_path, paste0(name, "/", i)),
-            chunk_dim = c(
-              dim(img)[1],
-              min(dim(img)[2], 2000),
-              min(dim(img)[3], 2000)
-            )
+            chunk_dim = chunk_dim
           )
       },
       InMemoryImgArray = {
@@ -606,4 +580,19 @@ writeImgArray <- function(
 
   # return
   return(image_list)
+}
+
+####
+# Auxiliary ####
+####
+
+#' @noRd
+.img_create_msg <- function(dim_img, i){
+  cat(paste0(
+    "Creating Series ",
+    i,
+    " of size ",
+    paste0("(", paste(dim_img, collapse = ","), ")"),
+    "\n"
+  ))
 }

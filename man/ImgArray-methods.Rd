@@ -16,6 +16,8 @@
 \alias{negate,ImgArray-method}
 \alias{modulate}
 \alias{modulate,ImgArray-method}
+\alias{axes}
+\alias{axes,ImgArray-method}
 \alias{[,ImgArray,numeric,numeric,ANY-method}
 \alias{[[,ImgArray,numeric,ANY-method}
 \alias{[[<-,ImgArray,numeric,ANY,ANY-method}
@@ -38,7 +40,7 @@
 
 \S4method{length}{ImgArray}(x)
 
-ImgArray(series)
+ImgArray(meta, series)
 
 \S4method{rotate}{ImgArray}(object, degrees)
 
@@ -53,6 +55,8 @@ ImgArray(series)
 \S4method{flop}{ImgArray}(object)
 
 \S4method{crop}{ImgArray}(object, ind)
+
+\S4method{axes}{ImgArray}(object)
 }
 \arguments{
 \item{x, a, object}{An ImgArray object}
@@ -71,6 +75,8 @@ ImgArray(series)
 \item{...}{Arguments passed to other methods}
 
 \item{drop}{ignored}
+
+\item{meta}{the metadata of the ImgArray object.}
 
 \item{series}{the series IDs of the pyramidal image,
 typical an integer starting from 1}
@@ -129,6 +135,8 @@ A function for creating objects of ImgArray class
 \item \code{flop(ImgArray)}: horizontal flipping image
 
 \item \code{crop(ImgArray)}: cropping image
+
+\item \code{axes(ImgArray)}: get axes metadata of the ImgArray object
 
 }}
 \examples{

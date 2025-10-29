@@ -38,3 +38,12 @@ A function for creating objects of BFArray class
 \item \code{type(BFArraySeed)}: type function for BFArray objects
 
 }}
+\examples{
+# get image
+img.file <- system.file("extdata", 
+                        "xy_12bit__plant.ome.tiff", 
+                        package = "ImageArray")
+bfa <- BFArray(img.file, series = 1, resolution = 2)
+dim(bfa)
+type(bfa)
+}

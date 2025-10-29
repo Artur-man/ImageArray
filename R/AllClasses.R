@@ -1,6 +1,7 @@
 .ImgArray <- setClass(
   Class = "ImgArray",
   slots = c(
+    meta = "list",
     series = "list"
   )
 )

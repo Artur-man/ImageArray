@@ -1,3 +1,7 @@
+####
+# Main ####
+####
+
 #' @describeIn ImgArray-methods rotate image array to 90, 180, 270 degrees
 #' @exportMethod rotate
 setMethod("rotate", signature = "ImgArray", function(object, degrees) {
@@ -6,15 +10,16 @@ setMethod("rotate", signature = "ImgArray", function(object, degrees) {
     stop("Only rotations of 0,90,180,270,360 degrees are supported!")
   }
 
-  # aperm
-  if (degrees %in% c(90, 270)) {
-    if(length(dim(object[[1]])) == 3){
-      object <- aperm(object, perm = c(1, 3, 2))
-    } else if(length(dim(object[[1]])) == 2){
-      object <- aperm(object, perm = c(2,1))
-    } else {
-      stop("Rotation is only supported for 2D and 3D image arrays!")
-    }
+  # check dimensions
+  .check_dim(object)
+  dim_img <- dim(object[[1]])
+  ax <- axes(object)
+  
+  # array perm.
+  if (degrees %in% c(90, 270)){
+    cur_perm <- .swap(seq_len(length(dim_img)), 
+                      which(ax == "x"), which(ax == "y"))
+    object <- aperm(object, perm = cur_perm)
   }
 
   # flop
@@ -71,54 +76,67 @@ setMethod("modulate", signature = "ImgArray", function(object, brightness) {
   object
 })
 
+#' @importFrom stats setNames
+#' @noRd
+.flipflop <- function(object, direction = "x"){
+  n.series <- length(object@series)
+  ax <- axes(object)
+  
+  # check dim
+  .check_dim(object)
+  
+  # flip all
+  for (i in seq_len(n.series)) {
+    img <- object[[i]]
+    dim_img <- stats::setNames(dim(img),ax)
+    cur_ind <- stats::setNames(lapply(dim_img, seq_len), ax)
+    cur_ind[[direction]] <- rev(cur_ind[[direction]])
+    object[[i]] <- .subset_array(object[[i]], cur_ind, drop = FALSE)
+  }
+  object
+}
+
+
 #' @describeIn ImgArray-methods vertical flipping image
 #' @exportMethod flip
 setMethod("flip", signature = "ImgArray", function(object) {
-  n.series <- length(object@series)
-  for (i in seq_len(n.series)) {
-    img <- object[[i]]
-    dim_img <- dim(img)
-    if(length(dim_img) == 3){
-      object[[i]] <- img[,,dim_img[3]:1, drop = FALSE]
-    } else if(length(dim_img) == 2){
-      object[[i]] <- img[,dim_img[2]:1, drop = FALSE]
-    } else {
-      stop("Flop is only supported for 2D and 3D image arrays!")
-    }
-  }
-  object
+  .flipflop(object, direction = "y")
 })
 
 #' @describeIn ImgArray-methods horizontal flipping image
 #' @exportMethod flop
 setMethod("flop", signature = "ImgArray", function(object) {
-  n.series <- length(object@series)
-  for (i in seq_len(n.series)) {
-    img <- object[[i]]
-    dim_img <- dim(img)
-    if(length(dim_img) == 3){
-      object[[i]] <- img[, dim_img[2]:1, , drop = FALSE]
-    } else if(length(dim_img) == 2){
-      object[[i]] <- img[dim_img[1]:1, , drop = FALSE]
-    } else {
-      stop("Flop is only supported for 2D and 3D image arrays!")
-    }
-  }
-  object
+  .flipflop(object, direction = "x")
 })
 
 #' @describeIn ImgArray-methods cropping image
 #' @importFrom utils head tail
+#' @importFrom stats setNames
 #' @exportMethod crop
 setMethod("crop", signature = "ImgArray", function(object, ind) {
+  
+  # get axes
+  ax <- axes(object)
+  dim_img <- stats::setNames(dim(object), ax)
+    
   # check ind
   if (!is.list(ind)) {
     stop("'ind' should be a list of integers")
   }
-  if (!(length(ind) %in% c(2,3))) {
-    stop("'ind' should be a list of integers")
-  }
-  check_sequential <- all(vapply(ind, is.sequential, logical(1)))
+  
+  # check_dim
+  .check_dim(object)
+  
+  # ind control
+  if(length(ind) == 2){
+    ind <- stats::setNames(ind, c("x", "y"))
+    if(length(dim_img) == 3)
+      ind <- c(ind, list(c = seq_len(dim_img["c"])))
+    ind <- ind[ax]
+  } 
+  
+  # check sequential
+  check_sequential <- all(vapply(ind[c("x", "y")], is.sequential, logical(1)))
   if (!check_sequential) {
     stop(
       "'ind' should be a list of sequantial integer 
@@ -130,22 +148,55 @@ setMethod("crop", signature = "ImgArray", function(object, ind) {
   n.series <- length(object@series)
   for (i in seq_len(n.series)) {
     img <- object[[i]]
-    dim_img <- dim(img)
-    cur_ind <- lapply(seq_len(length(ind)), function(j) {
-      curind <- ind[[j]]
+    dim_img <- stats::setNames(dim(img),ax)[c("x", "y")]
+    cur_ind <- ind
+    cur_ind[c("x","y")] <- 
+      lapply(seq_len(length(ind[c("x", "y")])), function(j) {
+      curind <- ind[c("x", "y")][[j]]
       id <- c(
         floor(utils::head(curind, 1) / (2^(i - 1))),
         ceiling(utils::tail(curind, 1) / (2^(i - 1)))
       )
-      seq(max(id[1], 1), 
-          min(id[2], if(length(dim_img) == 2) dim_img[j] else dim_img[j + 1]))
+      seq(max(id[1], 1), min(id[2], dim_img[j]))
     })
-    if(length(dim_img) == 3){
-      object[[i]] <- img[, cur_ind[[1]], cur_ind[[2]], drop = FALSE]
-    } else {
-      object[[i]] <- img[cur_ind[[1]], cur_ind[[2]], drop = FALSE]
-    }
+    object[[i]] <- .subset_array(img, cur_ind, drop = FALSE)
   }
 
   object
 })
+
+#' @describeIn ImgArray-methods get axes metadata of the ImgArray object
+#' @exportMethod axes
+setMethod("axes", "ImgArray", function(object) object@meta[["axes"]])
+
+####
+# Auxiliary ####
+####
+
+#' @noRd
+.subset_array <- function(x, idx, drop = FALSE) {
+  d <- dim(x)
+  if (is.null(d)) stop("x must be an array or matrix.")
+  if (length(idx) > length(d)) stop("Too many index dimensions provided.")
+  
+  # pad missing dimensions with full slices
+  while (length(idx) < length(d)) {
+    idx[[length(idx) + 1]] <- seq_len(d[length(idx) + 1])
+  }
+  
+  if(length(idx) == 3){
+    return(x[idx[[1]], idx[[2]], idx[[3]], drop = drop])
+  } else {
+    return(x[idx[[1]], idx[[2]], drop = drop])
+  }
+}
+
+.swap <- function(x, i, j) {
+  x[c(i, j)] <- x[c(j, i)]
+  x
+}
+
+.check_dim <- function(object){
+  if (!(length(dim(object)) %in% c(2,3)))
+    stop("This operation can only be performed on 2D or 3D image arrays")
+}

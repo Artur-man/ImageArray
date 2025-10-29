@@ -28,6 +28,10 @@ setMethod(
   "realize",
   signature = "ImgArray",
   function(x, max.pixel.size = NULL, min.pixel.size = NULL) {
+    
+    # axes
+    ax <- axes(x)
+    
     # get parameter
     if (!is.null(max.pixel.size) && !is.null(min.pixel.size)) {
       stop("min and max values cant be defined in the same time!")
@@ -39,8 +43,8 @@ setMethod(
       if (max.pixel.size %% 1 == 0) {
         n.series <- length(x@series)
         for (i in seq_len(n.series)) {
-          dim_img <- dim(x[[i]])
-          if (max.pixel.size >= max(rev(dim_img)[c(1, 2)])) {
+          dim_img <- stats::setNames(dim(x[[i]]), ax)
+          if (max.pixel.size >= max(rev(dim_img)[c("x", "y")])) {
             return(S4Arrays::as.array.Array(x[[i]]))
           }
         }
@@ -54,7 +58,7 @@ setMethod(
         if (n.series > 1) {
           for (i in 2:n.series) {
             dim_img <- dim(x[[i]])
-            if (min.pixel.size > max(rev(dim_img)[c(1, 2)])) {
+            if (min.pixel.size > max(rev(dim_img)[c("x", "y")])) {
               return(S4Arrays::as.array.Array(x[[i - 1]]))
             }
           }
@@ -119,6 +123,8 @@ setMethod(
 #' @param max.pixel.size maximum pixel size
 #' @param min.pixel.size minimum pixel size
 #'
+#' @importFrom stats setNames
+#' 
 #' @export
 #' @return A raster array
 #'
@@ -140,18 +146,23 @@ setMethod(
   "as.raster",
   signature = "ImgArray",
   function(x, max.pixel.size = NULL, min.pixel.size = NULL) {
+    
+    # get axes
+    ax <- axes(x)
+    cur_perm <- stats::setNames(seq_len(length(dim(x))), ax)
+
+    # realize
     rx <- realize(
       x,
       max.pixel.size = max.pixel.size,
       min.pixel.size = min.pixel.size
     )
     d <- length(dim(x))
-    if (d == 3) {
-      rx <- aperm(rx, perm = c(3, 2, 1))
-    } else {
+    if (d == 2) {
+      cur_perm <- stats::setNames(c(cur_perm, 3), c(ax, "c"))
       rx <- array(rx, dim = c(dim(rx), 1))
-      rx <- aperm(rx, perm = c(2,1,3))
     }
+    rx <- aperm(rx, perm = cur_perm[c("y", "x", "c")])
     rx <- .as_raster_array(
       rx,
       max = if (type(x) == "double") 1 else 255
