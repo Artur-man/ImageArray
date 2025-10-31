@@ -57,7 +57,7 @@ setMethod(
         n.levels <- length(x@levels)
         if (n.levels > 1) {
           for (i in 2:n.levels) {
-            dim_img <- dim(x[[i]])
+            dim_img <- stats::setNames(dim(x[[i]]), ax)
             if (min.pixel.size > max(rev(dim_img)[c("x", "y")])) {
               return(S4Arrays::as.array.Array(x[[i - 1]]))
             }
