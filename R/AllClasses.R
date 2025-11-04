@@ -1,5 +1,5 @@
-.ImgArray <- setClass(
-  Class = "ImgArray",
+.ImageArray <- setClass(
+  Class = "ImageArray",
   slots = c(
     meta = "list",
     levels = "list"

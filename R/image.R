@@ -1,8 +1,8 @@
 #' getImageInfo
 #'
-#' get information of an ImgArray object
+#' get information of an ImageArray object
 #'
-#' @param object an ImgArray object
+#' @param object an ImageArray object
 #'
 #' @importFrom stats setNames
 #' 
@@ -14,18 +14,18 @@
 #' library(EBImage)
 #' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
-#' # create ImgArray
+#' # create ImageArray
 #' dir.create(td <- tempfile())
 #' output_h5ad <- file.path(td, "h5test")
-#' imgarray <- writeImgArray(img.file,
+#' imgarray <- writeImageArray(img.file,
 #'                           output = output_h5ad,
 #'                           name = "image",
-#'                           format = "HDF5ImgArray",
+#'                           format = "HDF5ImageArray",
 #'                           replace = TRUE, verbose = FALSE)
 #' getImageInfo(imgarray)
 #'
-#' # create ImgArray
-#' imgarray <- createImgArray(img.file, n.levels = 3)
+#' # create ImageArray
+#' imgarray <- createImageArray(img.file, n.levels = 3)
 #' imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 #' getImageInfo(imgarray)
 #' 

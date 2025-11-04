@@ -1,8 +1,8 @@
 #' as.array
 #'
-#' as.array method for ImgArray object
+#' as.array method for ImageArray object
 #'
-#' @param x an ImgArray object
+#' @param x an ImageArray object
 #' @param max.pixel.size maximum pixel size
 #' @param min.pixel.size minimum pixel size
 #' @importFrom S4Arrays as.array.Array
@@ -15,18 +15,18 @@
 #' library(EBImage)
 #' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
-#' # create ImgArray
+#' # create ImageArray
 #' dir.create(td <- tempfile())
 #' output_h5ad <- file.path(td, "h5test")
-#' imgarray <- writeImgArray(img.file,
+#' imgarray <- writeImageArray(img.file,
 #'                           output = output_h5ad,
 #'                           name = "image",
-#'                           format = "HDF5ImgArray",
+#'                           format = "HDF5ImageArray",
 #'                           replace = TRUE, verbose = FALSE)
 #' imgarray <- realize(imgarray)
 setMethod(
   "realize",
-  signature = "ImgArray",
+  signature = "ImageArray",
   function(x, max.pixel.size = NULL, min.pixel.size = NULL) {
     
     # axes
@@ -77,7 +77,7 @@ setMethod(
 
 #' .as_raster_array
 #'
-#' custom as_raster_array function for ImgArray
+#' custom as_raster_array function for ImageArray
 #'
 #' @param x x
 #' @param max max
@@ -117,9 +117,9 @@ setMethod(
   r
 }
 
-#' as.raster method for ImgArray object
+#' as.raster method for ImageArray object
 #'
-#' @param x an ImgArray object
+#' @param x an ImageArray object
 #' @param max.pixel.size maximum pixel size
 #' @param min.pixel.size minimum pixel size
 #'
@@ -133,18 +133,18 @@ setMethod(
 #' library(EBImage)
 #' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
-#' # create ImgArray
+#' # create ImageArray
 #' dir.create(td <- tempfile())
 #' output_h5ad <- file.path(td, "h5test")
-#' imgarray <- writeImgArray(img.file,
+#' imgarray <- writeImageArray(img.file,
 #'                           output = output_h5ad,
 #'                           name = "image",
-#'                           format = "HDF5ImgArray",
+#'                           format = "HDF5ImageArray",
 #'                           replace = TRUE, verbose = FALSE)
 #' imgarray_raster <- as.raster(imgarray)
 setMethod(
   "as.raster",
-  signature = "ImgArray",
+  signature = "ImageArray",
   function(x, max.pixel.size = NULL, min.pixel.size = NULL) {
     
     # get axes

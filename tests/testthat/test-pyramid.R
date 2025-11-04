@@ -17,13 +17,13 @@ mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
 # read as magick object
 mat_image <- magick::image_read(mat_raster)
 
-test_that("visualize h5 ImgArray", {
+test_that("visualize h5 ImageArray", {
   
   # create image array
-  mat_list <- writeImgArray(mat_image, 
+  mat_list <- writeImageArray(mat_image, 
                               output = output_h5ad, 
                               name = "image",
-                              format = "HDF5ImgArray", 
+                              format = "HDF5ImageArray", 
                               replace = TRUE, verbose = FALSE)
   expect_equal(length(mat_list),4)
 
@@ -43,14 +43,14 @@ test_that("visualize h5 ImgArray", {
   
 })
 
-test_that("visualize zarr ImgArray", {
+test_that("visualize zarr ImageArray", {
   
   # create image array
   unlink(output_zarr, recursive = TRUE)
-  mat_list <- writeImgArray(mat_image, 
+  mat_list <- writeImageArray(mat_image, 
                             output = output_zarr, 
                             name = "image",
-                            format = "ZarrImgArray", 
+                            format = "ZarrImageArray", 
                             replace = TRUE, verbose = FALSE)
   expect_equal(length(mat_list),4)
   

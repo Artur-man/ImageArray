@@ -29,15 +29,15 @@ img <- as.Image(img_raster)
 # create image array
 dir.create(td <- tempfile())
 output_h5ad <- file.path(td, "h5test")
-imgarray <- writeImgArray(img, 
-                         format = "HDF5ImgArray", 
+imgarray <- writeImageArray(img, 
+                         format = "HDF5ImageArray", 
                          output = output_h5ad, 
                          replace = TRUE)
 imgarray
 ```
 
 ```
-ImgArray Object 
+ImageArray Object 
 Series 1 of size (3,5000,2000) 
 Series 2 of size (3,2500,1000) 
 Series 3 of size (3,1250,500) 
@@ -52,7 +52,7 @@ imgarray_rotated
 ```
 
 ```
-ImgArray Object 
+ImageArray Object 
 Series 1 of size (3,2000,5000) 
 Series 2 of size (3,1000,2500) 
 Series 3 of size (3,500,1250) 
@@ -68,7 +68,7 @@ imgarray_cropped
 ```
 
 ```
-ImgArray Object 
+ImageArray Object 
 Series 1 of size (3,1000,500) 
 Series 2 of size (3,501,251) 
 Series 3 of size (3,251,126) 
@@ -86,33 +86,33 @@ img <- magick::image_read(img_raster)
 # create image array
 dir.create(td <- tempfile())
 output_zarr <- file.path(td, "zarrtest")
-imgarray <- writeImgArray(img, 
-                          format = "ZarrImgArray", 
+imgarray <- writeImageArray(img, 
+                          format = "ZarrImageArray", 
                           output = output_zarr, 
                           replace = TRUE)
 imgarray
 ```
 
 ```
-ImgArray Object 
+ImageArray Object 
 Series 1 of size (3,5000,2000) 
 Series 2 of size (3,2500,1000) 
 Series 3 of size (3,1250,500) 
 Series 4 of size (3,625,250)
 ```
 
-Finally, we can parse multiple resolutions of an ome.tiff in an ImgArray object.
+Finally, we can parse multiple resolutions of an ome.tiff in an ImageArray object.
 
 ``` r
 # get ome.tiff
 img.file <- system.file("extdata", "xy_12bit__plant.ome.tiff", package = "ImageArray")
 
-# read as ImgArray
-img <- createImgArray(img.file, n.series = 1, resolution = 1:2)
+# read as ImageArray
+img <- createImageArray(img.file, n.series = 1, resolution = 1:2)
 ```
 
 ```
-ImgArray Object 
+ImageArray Object 
 Series 1 of size (512,512) 
 Series 2 of size (256,256)
 ```

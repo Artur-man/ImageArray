@@ -2,9 +2,9 @@
 # Main ####
 ####
 
-#' @describeIn ImgArray-methods rotate image array to 90, 180, 270 degrees
+#' @describeIn ImageArray-methods rotate image array to 90, 180, 270 degrees
 #' @exportMethod rotate
-setMethod("rotate", signature = "ImgArray", function(object, degrees) {
+setMethod("rotate", signature = "ImageArray", function(object, degrees) {
   # validate rotation
   if (!degrees %in% c(0, 90, 180, 270, 360)) {
     stop("Only rotations of 0,90,180,270,360 degrees are supported!")
@@ -36,9 +36,9 @@ setMethod("rotate", signature = "ImgArray", function(object, degrees) {
   object
 })
 
-#' @describeIn ImgArray-methods permute image
+#' @describeIn ImageArray-methods permute image
 #' @exportMethod aperm
-setMethod("aperm", signature = "ImgArray", function(a, perm) {
+setMethod("aperm", signature = "ImageArray", function(a, perm) {
   n.levels <- length(a@levels)
   for (i in seq_len(n.levels)) {
     a[[i]] <- aperm(a[[i]], perm = perm)
@@ -46,9 +46,9 @@ setMethod("aperm", signature = "ImgArray", function(a, perm) {
   a
 })
 
-#' @describeIn ImgArray-methods negate image
+#' @describeIn ImageArray-methods negate image
 #' @exportMethod negate
-setMethod("negate", signature = "ImgArray", function(object) {
+setMethod("negate", signature = "ImageArray", function(object) {
   n.levels <- length(object@levels)
   for (i in seq_len(n.levels)) {
     object[[i]] <- 255L - object[[i]]
@@ -56,9 +56,9 @@ setMethod("negate", signature = "ImgArray", function(object) {
   object
 })
 
-#' @describeIn ImgArray-methods modulate image
+#' @describeIn ImageArray-methods modulate image
 #' @exportMethod modulate
-setMethod("modulate", signature = "ImgArray", function(object, brightness) {
+setMethod("modulate", signature = "ImageArray", function(object, brightness) {
   if (brightness < 0) {
     stop("Brightness should be more than 0, typically more than 100")
   }
@@ -97,23 +97,23 @@ setMethod("modulate", signature = "ImgArray", function(object, brightness) {
 }
 
 
-#' @describeIn ImgArray-methods vertical flipping image
+#' @describeIn ImageArray-methods vertical flipping image
 #' @exportMethod flip
-setMethod("flip", signature = "ImgArray", function(object) {
+setMethod("flip", signature = "ImageArray", function(object) {
   .flipflop(object, direction = "y")
 })
 
-#' @describeIn ImgArray-methods horizontal flipping image
+#' @describeIn ImageArray-methods horizontal flipping image
 #' @exportMethod flop
-setMethod("flop", signature = "ImgArray", function(object) {
+setMethod("flop", signature = "ImageArray", function(object) {
   .flipflop(object, direction = "x")
 })
 
-#' @describeIn ImgArray-methods cropping image
+#' @describeIn ImageArray-methods cropping image
 #' @importFrom utils head tail
 #' @importFrom stats setNames
 #' @exportMethod crop
-setMethod("crop", signature = "ImgArray", function(object, ind) {
+setMethod("crop", signature = "ImageArray", function(object, ind) {
   
   # get axes
   ax <- axes(object)
@@ -165,9 +165,9 @@ setMethod("crop", signature = "ImgArray", function(object, ind) {
   object
 })
 
-#' @describeIn ImgArray-methods get axes metadata of the ImgArray object
+#' @describeIn ImageArray-methods get axes metadata of the ImageArray object
 #' @exportMethod axes
-setMethod("axes", "ImgArray", function(object) object@meta[["axes"]])
+setMethod("axes", "ImageArray", function(object) object@meta[["axes"]])
 
 ####
 # Auxiliary ####

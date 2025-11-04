@@ -52,8 +52,8 @@ img = readImage(f)
 # create image array
 dir.create(td <- tempfile())
 output_h5 <- file.path(td, "h5test")
-imgarray <- writeImgArray(img, 
-                         format = "HDF5ImgArray", 
+imgarray <- writeImageArray(img, 
+                         format = "HDF5ImageArray", 
                          output = output_h5, 
                          replace = TRUE)
 ```
@@ -106,8 +106,8 @@ img = magick::image_read(f)
 # create image array
 dir.create(td <- tempfile())
 output_h5 <- file.path(td, "h5test")
-imgarray <- writeImgArray(img, 
-                         format = "HDF5ImgArray", 
+imgarray <- writeImageArray(img, 
+                         format = "HDF5ImageArray", 
                          output = output_h5, 
                          replace = TRUE)
 
@@ -117,13 +117,13 @@ plot(bfa.raster)
 
 # Using OME.TIFF
 
-You can create `ImgArray` objects from OME.TIFF files with already defined
+You can create `ImageArray` objects from OME.TIFF files with already defined
 layers. 
 
 ```{r ometiff}
 ome.tiff.file <- system.file("extdata", "xy_12bit__plant.ome.tiff", 
                              package = "ImageArray")
-imgarray <- createImgArray(ome.tiff.file, series = 1, resolution = 1:2)
+imgarray <- createImageArray(ome.tiff.file, series = 1, resolution = 1:2)
 imgarray
 ```
 
@@ -145,7 +145,7 @@ dim(bfa.raster)
 ```
 # Using with Shiny
 
-The pyramid scheme introduced by `ImgArray` objects can also be used to 
+The pyramid scheme introduced by `ImageArray` objects can also be used to 
 generate scalable plots and interactive Shiny application for visualizing 
 large images. 
 
@@ -163,13 +163,14 @@ bfc <- BiocFileCache()
 image_file <- bfcrpath(bfc, image_file)
 ```
 
-Let us create an `ImgArray` object first with the image above. The ome.tiff 
-file includes multiple resolutions that we can ask `ImgArray` object to include.
+Let us create an `ImageArray` object first with the image above. The ome.tiff 
+file includes multiple resolutions that we can ask `ImageArray` 
+object to include.
 
 ```{r he_imgarray}
-imgarray <- createImgArray(image_file, 
-                           series = 1, 
-                           resolution = 1:6)
+imgarray <- createImageArray(image_file, 
+                             series = 1, 
+                             resolution = 1:6)
 imgarray
 ```
 You can visualize subsets of large images really quickly using `crop` and

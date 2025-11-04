@@ -18,20 +18,20 @@ img <- magick::image_read(img_raster)
 test_that("write image array to disk", {
   
   # create image array
-  imgarray <- writeImgArray(img, 
+  imgarray <- writeImageArray(img, 
                               output = output_h5ad, 
                               name = "image",
-                              format = "HDF5ImgArray", 
+                              format = "HDF5ImageArray", 
                               replace = TRUE, verbose = FALSE)
   expect_equal(length(imgarray),4)
   expect_equal(dim(imgarray), c(3,5000,2000))
 
   # create image array
   unlink(output_zarr, recursive = TRUE)
-  imgarray <- writeImgArray(img, 
+  imgarray <- writeImageArray(img, 
                               output = output_zarr, 
                               name = "image",
-                              format = "ZarrImgArray", 
+                              format = "ZarrImageArray", 
                               replace = TRUE, verbose = FALSE)
   expect_equal(length(imgarray),4)
   expect_equal(dim(imgarray), c(3,5000,2000))

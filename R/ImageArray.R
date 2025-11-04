@@ -2,11 +2,11 @@
 # Methods ####
 ####
 
-#' Methods for ImgArray
+#' Methods for ImageArray
 #'
-#' Methods for \code{ImgArray} objects
+#' Methods for \code{ImageArray} objects
 #'
-#' @param x,a,object An ImgArray object
+#' @param x,a,object An ImageArray object
 #' @param i,j,value Depends on the usage
 #' \describe{
 #'  \item{\code{[[}, \code{[[<-}}{
@@ -24,34 +24,34 @@
 #' @param ind index list
 #' @param ... Arguments passed to other methods
 #'
-#' @name ImgArray-methods
-#' @rdname ImgArray-methods
+#' @name ImageArray-methods
+#' @rdname ImageArray-methods
 #'
 #' @aliases
-#' [[,ImgArray,numeric-method
-#' [[<-,ImgArray,numeric-method
+#' [[,ImageArray,numeric-method
+#' [[<-,ImageArray,numeric-method
 #' rotate
-#' rotate,ImgArray-method
+#' rotate,ImageArray-method
 #' crop
-#' crop,ImgArray-method
+#' crop,ImageArray-method
 #' flip
-#' flip,ImgArray-method
+#' flip,ImageArray-method
 #' flop
-#' flop,ImgArray-method
+#' flop,ImageArray-method
 #' negate
-#' negate,ImgArray-method
+#' negate,ImageArray-method
 #' modulate
-#' modulate,ImgArray-method
+#' modulate,ImageArray-method
 #' axes
-#' axes,ImgArray-method
+#' axes,ImageArray-method
 #'
 #' @examples
 #' # get image
 #' library(EBImage)
 #' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
-#' # create ImgArray
-#' imgarray <- createImgArray(img.file, n.levels = 3)
+#' # create ImageArray
+#' imgarray <- createImageArray(img.file, n.levels = 3)
 #'
 #' # access layers
 #' imgarray[[1]]
@@ -68,37 +68,37 @@
 #' imgarray <- flop(imgarray)
 NULL
 
-#' @describeIn ImgArray-methods subset and crop
-#' for \code{ImgArray} objects
+#' @describeIn ImageArray-methods subset and crop
+#' for \code{ImageArray} objects
 #'
 #' @export
 setMethod(
   f = '[',
-  signature = c('ImgArray', "numeric", "numeric"),
+  signature = c('ImageArray', "numeric", "numeric"),
   definition = function(x, i, j, ..., drop = FALSE) {
     crop(x, ind = list(i, j))
   }
 )
 
-#' @describeIn ImgArray-methods Layer access
-#' for \code{ImgArray} objects
+#' @describeIn ImageArray-methods Layer access
+#' for \code{ImageArray} objects
 #'
 #' @export
 setMethod(
   f = '[[',
-  signature = c('ImgArray', "numeric"),
+  signature = c('ImageArray', "numeric"),
   definition = function(x, i) {
     return(x@levels[[i]])
   }
 )
 
-#' @describeIn ImgArray-methods Layer access
-#' for \code{ImgArray} objects
+#' @describeIn ImageArray-methods Layer access
+#' for \code{ImageArray} objects
 #'
 #' @export
 setMethod(
   f = '[[<-',
-  signature = c('ImgArray', "numeric"),
+  signature = c('ImageArray', "numeric"),
   definition = function(x, i, ..., value) {
     x@levels[[i]] <- value
     return(x)
@@ -108,7 +108,7 @@ setMethod(
 #' @noRd
 setMethod(
   f = 'show',
-  signature = c('ImgArray'),
+  signature = c('ImageArray'),
   definition = function(object) {
     cat(class(x = object), "Object", 
         paste0(
@@ -124,34 +124,34 @@ setMethod(
   }
 )
 
-#' @describeIn ImgArray-methods dimensions of an ImgArray
+#' @describeIn ImageArray-methods dimensions of an ImageArray
 #' @export
-#' @returns dim of the first level of the ImgArray object
-setMethod("dim", "ImgArray", function(x) dim(x[[1]]))
+#' @returns dim of the first level of the ImageArray object
+setMethod("dim", "ImageArray", function(x) dim(x[[1]]))
 
-#' @describeIn ImgArray-methods dimensions of an ImgArray
+#' @describeIn ImageArray-methods dimensions of an ImageArray
 #' @export
-#' @returns type of ImgArray object
-setMethod("type", "ImgArray", function(x) type(x[[1]]))
+#' @returns type of ImageArray object
+setMethod("type", "ImageArray", function(x) type(x[[1]]))
 
-#' @describeIn ImgArray-methods length of an ImgArray
+#' @describeIn ImageArray-methods length of an ImageArray
 #' @export
-#' @returns length of ImgArray object
-setMethod("length", signature = "ImgArray", function(x) length(x@levels))
+#' @returns length of ImageArray object
+setMethod("length", signature = "ImageArray", function(x) length(x@levels))
 
-#' @describeIn ImgArray-methods ImgArray constructor method
+#' @describeIn ImageArray-methods ImageArray constructor method
 #'
-#' A function for creating objects of ImgArray class
+#' A function for creating objects of ImageArray class
 #'
-#' @param meta the metadata of the ImgArray object. 
+#' @param meta the metadata of the ImageArray object. 
 #' @param levels levels of the pyramid image, typically a vector of integers
 #' starting with 1
 #'
 #' @importFrom S4Vectors new2
 #' @export
-#' @return An ImgArray object
-ImgArray <- function(meta, levels) {
-  S4Vectors::new2("ImgArray", meta = meta, levels = levels)
+#' @return An ImageArray object
+ImageArray <- function(meta, levels) {
+  S4Vectors::new2("ImageArray", meta = meta, levels = levels)
 }
 
 #' createBFArray
@@ -185,12 +185,12 @@ createBFArray <- function(
   image_list <- lapply(resolution, function(res) {
     BFArray(image, series = series, resolution = res)
   })
-  ImgArray(meta = list(axes = c("x", "y", "c")), levels = image_list)
+  ImageArray(meta = list(axes = c("x", "y", "c")), levels = image_list)
 }
 
 #' createMagickArray
 #'
-#' creates an object of ImgArray class from magick image
+#' creates an object of ImageArray class from magick image
 #'
 #' @param image the image
 #' @param n.levels the number of levels of the pyramidal image,
@@ -263,12 +263,12 @@ createMagickArray <- function(
   }
 
   # return
-  ImgArray(meta = list(axes = c("c", "x", "y")), levels = image_list)
+  ImageArray(meta = list(axes = c("c", "x", "y")), levels = image_list)
 }
 
 #' createMagickArray
 #'
-#' creates an object of ImgArray class from magick image
+#' creates an object of ImageArray class from magick image
 #'
 #' @param image the image
 #' @param n.levels the number of levels of the pyramidal image,
@@ -336,12 +336,12 @@ createEBImageArray <- function(
   }
 
   # return
-  ImgArray(meta = meta, levels = image_list)
+  ImageArray(meta = meta, levels = image_list)
 }
 
-#' createImgArray
+#' createImageArray
 #'
-#' creates an object of ImgArray class
+#' creates an object of ImageArray class
 #'
 #' @param image the image
 #' @param n.levels the number of levels of the pyramidal image,
@@ -363,19 +363,19 @@ createEBImageArray <- function(
 #' @importFrom DelayedArray DelayedArray
 #'
 #' @export
-#' @return An ImgArray object
+#' @return An ImageArray object
 #'
 #' @examples
 #' # get image
 #' library(EBImage)
 #' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
-#' # create ImgArray
-#' imgarray <- createImgArray(img.file, n.levels = 3)
+#' # create ImageArray
+#' imgarray <- createImageArray(img.file, n.levels = 3)
 #' imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 #' plot(imgarray_raster)
 #'
-createImgArray <- function(
+createImageArray <- function(
   image,
   n.levels = NULL,
   series = NULL,
@@ -392,7 +392,7 @@ createImgArray <- function(
     image <- read_image(image, engine = engine)
   }
 
-  # create ImgArray from magick
+  # create ImageArray from magick
   if (inherits(image, c("magick-image", "bitmap"))) {
     return(createMagickArray(
       image,
@@ -402,7 +402,7 @@ createImgArray <- function(
     ))
   }
 
-  # create ImgArray from EBImage
+  # create ImageArray from EBImage
   if (inherits(image, c("Image"))) {
     return(createEBImageArray(
       image,
@@ -437,7 +437,7 @@ createImgArray <- function(
   }
 }
 
-#' writeImgArray
+#' writeImageArray
 #'
 #' Writing image arrays on disk
 #'
@@ -456,7 +456,8 @@ createImgArray <- function(
 #' @param engine the package to use for each image layer: either
 #' \code{EBImage} or \code{magick-image}
 #' @param verbose verbose
-#' @param ... additional parameters passed to \link[ImageArray]{createImgArray}.
+#' @param ... additional parameters passed to 
+#' \link[ImageArray]{createImageArray}.
 #'
 #' @importFrom HDF5Array writeHDF5Array
 #' @importFrom Rarr writeZarrArray
@@ -464,29 +465,29 @@ createImgArray <- function(
 #' @import DelayedArray
 #'
 #' @export
-#' @returns An ImgArray object
+#' @returns An ImageArray object
 #'
 #' @examples
 #' # get image
 #' library(EBImage)
 #' img.file <- system.file("images", "sample.png", package="EBImage")
 #'
-#' # create ImgArray
+#' # create ImageArray
 #' dir.create(td <- tempfile())
 #' output_h5ad <- file.path(td, "h5test")
-#' imgarray <- writeImgArray(img.file,
+#' imgarray <- writeImageArray(img.file,
 #'                           output = output_h5ad,
 #'                           name = "image",
-#'                           format = "HDF5ImgArray",
+#'                           format = "HDF5ImageArray",
 #'                           replace = TRUE, verbose = FALSE)
 #' imgarray_raster <- as.raster(imgarray)
 #' plot(imgarray_raster)
 #'
-writeImgArray <- function(
+writeImageArray <- function(
   image,
   output = "my_image",
   name = "",
-  format = c("InMemoryImgArray", "HDF5ImgArray", "ZarrImgArray"),
+  format = c("InMemoryImageArray", "HDF5ImageArray", "ZarrImageArray"),
   replace = FALSE,
   n.levels = NULL,
   chunkdim = NULL,
@@ -501,7 +502,7 @@ writeImgArray <- function(
   # path
   ondisk_path <- paste0(
     output,
-    ifelse(format == "HDF5ImgArray", ".h5", ".zarr")
+    ifelse(format == "HDF5ImageArray", ".h5", ".zarr")
   )
 
   # create or replace output folder
@@ -515,8 +516,8 @@ writeImgArray <- function(
   }
 
   # make Image Array
-  if (!inherits(image, "ImgArray")) {
-    image_list <- createImgArray(
+  if (!inherits(image, "ImageArray")) {
+    image_list <- createImageArray(
       image,
       n.levels = n.levels,
       verbose = verbose,
@@ -529,7 +530,7 @@ writeImgArray <- function(
   # open ondisk store
   switch(
     format,
-    HDF5ImgArray = {
+    HDF5ImageArray = {
       if (!file.exists(ondisk_path)) {
         rhdf5::h5createFile(ondisk_path)
       }
@@ -537,7 +538,7 @@ writeImgArray <- function(
       if(!name %in% c("", "/"))
         rhdf5::h5createGroup(ondisk_path, group = name)
     },
-    ZarrImgArray = {
+    ZarrImageArray = {
       dir.zarr <- gsub(paste0(basename(ondisk_path), "$"), "", ondisk_path)
       open_zarr(dir = dir.zarr, name = basename(ondisk_path))
       zarrcreateGroup(ondisk_path, name)
@@ -552,7 +553,7 @@ writeImgArray <- function(
     # write array
     switch(
       format,
-      HDF5ImgArray = {
+      HDF5ImageArray = {
         image_list[[i]] <-
           HDF5Array::writeHDF5Array(
             img,
@@ -565,7 +566,7 @@ writeImgArray <- function(
             verbose = verbose
           )
       },
-      ZarrImgArray = {
+      ZarrImageArray = {
         chunk_dim <- stats::setNames(dim(img),ax)
         chunk_dim["x"] <- min(chunk_dim["x"], 2000)
         chunk_dim["y"] <- min(chunk_dim["y"], 2000)
@@ -576,7 +577,7 @@ writeImgArray <- function(
             chunk_dim = chunk_dim
           )
       },
-      InMemoryImgArray = {
+      InMemoryImageArray = {
         image_list[[i]] <- img
       }
     )

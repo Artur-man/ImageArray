@@ -7,31 +7,31 @@
 getImageInfo(object)
 }
 \arguments{
-\item{object}{an ImgArray object}
+\item{object}{an ImageArray object}
 }
 \value{
 a data frame of width and height info
 }
 \description{
-get information of an ImgArray object
+get information of an ImageArray object
 }
 \examples{
 # get image
 library(EBImage)
 img.file <- system.file("images", "sample.png", package="EBImage")
 
-# create ImgArray
+# create ImageArray
 dir.create(td <- tempfile())
 output_h5ad <- file.path(td, "h5test")
-imgarray <- writeImgArray(img.file,
+imgarray <- writeImageArray(img.file,
                           output = output_h5ad,
                           name = "image",
-                          format = "HDF5ImgArray",
+                          format = "HDF5ImageArray",
                           replace = TRUE, verbose = FALSE)
 getImageInfo(imgarray)
 
-# create ImgArray
-imgarray <- createImgArray(img.file, n.levels = 3)
+# create ImageArray
+imgarray <- createImageArray(img.file, n.levels = 3)
 imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 getImageInfo(imgarray)
 

@@ -1,23 +1,23 @@
-#' path of ImgArray image
+#' path of ImageArray image
 #'
-#' @param object an ImgArray object
+#' @param object an ImageArray object
 #' @importFrom DelayedArray path
 #' @export
-#' @returns the path to ImgArray object store
-setMethod("path", signature = "ImgArray", function(object) {
+#' @returns the path to ImageArray object store
+setMethod("path", signature = "ImageArray", function(object) {
   DelayedArray::path(object[[1]])
 })
 
-#' path of ImgArray image
+#' path of ImageArray image
 #'
-#' @param object an ImgArray object
+#' @param object an ImageArray object
 #' @param value the new path
 #' @importFrom methods slotNames slot slot<-
 #' @export
-#' @return does not return a value, updates the path of the ImgArray object
+#' @return does not return a value, updates the path of the ImageArray object
 setReplaceMethod(
   "path",
-  signature = "ImgArray",
+  signature = "ImageArray",
   function(object, value) {
     n.levels <- length(object)
     for (i in seq_len(n.levels)) {

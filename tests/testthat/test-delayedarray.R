@@ -18,10 +18,10 @@ mat_image <- magick::image_read(mat_raster)
 test_that("path hdf5", {
   
   # h5
-  mat_list <- writeImgArray(mat_image, 
+  mat_list <- writeImageArray(mat_image, 
                               output = output_h5ad, 
                               name = "image",
-                              format = "HDF5ImgArray", 
+                              format = "HDF5ImageArray", 
                               replace = TRUE, verbose = FALSE)
   expect_equal(length(mat_list),1)
   expect_true(file.exists(path(mat_list)))
@@ -38,10 +38,10 @@ test_that("path hdf5", {
 test_that("path zarr", {
   # zarr
   unlink(output_zarr, recursive = TRUE)
-  mat_list <- writeImgArray(mat_image, 
+  mat_list <- writeImageArray(mat_image, 
                               output = output_zarr, 
                               name = "image",
-                              format = "ZarrImgArray", 
+                              format = "ZarrImageArray", 
                               replace = TRUE, verbose = FALSE)
   expect_equal(length(mat_list),1)
   expect_true(dir.exists(path(mat_list)))

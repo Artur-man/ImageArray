@@ -15,13 +15,13 @@ mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
 # read as magick object
 mat_image <- magick::image_read(mat_raster)
 
-test_that("manipulate h5 ImgArray", {
+test_that("manipulate h5 ImageArray", {
   
   # create image array
-  mat_list <- writeImgArray(mat_image, 
+  mat_list <- writeImageArray(mat_image, 
                               output = output_h5ad, 
                               name = "image",
-                              format = "HDF5ImgArray", 
+                              format = "HDF5ImageArray", 
                               replace = TRUE, 
                               verbose = FALSE)
   expect_equal(length(mat_list),4)
@@ -57,10 +57,10 @@ test_that("manipulate h5 ImgArray", {
   expect_equal(realize(mat_list_flipflop)[1,,][,1], rev(realize(mat_list)[1,,][,1]))
   
   # modulate
-  mat_list <- writeImgArray(mat_image, 
+  mat_list <- writeImageArray(mat_image, 
                             output = output_h5ad, 
                             name = "image",
-                            format = "HDF5ImgArray", 
+                            format = "HDF5ImageArray", 
                             engine = "EBImage",
                             replace = TRUE, 
                             verbose = FALSE)
@@ -75,14 +75,14 @@ test_that("manipulate h5 ImgArray", {
   expect_equal(orig, newmat)
 })
 
-test_that("manipulate zarr ImgArray", {
+test_that("manipulate zarr ImageArray", {
   
   # create image array
   unlink(output_zarr, recursive = TRUE)
-  mat_list <- writeImgArray(mat_image, 
+  mat_list <- writeImageArray(mat_image, 
                             output = output_zarr, 
                             name = "image",
-                            format = "ZarrImgArray", 
+                            format = "ZarrImageArray", 
                             replace = TRUE, verbose = FALSE)
   expect_equal(length(mat_list),4)
   expect_equal(dim(mat_list), c(3,5000,2000))
@@ -120,10 +120,10 @@ test_that("manipulate zarr ImgArray", {
   expect_equal(realize(mat_list_flipflop)[1,,][,1], rev(realize(mat_list)[1,,][,1]))
   
   # modulate
-  mat_list <- writeImgArray(mat_image, 
+  mat_list <- writeImageArray(mat_image, 
                             output = output_zarr, 
                             name = "image",
-                            format = "ZarrImgArray", 
+                            format = "ZarrImageArray", 
                             replace = TRUE, 
                             verbose = FALSE)
   expect_equal(length(mat_list),4)
