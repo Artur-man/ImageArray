@@ -16,7 +16,7 @@ vignette: |
 ```{r load-libs}
 library(BiocFileCache)
 library(EBImage)
-library(ImageArray)
+# library(ImageArray)
 library(ggplot2)
 library(shiny)
 ```
@@ -56,6 +56,7 @@ imgarray <- writeImageArray(img,
                          format = "HDF5ImageArray", 
                          output = output_h5, 
                          replace = TRUE)
+imgarray
 ```
 
 ```{r visualize_read}

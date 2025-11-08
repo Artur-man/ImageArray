@@ -1,7 +1,20 @@
 # ImageArray
 
-Package for Pyramidal and non-pyramidal images in 
-`r Biocpkg("DelayedArray")` format 
+**ImageArray** provides a unified, memory‑efficient way to work with pyramidal and non‑pyramidal images using the `DelayedArray` infrastructure. 
+It stores large images in memory or on disk (**HDF5** or **Zarr**), exposes them through an array‑like API, and applies common image operations 
+consistently across all pyramid levels
+
+- **Pyramids:** multi‑resolution stacks of, e.g., from Zarr or OME‑TIFF images as a single object.
+- **Interoperability:** plays nicely with image classes across R/Bioconductor, such as **EBImage** or **magick**. 
+- **Delayed operations:** rotate/flip/flop/negate, cropping and slicing – performed lazily (without loading to memory) via `DelayedArray`.
+- **Backends:** HDF5 and Zarr on‑disk storage using **HDF5Array** and **Rarr** packages.
+
+<div style="display: flex; align-items: left;">
+
+<div style="flex: 1; padding-right: 20px;">
+## What are image pyramids?
+An **image pyramid** is a multi‑scale representation built by repeatedly smoothing and down‑sampling an image (e.g. Gaussian/Laplacian pyramids). 
+Pyramids make zooming, visualization, and scale‑aware analysis efficient – a staple in digital pathology and large microscopy images.
 
 ## Installation
 
@@ -13,107 +26,89 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 }
 BiocManager::install("ImageArray")
 ```
+</div>
 
-## Usage
+<div style="flex: 0 0 30%;">
+<img src="inst/extdata/dz-pyramid.png" alt="ImageArray logo" width="100%">
+</div>
 
-The main purpose of the `r Biocpkg("ImageArray")` is to deliver 
-`r Biocpkg("DelayedArray")` operations for a list of images in Pyramidal format. 
-Here, we first store the image in HDF5. 
+</div>
 
-``` r
-# make random magick image
-arr <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), dim=c(2000, 5000, 3))
-img_raster <- as.raster(arr, max = 255)
-img <- as.Image(img_raster)
+## Getting started
 
-# create image array
+```r
+library(ImageArray)
+library(EBImage)
+
+img_file <- system.file("images", "sample.png", package="EBImage")
+img = readImage(img_file)
+
 dir.create(td <- tempfile())
-output_h5ad <- file.path(td, "h5test")
+h5_sample <- file.path(td, "sample")
 imgarray <- writeImageArray(img, 
-                         format = "HDF5ImageArray", 
-                         output = output_h5ad, 
-                         replace = TRUE)
+                            format = "HDF5ImageArray", 
+                            output = h5_sample, 
+                            replace = TRUE)
+```
+
+```
+ImageArray Object (x,y) 
+Level 1 (768,512) 
+Level 2 (384,256)
+```
+
+```r
+plot(as.raster(imgarray))
+```
+
+<img src="inst/extdata/sample.png" width="30%">
+
+<br>
+
+A number of memory-efficient (delayed or lazy) operations are available 
+for pyramid images. 
+
+```r
+imgarray <- rotate(imgarray, degrees = 90)
+imgarray <- flip(imgarray)
+imgarray <- flop(imgarray)
+imgarray  <- negate(imgarray)
+imgarray
+```
+
+<br>
+
+We can crop or slice images via indexing.
+
+```r
+# crop or slice via indexing
+imgarray <- imgarray[100:200, 200:300]
 imgarray
 ```
 
 ```
-ImageArray Object 
-Series 1 of size (3,5000,2000) 
-Series 2 of size (3,2500,1000) 
-Series 3 of size (3,1250,500) 
-Series 4 of size (3,625,250)
+ImageArray Object (x,y) 
+Level 1 (101,101) 
+Level 2 (51,51) 
 ```
 
-Operations such as rotate, flip, flop or negate will be conducted on all series
+<br>
 
-``` r
-imgarray_rotated <- rotate(imgarray, degrees = 90)
-imgarray_rotated
-```
+You can also use an existing OME-TIFF (or any Bioformats image) to 
+create an ImageArray object. 
 
-```
-ImageArray Object 
-Series 1 of size (3,2000,5000) 
-Series 2 of size (3,1000,2500) 
-Series 3 of size (3,500,1250) 
-Series 4 of size (3,250,625) 
-```
-
-You can even crop images or slice.
-
-``` r
-# crop(imgarray, ind = list(2001:3000, 501:1000))
-imgarray_cropped <- imgarray[2001:3000, 501:1000]
-imgarray_cropped
-```
-
-```
-ImageArray Object 
-Series 1 of size (3,1000,500) 
-Series 2 of size (3,501,251) 
-Series 3 of size (3,251,126) 
-Series 4 of size (3,126,64)
-```
-
-You can also use Zarr for storing the image. 
-
-``` r
-# make random magick image
-arr <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), dim=c(2000, 5000, 3))
-img_raster <- as.raster(arr, max = 255)
-img <- magick::image_read(img_raster)
-
-# create image array
-dir.create(td <- tempfile())
-output_zarr <- file.path(td, "zarrtest")
-imgarray <- writeImageArray(img, 
-                          format = "ZarrImageArray", 
-                          output = output_zarr, 
-                          replace = TRUE)
+```r
+ome_file <- system.file("extdata", 
+                        "xy_12bit__plant.ome.tiff", 
+                        package = "ImageArray")
+imgarray   <- createImageArray(ome_file, 
+                               series = 1, 
+                               resolution = 1:2)
 imgarray
 ```
 
 ```
-ImageArray Object 
-Series 1 of size (3,5000,2000) 
-Series 2 of size (3,2500,1000) 
-Series 3 of size (3,1250,500) 
-Series 4 of size (3,625,250)
+ImageArray Object (x,y,c) 
+Level 1 (512,512,1) 
+Level 2 (256,256,1) 
 ```
-
-Finally, we can parse multiple resolutions of an ome.tiff in an ImageArray object.
-
-``` r
-# get ome.tiff
-img.file <- system.file("extdata", "xy_12bit__plant.ome.tiff", package = "ImageArray")
-
-# read as ImageArray
-img <- createImageArray(img.file, n.series = 1, resolution = 1:2)
-```
-
-```
-ImageArray Object 
-Series 1 of size (512,512) 
-Series 2 of size (256,256)
-```
-
