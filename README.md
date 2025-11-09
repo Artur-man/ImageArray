@@ -36,6 +36,11 @@ BiocManager::install("ImageArray")
 
 ## Getting started
 
+**ImageArray** allows saving images to either HDF5 (HDF5ImageArray) or 
+Zarr (ZarrImageArray) where you can define the number of layers of the 
+pyramids (i.e. number of downscaled images) and the path to the on-disk h5 
+or zarr store. 
+
 ```r
 library(ImageArray)
 library(EBImage)
@@ -48,6 +53,7 @@ h5_sample <- file.path(td, "sample")
 imgarray <- writeImageArray(img, 
                             format = "HDF5ImageArray", 
                             output = h5_sample, 
+                            nlevels = 2,
                             replace = TRUE)
 ```
 
@@ -66,7 +72,8 @@ plot(as.raster(imgarray))
 <br>
 
 A number of memory-efficient (delayed or lazy) operations are available 
-for pyramid images. 
+for pyramid images, including rotation (0, 90, 180, 270), horizontal or 
+vertical flipping and negation. 
 
 ```r
 imgarray <- rotate(imgarray, degrees = 90)
@@ -78,7 +85,7 @@ imgarray
 
 <br>
 
-We can crop or slice images via indexing.
+We can crop or slice images via lazy indexing.
 
 ```r
 # crop or slice via indexing
@@ -94,7 +101,7 @@ Level 2 (51,51)
 
 <br>
 
-You can also use an existing OME-TIFF (or any Bioformats image) to 
+You can also use an existing **OME-TIFF** (or any Bioformats image) to 
 create an ImageArray object. 
 
 ```r
