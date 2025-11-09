@@ -9,9 +9,10 @@ consistently across all pyramid levels
 - **Delayed operations:** rotate/flip/flop/negate, cropping and slicing – performed lazily (without loading to memory) via `DelayedArray`.
 - **Backends:** HDF5 and Zarr on‑disk storage using **HDF5Array** and **Rarr** packages.
 
-<table style="border: none!important">
-<tr style="border: none!important">
-<td width="65%" valign="top" style="border: none!important">
+<img
+  src="inst/extdata/dz-pyramid.png"
+  align="right" width="250" alt="image" hspace="10"
+/>
 
 ## What are image pyramids?
 
@@ -27,12 +28,6 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 }
 BiocManager::install("ImageArray")
 ```
-</td>
-<td width="28%" style="border: none!important">
-<img src="inst/extdata/dz-pyramid.png" alt="ImageArray logo" width="100%" hspace="10">
-</td>
-</tr>
-</table>
 
 ## Getting started
 
