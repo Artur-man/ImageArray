@@ -19,8 +19,7 @@ consistently across all pyramid levels
 An **image pyramid** is a multi‑scale representation built by repeatedly smoothing and down‑sampling an image (e.g. Gaussian/Laplacian pyramids). 
 Pyramids make zooming, visualization, and scale‑aware analysis efficient – a staple in digital pathology and large microscopy images.
 
-<h2>Installation</h2>
-<hr width="30%" align="center" noshade>
+## Installation
 
 You can install ImageArray from Bioconductor with:
 ``` r
