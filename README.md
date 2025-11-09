@@ -9,7 +9,7 @@ consistently across all pyramid levels
 - **Delayed operations:** rotate/flip/flop/negate, cropping and slicing – performed lazily (without loading to memory) via `DelayedArray`.
 - **Backends:** HDF5 and Zarr on‑disk storage using **HDF5Array** and **Rarr** packages.
 
-<table>
+<table border="0">
 <tr>
 <td width="65%" valign="top">
 
@@ -20,7 +20,7 @@ Pyramids make zooming, visualization, and scale‑aware analysis efficient – a
 
 ## Installation
 
-You can install `r Biocpkg("ImageArray")` from Bioconductor with:
+You can install ImageArray from Bioconductor with:
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
