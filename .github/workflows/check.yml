@@ -126,7 +126,7 @@ jobs:
           ## https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016675.html
           ## https://github.com/r-lib/remotes/issues/296
           ## Ideally, all dependencies should get installed in the first pass.
-          install.packages(c("rcmdcheck", "BiocCheck"), repos = BiocManager::repositories())
+          install.packages(c("rcmdcheck", "BiocCheck", "remotes"), repos = BiocManager::repositories())
           remotes::install_local(dependencies = TRUE, repos = BiocManager::repositories(), build_vignettes = FALSE, upgrade = TRUE)
         shell: Rscript {0}
       
