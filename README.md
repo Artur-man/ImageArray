@@ -9,7 +9,7 @@ consistently across all pyramid levels
 - **Delayed operations:** rotate/flip/flop/negate, cropping and slicing – performed lazily (without loading to memory) via `DelayedArray`.
 - **Backends:** HDF5 and Zarr on‑disk storage using **HDF5Array** and **Rarr** packages.
 
-<table border="0">
+<table style="border: none!important">
 <tr>
 <td width="65%" valign="top">
 
