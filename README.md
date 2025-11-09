@@ -9,17 +9,18 @@ consistently across all pyramid levels
 - **Delayed operations:** rotate/flip/flop/negate, cropping and slicing – performed lazily (without loading to memory) via `DelayedArray`.
 - **Backends:** HDF5 and Zarr on‑disk storage using **HDF5Array** and **Rarr** packages.
 
+## What are image pyramids?
+
 <img
   src="inst/extdata/dz-pyramid.png"
   align="right" width="250" alt="image" hspace="10"
 />
 
-## What are image pyramids?
-
 An **image pyramid** is a multi‑scale representation built by repeatedly smoothing and down‑sampling an image (e.g. Gaussian/Laplacian pyramids). 
 Pyramids make zooming, visualization, and scale‑aware analysis efficient – a staple in digital pathology and large microscopy images.
 
-## Installation
+<h2>Installation</h2>
+<hr width="30%" align="center" noshade>
 
 You can install ImageArray from Bioconductor with:
 ``` r
