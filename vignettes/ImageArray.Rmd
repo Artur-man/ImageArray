@@ -16,7 +16,7 @@ vignette: |
 ```{r load-libs}
 library(BiocFileCache)
 library(EBImage)
-# library(ImageArray)
+library(ImageArray)
 library(ggplot2)
 library(shiny)
 ```

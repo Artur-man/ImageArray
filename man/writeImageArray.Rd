@@ -44,7 +44,8 @@ writing the data to disk.}
 
 \item{verbose}{verbose}
 
-\item{...}{additional parameters passed to \link[ImageArray]{createImageArray}.}
+\item{...}{additional parameters passed to 
+\link[ImageArray]{createImageArray}.}
 }
 \value{
 An ImageArray object
