@@ -11,12 +11,15 @@ consistently across all pyramid levels
 
 <table>
 <tr>
-<td width="70%" valign="top">
+<td width="65%" valign="top">
+
 ## What are image pyramids?
+
 An **image pyramid** is a multi‑scale representation built by repeatedly smoothing and down‑sampling an image (e.g. Gaussian/Laplacian pyramids). 
 Pyramids make zooming, visualization, and scale‑aware analysis efficient – a staple in digital pathology and large microscopy images.
 
 ## Installation
+
 You can install `r Biocpkg("ImageArray")` from Bioconductor with:
 ``` r
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
@@ -25,7 +28,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 BiocManager::install("ImageArray")
 ```
 </td>
-<td>
+<td width="28%">
 <img src="inst/extdata/dz-pyramid.png" alt="ImageArray logo" width="100%" hspace="10">
 </td>
 </tr>
