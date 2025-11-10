@@ -1,6 +1,8 @@
 library(magick)
 skip_if_not_installed("ggplot2")
+skip_if_not_installed("RBioFormats")
 library(ggplot2)
+library(RBioFormats)
 
 # image file
 img.file <- system.file("extdata", "xy_12bit__plant.ome.tiff", package = "ImageArray")
