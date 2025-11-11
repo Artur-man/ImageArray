@@ -12,13 +12,13 @@
 #'
 #' @name BFArray-methods
 #' @rdname BFArray-methods
-#' @importFrom RBioFormats read.metadata
 #'
 #' @export
 #' @return A BFArray object
 #' 
 #' @examples
 #' # get image
+#' library(RBioFormats)
 #' img.file <- system.file("extdata", 
 #'                         "xy_12bit__plant.ome.tiff", 
 #'                         package = "ImageArray")
@@ -26,6 +26,11 @@
 #' dim(bfa)
 #' type(bfa)
 BFArray <- function(image.file, series, resolution) {
+  
+  # check RBioFormats
+  if(!requireNamespace("RBioFormats"))
+    stop("Please install RBioFormats: BiocManager::install('RBioFormats')")
+  
   # get metadata
   meta <- RBioFormats::read.metadata(
     file = image.file,
@@ -108,9 +113,13 @@ setMethod("type", "BFArraySeed", function(x) x@type)
 ### extract_array()
 ###
 
-#' @importFrom RBioFormats read.metadata read.image
 #' @importFrom EBImage imageData
 .extract_array_from_BFArraySeed <- function(x, index) {
+  
+  # check RBioFormats
+  if(!requireNamespace("RBioFormats"))
+    stop("Please install RBioFormats: BiocManager::install('RBioFormats')")
+  
   # get metadata
   meta <- RBioFormats::read.metadata(
     file = x@filepath,

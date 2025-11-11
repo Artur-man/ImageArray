@@ -73,10 +73,6 @@ vertical flipping and negation.
 
 ```r
 imgarray <- rotate(imgarray, degrees = 90)
-imgarray <- flip(imgarray)
-imgarray <- flop(imgarray)
-imgarray  <- negate(imgarray)
-imgarray
 ```
 
 <br>
@@ -98,9 +94,10 @@ Level 2 (51,51)
 <br>
 
 You can also use an existing **OME-TIFF** (or any Bioformats image) to 
-create an ImageArray object. 
+create an ImageArray object which we use **RBioFormats** package too.
 
 ```r
+library(RBioFormats)
 ome_file <- system.file("extdata", 
                         "xy_12bit__plant.ome.tiff", 
                         package = "ImageArray")
