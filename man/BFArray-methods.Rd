@@ -40,6 +40,7 @@ A function for creating objects of BFArray class
 }}
 \examples{
 # get image
+library(RBioFormats)
 img.file <- system.file("extdata", 
                         "xy_12bit__plant.ome.tiff", 
                         package = "ImageArray")
