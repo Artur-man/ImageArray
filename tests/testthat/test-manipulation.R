@@ -9,8 +9,9 @@ output_zarr <- file.path(td, "zarrtest")
 
 # build image array 
 set.seed(1)
-mat <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), dim=c(3, 2000, 5000))
-mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
+mat <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), 
+             dim=c(2000, 5000, 3))
+mat_raster <- as.raster(mat, max = 255)
 
 # read as magick object
 mat_image <- magick::image_read(mat_raster)
@@ -52,9 +53,11 @@ test_that("manipulate h5 ImageArray", {
   
   # flip flop 
   mat_list_flipflop <- flip(mat_list)
-  expect_equal(realize(mat_list_flipflop)[1,,][1,], rev(realize(mat_list)[1,,][1,]))
+  expect_equal(realize(mat_list_flipflop)[1,,][1,], 
+               rev(realize(mat_list)[1,,][1,]))
   mat_list_flipflop <- flop(mat_list)
-  expect_equal(realize(mat_list_flipflop)[1,,][,1], rev(realize(mat_list)[1,,][,1]))
+  expect_equal(realize(mat_list_flipflop)[1,,][,1], 
+               rev(realize(mat_list)[1,,][,1]))
   
   # modulate
   mat_list <- writeImageArray(mat_image, 
@@ -115,9 +118,11 @@ test_that("manipulate zarr ImageArray", {
   
   # flip flop 
   mat_list_flipflop <- flip(mat_list)
-  expect_equal(realize(mat_list_flipflop)[1,,][1,], rev(realize(mat_list)[1,,][1,]))
+  expect_equal(realize(mat_list_flipflop)[1,,][1,], 
+               rev(realize(mat_list)[1,,][1,]))
   mat_list_flipflop <- flop(mat_list)
-  expect_equal(realize(mat_list_flipflop)[1,,][,1], rev(realize(mat_list)[1,,][,1]))
+  expect_equal(realize(mat_list_flipflop)[1,,][,1], 
+               rev(realize(mat_list)[1,,][,1]))
   
   # modulate
   mat_list <- writeImageArray(mat_image, 

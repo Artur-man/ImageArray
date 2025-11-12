@@ -9,8 +9,8 @@ output_zarr <- file.path(td, "zarrtest")
 
 # build image array 
 set.seed(1)
-mat <- array(data=sample(1:13, 20*50*3, replace = TRUE), dim=c(3, 20, 50))
-mat_raster <- as.raster(aperm(mat, perm = c(2,3,1)), max = 255)
+mat <- array(data=sample(1:13, 20*50*3, replace = TRUE), dim=c(20, 50, 3))
+mat_raster <- as.raster(mat, max = 255)
 
 # read as magick object
 mat_image <- magick::image_read(mat_raster)

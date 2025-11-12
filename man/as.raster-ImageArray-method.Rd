@@ -4,10 +4,12 @@
 \alias{as.raster,ImageArray-method}
 \title{as.raster method for ImageArray object}
 \usage{
-\S4method{as.raster}{ImageArray}(x, max.pixel.size = NULL, min.pixel.size = NULL)
+\S4method{as.raster}{ImageArray}(x, level = NULL, max.pixel.size = NULL, min.pixel.size = NULL)
 }
 \arguments{
 \item{x}{an ImageArray object}
+
+\item{level}{level}
 
 \item{max.pixel.size}{maximum pixel size}
 

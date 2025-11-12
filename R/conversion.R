@@ -5,6 +5,7 @@
 #' @param x an ImageArray object
 #' @param max.pixel.size maximum pixel size
 #' @param min.pixel.size minimum pixel size
+#' @param level level
 #' @importFrom S4Arrays as.array.Array
 #'
 #' @export
@@ -27,7 +28,21 @@
 setMethod(
   "realize",
   signature = "ImageArray",
-  function(x, max.pixel.size = NULL, min.pixel.size = NULL) {
+  function(x, level = NULL, max.pixel.size = NULL, min.pixel.size = NULL) {
+    
+    # return level if specified
+    if(!is.null(level)){
+      if (level %% 1 == 0) {
+        if(level <= length(x@levels)){
+          return(S4Arrays::as.array.Array(x[[level]]))
+        } else {
+          stop("'level' should be smaller than or equal to the ",
+               "size of the pyramid")
+        }
+      } else {
+        stop("'level' should be an integer.")
+      }
+    }
     
     # axes
     ax <- axes(x)
@@ -120,6 +135,7 @@ setMethod(
 #' as.raster method for ImageArray object
 #'
 #' @param x an ImageArray object
+#' @param level level
 #' @param max.pixel.size maximum pixel size
 #' @param min.pixel.size minimum pixel size
 #'
@@ -145,7 +161,7 @@ setMethod(
 setMethod(
   "as.raster",
   signature = "ImageArray",
-  function(x, max.pixel.size = NULL, min.pixel.size = NULL) {
+  function(x, level = NULL, max.pixel.size = NULL, min.pixel.size = NULL) {
     
     # get axes
     ax <- axes(x)
@@ -154,6 +170,7 @@ setMethod(
     # realize
     rx <- realize(
       x,
+      level = level,
       max.pixel.size = max.pixel.size,
       min.pixel.size = min.pixel.size
     )

@@ -24,8 +24,13 @@ library(shiny)
 
 # Introduction
 
-The *ImageArray* package provides a **unified, memory-efficient** framework for working with both **pyramidal** and **non-pyramidal** images in R, leveraging the DelayedArray infrastructure.  
-With ImageArray you can store large images on disk (HDF5 or Zarr), treat them as array-like objects, perform lazy/blocked operations (e.g., rotate, flip, crop) across all pyramid levels, and seamlessly integrate with standard R image workflows.
+The `r Biocpkg("ImageArray")` package provides a **unified, memory-efficient** 
+framework for working with both **pyramidal** and **non-pyramidal** images in R 
+by leveraging the `r Biocpkg("DelayedArray")` infrastructure. With 
+`r Biocpkg("ImageArray")` you can store large images on disk (HDF5 or Zarr), 
+treat them as array-like objects, perform delayed/lazy operations (e.g., 
+rotate, flip, crop) across all pyramid levels, and seamlessly integrate with 
+standard R image workflows.
 
 # Installation
 
@@ -40,46 +45,77 @@ BiocManager::install("ImageArray")
 
 # Why pyramidal images?
 
-Image pyramids are multi-resolution representations: starting from a full resolution image, you generate a series of down-sampled versions (e.g., half resolution, quarter resolution, etc). These are common in microscopy, digital pathology and large-scale imaging because:
+Image pyramids are multi-resolution representations: starting from a full 
+resolution image, you generate a series of down-sampled versions (e.g., half 
+resolutions). These are common in microscopy, digital pathology and large-scale 
+imaging because:
 
-- They allow fast zooming and visualization (you don’t always need full resolution to inspect large images).  
-- They support scale-aware analysis (you may operate on coarse levels when doing overview tasks, fine levels for detail).  
-- Storing data in a pyramidal stack often reduces memory footprint and enables on-disk processing.
+- They allow fast zooming and visualization (you don’t always need full 
+resolution to inspect large images).  
+- They support scale-aware analysis (you may operate on coarse levels when 
+doing overview tasks, fine levels for detail).  
+- Storing data in a pyramidal stack often reduces memory footprint and 
+enables on-disk processing.
 
-In our context, an ImageArray object may contain **multiple series** (each a resolution level) internally, and most operations are applied *consistently* across all series.
+In our context, an ImageArray object may contain **multiple series** 
+(each a resolution level) internally, and most operations are applied 
+lazily across all series.
 
 # Usage
 
 ## EBImage
 
-The main usage of the `r Biocpkg("ImageArray")` is to deliver 
-`r Biocpkg("DelayedArray")` operations for images or a list of images in 
-Pyramidal format. You can also use
-`magick-image` objects.
+We primarily use images via the `r Biocpkg("EBImage")` package. 
 
 ```{r read}
 # make random EBImage image
 f = system.file("images", "sample.png", package="EBImage")
 img = readImage(f)
+```
 
+Similar to its counterparts (see `writeHDF5Array` in `r Biocpkg("HDF5Array")`), 
+we use the `writeImageArray` function to write pyramid images to preferred 
+locations. Here, `n.levels` control the amount of levels that the pyramid image
+should have. 
+
+```{r write}
 # create image array
 dir.create(td <- tempfile())
 output_h5 <- file.path(td, "h5test")
 imgarray <- writeImageArray(img, 
-                         format = "HDF5ImageArray", 
-                         output = output_h5, 
-                         replace = TRUE)
+                            format = "HDF5ImageArray", 
+                            output = output_h5, 
+                            n.levels = 2,
+                            replace = TRUE)
 imgarray
 ```
 
+Each level of a pyramid can be rasterized at any time.
+
 ```{r visualize_read}
 # visualize 
-bfa.raster <- as.raster(imgarray, max.pixel.size = 300)
+bfa.raster <- as.raster(imgarray, level = 2)
 plot(bfa.raster)
 ```
 
+However, the true functionality of `r Biocpkg("ImageArray")` is to pick
+pyramid levels in a memory-efficient level. Thus, packages and applications
+that use `r Biocpkg("ImageArray")` can rasterize images by defining thresholds
+for the pixel dimensions of the levels that are realized to the memory.
+
+Here, by using the `max.pixel.size`, we request `r Biocpkg("ImageArray")` to 
+return a pyramid level whose both width (`X`) and height (`Y`) are lower than
+300. 
+
+```{r visualize_read2}
+# visualize 
+bfa.raster <- as.raster(imgarray, max.pixel.size = 300)
+dim(bfa.raster)
+```
+
 Operations such as rotate, flip, flop or negate will be 
-conducted on all levels
+conducted on all levels (without loading the image on the memory)
+which then can be rasterized and plotted.
 
 ```{r rotate}
 imgarray_rotated <- rotate(imgarray, degrees = 90)
@@ -90,7 +126,7 @@ bfa.raster <- as.raster(imgarray_rotated, max.pixel.size = 300)
 plot(bfa.raster)
 ```
 
-You can even crop images, either by using `crop` or `[` method.
+You can even crop images, either by using `crop` or `[` methods.
 
 ```{r crop}
 imgarray_cropped <- imgarray[300:500, 200:300]
@@ -99,9 +135,7 @@ imgarray_cropped
 # visualize 
 bfa.raster <- as.raster(imgarray_cropped, max.pixel.size = 300)
 plot(bfa.raster)
-```
 
-```{r crop2}
 imgarray_cropped <- crop(imgarray, ind = list(300:500, 200:300))
 imgarray_cropped
 
@@ -111,6 +145,10 @@ plot(bfa.raster)
 ```
 
 ## magick images
+
+`r Biocpkg("ImageArray")` is also compatible with the `r CRANpkg("magick")` 
+package where we retain the dimensionality of the image similar to 
+`r Biocpkg("EBImage")`.
 
 ```{r read3}
 # make random EBImage image
@@ -125,49 +163,50 @@ imgarray <- writeImageArray(img,
                          output = output_h5, 
                          replace = TRUE)
 
-bfa.raster <- as.raster(imgarray, max.pixel.size = 300)
+# plot
+bfa.raster <- as.raster(imgarray, level = 2)
 plot(bfa.raster)
 ```
 
 ## OME.TIFF (Bio-Formats) images
 
-You can create `ImageArray` objects from OME.TIFF files with already defined
-layers. 
+You can create `ImageArray` objects from OME-TIFF files (or image formats that 
+are compatible with Bio-formats, see `r Biocpkg("RBioFormats")`) with 
+already defined layers. 
 
 ```{r ometiff}
 ome.tiff.file <- system.file("extdata", "xy_12bit__plant.ome.tiff", 
                              package = "ImageArray")
+RBioFormats::read.metadata(ome.tiff.file)
+
+# define ImageArray object
 imgarray <- createImageArray(ome.tiff.file, series = 1, resolution = 1:2)
 imgarray
 ```
 
-Depending on the requested pixel size, functions may return the desired
-resolution from the pyramid.
-
-```{r ometiffvis, out.width="50%"}
-bfa.raster <- as.raster(imgarray)
-plot(bfa.raster)
-dim(bfa.raster)
-```
-
-You can use either `max.pixel.size` or `min.pixel.size` to control the output
+You can again use either `max.pixel.size` or `min.pixel.size` to control 
+the output or level.
 
 ```{r ometiffvis2, out.width="50%"}
 bfa.raster <- as.raster(img, max.pixel.size = 300)
+plot(bfa.raster)
+dim(bfa.raster)
+
+bfa.raster <- as.raster(img, level = 1)
 plot(bfa.raster)
 dim(bfa.raster)
 ```
 
 # Use cases
 
-The pyramid scheme introduced by `ImageArray` objects can also be used to 
-generate scalable plots and interactive Shiny application for visualizing 
-large images. 
+The delayed pyramid scheme introduced by `ImageArray` objects can also 
+be used to generate scalable plots and interactive Shiny application 
+for visualizing large images without loading them into the memory. 
 
 ## Visualizing H&E images
 
 For this example, we will use a large H&E image used by 10x Genomics, 
-generated after a Xenium in Situ platform run. 
+generated after a Xenium in Situ platform run (i.e. postXenium H&E).
 
 ```{r he}
 image_file <- paste(
@@ -180,7 +219,7 @@ bfc <- BiocFileCache()
 image_file <- bfcrpath(bfc, image_file)
 ```
 
-Let us create an `ImageArray` object first with the image above. The ome.tiff 
+Let us create an `ImageArray` object first with the image above. The OME-TIFF 
 file includes multiple resolutions that we can ask `ImageArray` 
 object to include.
 
@@ -190,10 +229,11 @@ imgarray <- createImageArray(image_file,
                              resolution = 1:6)
 imgarray
 ```
+
 You can visualize subsets of large images really quickly using `crop` and
 `as.raster`. Again, here we use `max.pixel.size` to regularize the resolution
-parsed from the pyramid; that is, as defined below, only resolutions with
-max pixel size 800 would be returned.
+parsed from the pyramid; that is, as defined below, only resolutions whose 
+width and height are both under size 800 would be returned.
 
 ```{r speedy_vis, out.width="70%"}
 # crop image
@@ -203,20 +243,19 @@ imgarray_sub <- crop(imgarray, ind = list(16000:19000, 7000:10000))
 img_raster <- as.raster(imgarray_sub, max.pixel.size = 800)
 
 # plot with ggplot
-imgggplot <- ggplot2::ggplot(data.frame(x = 0, y = 0), 
+ggplot2::ggplot(data.frame(x = 0, y = 0), 
                              ggplot2::aes_string("x", "y")) + 
   ggplot2::coord_fixed(expand = FALSE, 
                        xlim = c(0, dim(img_raster)[2]), 
                        ylim = c(0, dim(img_raster)[1])) + 
   ggplot2::annotation_raster(img_raster, 0, dim(img_raster)[2], 
                              dim(img_raster)[1], 0, interpolate = FALSE)
-imgggplot
 ```
 
 ## Interactive Shiny Applications
 
 Now let us create a shiny application where we can interactively define 
-subsetting and visualize the image quickly. 
+subsetting and visualize the OME-TIFF image quickly. 
 
 The Shiny application will react quickly to regardless of the size of the 
 image subset. This is because `as.raster` determines the layer that has the

@@ -4,10 +4,12 @@
 \alias{realize,ImageArray-method}
 \title{as.array}
 \usage{
-\S4method{realize}{ImageArray}(x, max.pixel.size = NULL, min.pixel.size = NULL)
+\S4method{realize}{ImageArray}(x, level = NULL, max.pixel.size = NULL, min.pixel.size = NULL)
 }
 \arguments{
 \item{x}{an ImageArray object}
+
+\item{level}{level}
 
 \item{max.pixel.size}{maximum pixel size}
 
