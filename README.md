@@ -51,6 +51,7 @@ imgarray <- writeImageArray(img,
                             output = h5_sample, 
                             nlevels = 2,
                             replace = TRUE)
+imgarray
 ```
 
 ```
@@ -59,8 +60,11 @@ Level 1 (768,512)
 Level 2 (384,256)
 ```
 
+Each level of a pyramid can be rasterized at any time.
+
 ```r
-plot(as.raster(imgarray))
+imgraster <- as.raster(imgarray, level = 2))
+plot(imgraster)
 ```
 
 <img src="inst/extdata/sample.png" width="30%">
@@ -73,11 +77,19 @@ vertical flipping and negation.
 
 ```r
 imgarray <- rotate(imgarray, degrees = 90)
+imgarray
+```
+
+```
+ImageArray Object (x,y) 
+Level 1 (512,768) 
+Level 2 (256,384)
 ```
 
 <br>
 
-We can crop or slice images via lazy indexing.
+We can crop or slice images via lazy/delayed indexing again with loading the
+image to the memory.
 
 ```r
 # crop or slice via indexing
