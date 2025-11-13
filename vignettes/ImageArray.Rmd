@@ -104,12 +104,12 @@ that use `r Biocpkg("ImageArray")` can rasterize images by defining thresholds
 for the pixel dimensions of the levels that are realized to the memory.
 
 Here, by using the `max.pixel.size`, we request `r Biocpkg("ImageArray")` to 
-return a pyramid level whose both width (`X`) and height (`Y`) are lower than
-300. 
+return a pyramid level whose both width (`X`) and height (`Y`) are lower than, 
+for example, 400.
 
 ```{r visualize_read2}
 # visualize 
-bfa.raster <- as.raster(imgarray, max.pixel.size = 300)
+bfa.raster <- as.raster(imgarray, max.pixel.size = 400)
 dim(bfa.raster)
 ```
 
@@ -122,7 +122,7 @@ imgarray_rotated <- rotate(imgarray, degrees = 90)
 imgarray_rotated
 
 # visualize 
-bfa.raster <- as.raster(imgarray_rotated, max.pixel.size = 300)
+bfa.raster <- as.raster(imgarray_rotated, max.pixel.size = 400)
 plot(bfa.raster)
 ```
 
@@ -133,15 +133,11 @@ imgarray_cropped <- imgarray[300:500, 200:300]
 imgarray_cropped
 
 # visualize 
-bfa.raster <- as.raster(imgarray_cropped, max.pixel.size = 300)
+bfa.raster <- as.raster(imgarray_cropped, max.pixel.size = 120)
 plot(bfa.raster)
 
 imgarray_cropped <- crop(imgarray, ind = list(300:500, 200:300))
 imgarray_cropped
-
-# visualize 
-bfa.raster <- as.raster(imgarray_cropped, max.pixel.size = 300)
-plot(bfa.raster)
 ```
 
 ## magick images
@@ -188,11 +184,11 @@ You can again use either `max.pixel.size` or `min.pixel.size` to control
 the output or level.
 
 ```{r ometiffvis2, out.width="50%"}
-bfa.raster <- as.raster(img, max.pixel.size = 300)
+bfa.raster <- as.raster(imgarray, max.pixel.size = 300)
 plot(bfa.raster)
 dim(bfa.raster)
 
-bfa.raster <- as.raster(img, level = 1)
+bfa.raster <- as.raster(imgarray, level = 1)
 plot(bfa.raster)
 dim(bfa.raster)
 ```
@@ -241,6 +237,7 @@ imgarray_sub <- crop(imgarray, ind = list(16000:19000, 7000:10000))
 
 # convert to raster
 img_raster <- as.raster(imgarray_sub, max.pixel.size = 800)
+dim(img_raster)
 
 # plot with ggplot
 ggplot2::ggplot(data.frame(x = 0, y = 0), 

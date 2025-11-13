@@ -71,6 +71,20 @@ plot(imgraster)
 
 <br>
 
+By using the `max.pixel.size`, we can request `r Biocpkg("ImageArray")` to 
+return a pyramid level whose both width (`X`) and height (`Y`) are lower than
+some pixel size, e.g. 400. 
+
+```{r visualize_read2}
+# visualize 
+bfa.raster <- as.raster(imgarray, max.pixel.size = 400)
+dim(bfa.raster)
+```
+
+```
+(256,384)
+```
+
 A number of memory-efficient (delayed or lazy) operations are available 
 for pyramid images, including rotation (0, 90, 180, 270), horizontal or 
 vertical flipping and negation. 
