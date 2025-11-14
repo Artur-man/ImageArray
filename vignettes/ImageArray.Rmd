@@ -26,11 +26,11 @@ library(shiny)
 
 The `r Biocpkg("ImageArray")` package provides a **unified, memory-efficient** 
 framework for working with both **pyramidal** and **non-pyramidal** images in R 
-by leveraging the `r Biocpkg("DelayedArray")` infrastructure. With 
-`r Biocpkg("ImageArray")` you can store large images on disk (HDF5 or Zarr), 
+by leveraging the `r Biocpkg("DelayedArray")` package. With 
+`r Biocpkg("ImageArray")` you can store large images on disk (as HDF5 or Zarr), 
 treat them as array-like objects, perform delayed/lazy operations (e.g., 
 rotate, flip, crop) across all pyramid levels, and seamlessly integrate with 
-standard R image workflows.
+other R package and workflows that use large bioimages. 
 
 # Installation
 
@@ -45,8 +45,8 @@ BiocManager::install("ImageArray")
 
 # Why pyramidal images?
 
-Image pyramids are multi-resolution representations: starting from a full 
-resolution image, you generate a series of down-sampled versions (e.g., half 
+Image pyramids are multi-resolution representations that start with a full 
+resolution image followed by a series of down-sampled levels (e.g., half 
 resolutions). These are common in microscopy, digital pathology and large-scale 
 imaging because:
 
@@ -57,9 +57,9 @@ doing overview tasks, fine levels for detail).
 - Storing data in a pyramidal stack often reduces memory footprint and 
 enables on-disk processing.
 
-In our context, an ImageArray object may contain **multiple series** 
-(each a resolution level) internally, and most operations are applied 
-lazily across all series.
+In our context, an `r Biocpkg("ImageArray")` object typically contain 
+**multiple levels** (each a resolution level) internally, and most operations 
+are applied lazily (or delayed) across all levels.
 
 # Usage
 
@@ -90,7 +90,7 @@ imgarray <- writeImageArray(img,
 imgarray
 ```
 
-Each level of a pyramid can be rasterized at any time.
+Each level of a pyramid can be rasterized at any time, and thus plotted.
 
 ```{r visualize_read}
 # visualize 
@@ -99,13 +99,18 @@ plot(bfa.raster)
 ```
 
 However, the true functionality of `r Biocpkg("ImageArray")` is to pick
-pyramid levels in a memory-efficient level. Thus, packages and applications
-that use `r Biocpkg("ImageArray")` can rasterize images by defining thresholds
-for the pixel dimensions of the levels that are realized to the memory.
+pyramid levels in a memory-efficient manner. Packages, applications and
+workflows that use `r Biocpkg("ImageArray")` can rasterize images by defining 
+thresholds for pixel dimensions across all levels.
 
 Here, by using the `max.pixel.size`, we request `r Biocpkg("ImageArray")` to 
 return a pyramid level whose both width (`X`) and height (`Y`) are lower than, 
-for example, 400.
+for example, 400. This approach is particularly useful when visualizing:
+
+- (i) the entire image 
+- (ii) a subset of the image with higher resolution 
+
+with minimal memory footprint.
 
 ```{r visualize_read2}
 # visualize 
@@ -114,7 +119,7 @@ dim(bfa.raster)
 ```
 
 Operations such as rotate, flip, flop or negate will be 
-conducted on all levels (without loading the image on the memory)
+conducted on all levels (without loading the image in the memory)
 which then can be rasterized and plotted.
 
 ```{r rotate}
@@ -158,6 +163,7 @@ imgarray <- writeImageArray(img,
                          format = "HDF5ImageArray", 
                          output = output_h5, 
                          replace = TRUE)
+imgarray
 
 # plot
 bfa.raster <- as.raster(imgarray, level = 2)
@@ -166,14 +172,13 @@ plot(bfa.raster)
 
 ## OME.TIFF (Bio-Formats) images
 
-You can create `ImageArray` objects from OME-TIFF files (or image formats that 
-are compatible with Bio-formats, see `r Biocpkg("RBioFormats")`) with 
-already defined layers. 
+You can create `ImageArray` objects from OME-TIFF files (or any file compatible 
+with Bio-formats, see `r Biocpkg("RBioFormats")`) with already defined layers. 
 
 ```{r ometiff}
 ome.tiff.file <- system.file("extdata", "xy_12bit__plant.ome.tiff", 
                              package = "ImageArray")
-RBioFormats::read.metadata(ome.tiff.file)
+read.metadata(ome.tiff.file)
 
 # define ImageArray object
 imgarray <- createImageArray(ome.tiff.file, series = 1, resolution = 1:2)
@@ -181,10 +186,14 @@ imgarray
 ```
 
 You can again use either `max.pixel.size` or `min.pixel.size` to control 
-the output or level.
+the size of the image that loaded into the memory.
 
 ```{r ometiffvis2, out.width="50%"}
 bfa.raster <- as.raster(imgarray, max.pixel.size = 300)
+plot(bfa.raster)
+dim(bfa.raster)
+
+bfa.raster <- as.raster(imgarray, min.pixel.size = 300)
 plot(bfa.raster)
 dim(bfa.raster)
 
@@ -227,9 +236,10 @@ imgarray
 ```
 
 You can visualize subsets of large images really quickly using `crop` and
-`as.raster`. Again, here we use `max.pixel.size` to regularize the resolution
+`as.raster`. Again, here we use `max.pixel.size` to optimize the level
 parsed from the pyramid; that is, as defined below, only resolutions whose 
-width and height are both under size 800 would be returned.
+width and height are both under size 800 would be returned, whether it is 
+the entire image, or a subset.
 
 ```{r speedy_vis, out.width="70%"}
 # crop image
@@ -251,13 +261,14 @@ ggplot2::ggplot(data.frame(x = 0, y = 0),
 
 ## Interactive Shiny Applications
 
-Now let us create a shiny application where we can interactively define 
-subsetting and visualize the OME-TIFF image quickly. 
+Now let us create a shiny application where we can interactively 
+subset and visualize the OME-TIFF image quickly. 
 
-The Shiny application will react quickly to regardless of the size of the 
-image subset. This is because `as.raster` determines the layer that has the
-highest resolution without exceeding the threshold (`max.pixel.size`) 
-automatically.
+The Shiny application lets the user to define image subsets (or slices)
+before visualizing without loading large images in memory. 
+
+This is because `as.raster` determines the layer with the pixel dimensions of 
+he specified subset not exceeding the defined threshold (`max.pixel.size`).
 
 ```{r speedy_vis_shiny}
 if(interactive()){

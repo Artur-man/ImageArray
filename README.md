@@ -2,11 +2,11 @@
 
 **ImageArray** provides a unified, memory‑efficient way to work with pyramidal and non‑pyramidal images using the `DelayedArray` package in Bioconductor. 
 It stores large images in memory or on disk (as **HDF5** or **Zarr**), allows array‑like manipulations, and applies common image operations 
-consistently across all pyramid levels without loading arrays to memory.
+consistently across all pyramid levels without loading arrays in memory.
 
 - **Pyramids:** multi‑resolution stacks of, e.g., from HDF5, Zarr or OME‑TIFF (Bio-formats) images as a single object.
 - **Interoperability:** plays nicely with image classes across R/Bioconductor, such as **EBImage** or **magick**. 
-- **Delayed operations:** rotate/flip/flop/negate, cropping and slicing – performed lazily (without loading to memory) via `DelayedArray`.
+- **Delayed operations:** rotate/flip/flop/negate, cropping and slicing – performed lazily (without loading in memory) via `DelayedArray`.
 - **Backends:** HDF5 and Zarr on‑disk storage using **HDF5Array** and **Rarr** packages.
 
 ## What are image pyramids?
@@ -102,7 +102,7 @@ Level 2 (256,384)
 ```
 
 We can crop or slice images via lazy/delayed indexing again without loading the
-image to the memory.
+image in the memory.
 
 ```r
 # crop or slice via indexing
