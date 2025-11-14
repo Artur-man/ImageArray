@@ -1,10 +1,10 @@
 # ImageArray
 
-**ImageArray** provides a unified, memory‑efficient way to work with pyramidal and non‑pyramidal images using the `DelayedArray` infrastructure. 
-It stores large images in memory or on disk (**HDF5** or **Zarr**), exposes them through an array‑like API, and applies common image operations 
-consistently across all pyramid levels
+**ImageArray** provides a unified, memory‑efficient way to work with pyramidal and non‑pyramidal images using the `DelayedArray` package in Bioconductor. 
+It stores large images in memory or on disk (as **HDF5** or **Zarr**), allows array‑like manipulations, and applies common image operations 
+consistently across all pyramid levels without loading arrays to memory.
 
-- **Pyramids:** multi‑resolution stacks of, e.g., from Zarr or OME‑TIFF images as a single object.
+- **Pyramids:** multi‑resolution stacks of, e.g., from HDF5, Zarr or OME‑TIFF (Bio-formats) images as a single object.
 - **Interoperability:** plays nicely with image classes across R/Bioconductor, such as **EBImage** or **magick**. 
 - **Delayed operations:** rotate/flip/flop/negate, cropping and slicing – performed lazily (without loading to memory) via `DelayedArray`.
 - **Backends:** HDF5 and Zarr on‑disk storage using **HDF5Array** and **Rarr** packages.
@@ -34,8 +34,8 @@ BiocManager::install("ImageArray")
 
 **ImageArray** allows saving images to either HDF5 (HDF5ImageArray) or 
 Zarr (ZarrImageArray) where you can define the number of layers of the 
-pyramids (i.e. number of downscaled images) and the path to the on-disk h5 
-or zarr store. 
+pyramids (i.e. number of downscaled images) and the path to the on-disk h5
+file or zarr store. 
 
 ```r
 library(ImageArray)
@@ -60,7 +60,7 @@ Level 1 (768,512)
 Level 2 (384,256)
 ```
 
-Each level of a pyramid can be rasterized at any time.
+Each level of a pyramid can be rasterized at any time, and thus plotted.
 
 ```r
 imgraster <- as.raster(imgarray, level = 2))
@@ -71,9 +71,10 @@ plot(imgraster)
 
 <br>
 
-By using the `max.pixel.size`, we can request `r Biocpkg("ImageArray")` to 
+By using the `max.pixel.size`, we can request **ImageArray** to 
 return a pyramid level whose both width (`X`) and height (`Y`) are lower than
-some pixel size, e.g. 400. 
+some pixel size, e.g. 400. Hence, **ImageArray** can be used by other 
+implementations to plot images in a memory-efficient way.
 
 ```{r visualize_read2}
 # visualize 
@@ -85,7 +86,7 @@ dim(bfa.raster)
 (256,384)
 ```
 
-A number of memory-efficient (delayed or lazy) operations are available 
+A number of other memory-efficient (delayed or lazy) operations are available 
 for pyramid images, including rotation (0, 90, 180, 270), horizontal or 
 vertical flipping and negation. 
 
@@ -100,9 +101,7 @@ Level 1 (512,768)
 Level 2 (256,384)
 ```
 
-<br>
-
-We can crop or slice images via lazy/delayed indexing again with loading the
+We can crop or slice images via lazy/delayed indexing again without loading the
 image to the memory.
 
 ```r
@@ -117,10 +116,8 @@ Level 1 (101,101)
 Level 2 (51,51) 
 ```
 
-<br>
-
 You can also use an existing **OME-TIFF** (or any Bioformats image) to 
-create an ImageArray object which we use **RBioFormats** package too.
+create an ImageArray object which we use **RBioFormats** package.
 
 ```r
 library(RBioFormats)
