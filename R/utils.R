@@ -46,25 +46,6 @@ setReplaceMethod(
   is.logical(x) && length(x) == 1L && !is.na(x)
 }
 
-#' #' @noRd
-#' .isSingleString <- function(x) {
-#'   is.character(x) && length(x) == 1L && !is.na(x)
-#' }
-
-#' #' modify_seeds
-#' #' @importFrom methods is
-#' #' @noRd
-#' .modify_seeds <- function(x, FUN, ...) {
-#'   if (methods::is(x, "DelayedUnaryOp")) {
-#'     x@seed <- modify_seeds(x@seed, FUN, ...)
-#'   } else if (methods::is(x, "DelayedNaryOp")) {
-#'     x@seeds <- lapply(x@seeds, modify_seeds, FUN, ...)
-#'   } else {
-#'     x <- FUN(x, ...)
-#'   }
-#'   return(x)
-#' }
-
 #' is.sequential
 #' @noRd
 is.sequential <- function(x) {
