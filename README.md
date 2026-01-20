@@ -56,8 +56,7 @@ imgarray
 
 ```
 ImageArray Object (x,y) 
-Level 1 (768,512) 
-Level 2 (384,256)
+Scales (2): (768,512) (384,256)
 ```
 
 Each level of a pyramid can be rasterized at any time, and thus plotted.
@@ -97,8 +96,7 @@ imgarray
 
 ```
 ImageArray Object (x,y) 
-Level 1 (512,768) 
-Level 2 (256,384)
+Scales (2): (512,768) (256,384)384)
 ```
 
 We can crop or slice images via lazy/delayed indexing again without loading the
@@ -112,8 +110,7 @@ imgarray
 
 ```
 ImageArray Object (x,y) 
-Level 1 (101,101) 
-Level 2 (51,51) 
+Scales (2): (101,101) (51,51)
 ```
 
 You can also use an existing **OME-TIFF** (or any Bioformats image) to 
@@ -132,6 +129,5 @@ imgarray
 
 ```
 ImageArray Object (x,y,c) 
-Level 1 (512,512,1) 
-Level 2 (256,256,1) 
+Scales (2): (512,512,1) (256,256,1)
 ```

@@ -105,6 +105,7 @@ setMethod(
   }
 )
 
+#' @importFrom S4Vectors coolcat
 #' @noRd
 setMethod(
   f = 'show',
@@ -115,12 +116,10 @@ setMethod(
           "(", paste(object@meta[["axes"]], collapse = ","), ")"
         ), 
     "\n")
-    n.levels <- length(object@levels)
-    for (i in seq_len(n.levels)) {
-      dim_image <- dim(object@levels[[i]])
-      dim_image <- paste(dim_image, collapse = ",")
-      cat(paste0("Level ", i, " (", dim_image, ") \n"))
-    }
+    scales <- vapply(object@levels, 
+                     \(x) sprintf("(%s)", paste0(dim(x), collapse=",")), 
+                     character(1))
+    S4Vectors::coolcat("Scales (%d): %s", scales)
   }
 )
 
