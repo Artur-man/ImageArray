@@ -5,7 +5,7 @@
 #' @param object an ImageArray object
 #'
 #' @importFrom stats setNames
-#' 
+#'
 #' @export
 #' @returns a data frame of width and height info
 #'
@@ -28,10 +28,10 @@
 #' imgarray <- createImageArray(img.file, n.levels = 3)
 #' imgarray_raster <- as.raster(imgarray, max.pixel.size = 300)
 #' getImageInfo(imgarray)
-#' 
+#'
 getImageInfo <- function(object) {
   ax <- axes(object)
-  dim_image <- stats::setNames(dim(object[[1]]),ax)
+  dim_image <- stats::setNames(dim(object[[1]]), ax)
   imginfo <- list(width = dim_image["x"], height = dim_image["y"])
   as.data.frame(imginfo, row.names = NULL)
 }

@@ -14,11 +14,14 @@ setMethod("rotate", signature = "ImageArray", function(object, degrees) {
   .check_dim(object)
   dim_img <- dim(object[[1]])
   ax <- axes(object)
-  
+
   # array perm.
-  if (degrees %in% c(90, 270)){
-    cur_perm <- .swap(seq_len(length(dim_img)), 
-                      which(ax == "x"), which(ax == "y"))
+  if (degrees %in% c(90, 270)) {
+    cur_perm <- .swap(
+      seq_len(length(dim_img)),
+      which(ax == "x"),
+      which(ax == "y")
+    )
     object <- aperm(object, perm = cur_perm)
   }
 
@@ -62,7 +65,6 @@ setMethod("modulate", signature = "ImageArray", function(object, brightness) {
   if (brightness < 0) {
     stop("Brightness should be more than 0, typically more than 100")
   }
-  dim_img <- dim(object[[1]])
   n.levels <- length(object@levels)
   for (i in seq_len(n.levels)) {
     tmp <- ceiling(object[[i]] * (brightness / 100))
@@ -78,17 +80,17 @@ setMethod("modulate", signature = "ImageArray", function(object, brightness) {
 
 #' @importFrom stats setNames
 #' @noRd
-.flipflop <- function(object, direction = "x"){
+.flipflop <- function(object, direction = "x") {
   n.levels <- length(object@levels)
   ax <- axes(object)
-  
+
   # check dim
   .check_dim(object)
-  
+
   # flip all
   for (i in seq_len(n.levels)) {
     img <- object[[i]]
-    dim_img <- stats::setNames(dim(img),ax)
+    dim_img <- stats::setNames(dim(img), ax)
     cur_ind <- stats::setNames(lapply(dim_img, seq_len), ax)
     cur_ind[[direction]] <- rev(cur_ind[[direction]])
     object[[i]] <- .subset_array(object[[i]], cur_ind, drop = FALSE)
@@ -114,27 +116,27 @@ setMethod("flop", signature = "ImageArray", function(object) {
 #' @importFrom stats setNames
 #' @exportMethod crop
 setMethod("crop", signature = "ImageArray", function(object, ind) {
-  
   # get axes
   ax <- axes(object)
   dim_img <- stats::setNames(dim(object), ax)
-    
+
   # check ind
   if (!is.list(ind)) {
     stop("'ind' should be a list of integers")
   }
-  
+
   # check_dim
   .check_dim(object)
-  
+
   # ind control
-  if(length(ind) == 2){
+  if (length(ind) == 2) {
     ind <- stats::setNames(ind, c("x", "y"))
-    if(length(dim_img) == 3)
+    if (length(dim_img) == 3) {
       ind <- c(ind, list(c = seq_len(dim_img["c"])))
+    }
     ind <- ind[ax]
-  } 
-  
+  }
+
   # check sequential
   check_sequential <- all(vapply(ind[c("x", "y")], is.sequential, logical(1)))
   if (!check_sequential) {
@@ -148,17 +150,17 @@ setMethod("crop", signature = "ImageArray", function(object, ind) {
   n.levels <- length(object@levels)
   for (i in seq_len(n.levels)) {
     img <- object[[i]]
-    dim_img <- stats::setNames(dim(img),ax)[c("x", "y")]
+    dim_img <- stats::setNames(dim(img), ax)[c("x", "y")]
     cur_ind <- ind
-    cur_ind[c("x","y")] <- 
+    cur_ind[c("x", "y")] <-
       lapply(seq_len(length(ind[c("x", "y")])), function(j) {
-      curind <- ind[c("x", "y")][[j]]
-      id <- c(
-        floor(utils::head(curind, 1) / (2^(i - 1))),
-        ceiling(utils::tail(curind, 1) / (2^(i - 1)))
-      )
-      seq(max(id[1], 1), min(id[2], dim_img[j]))
-    })
+        curind <- ind[c("x", "y")][[j]]
+        id <- c(
+          floor(utils::head(curind, 1) / (2^(i - 1))),
+          ceiling(utils::tail(curind, 1) / (2^(i - 1)))
+        )
+        seq(max(id[1], 1), min(id[2], dim_img[j]))
+      })
     object[[i]] <- .subset_array(img, cur_ind, drop = FALSE)
   }
 
@@ -176,18 +178,22 @@ setMethod("axes", "ImageArray", function(object) object@meta[["axes"]])
 #' @noRd
 .subset_array <- function(x, idx, drop = FALSE) {
   d <- dim(x)
-  if (is.null(d)) stop("x must be an array or matrix.")
-  if (length(idx) > length(d)) stop("Too many index dimensions provided.")
-  
+  if (is.null(d)) {
+    stop("x must be an array or matrix.")
+  }
+  if (length(idx) > length(d)) {
+    stop("Too many index dimensions provided.")
+  }
+
   # pad missing dimensions with full slices
   while (length(idx) < length(d)) {
     idx[[length(idx) + 1]] <- seq_len(d[length(idx) + 1])
   }
-  
-  if(length(idx) == 3){
-    return(x[idx[[1]], idx[[2]], idx[[3]], drop = drop])
+
+  if (length(idx) == 3) {
+    x[idx[[1]], idx[[2]], idx[[3]], drop = drop]
   } else {
-    return(x[idx[[1]], idx[[2]], drop = drop])
+    x[idx[[1]], idx[[2]], drop = drop]
   }
 }
 
@@ -196,7 +202,8 @@ setMethod("axes", "ImageArray", function(object) object@meta[["axes"]])
   x
 }
 
-.check_dim <- function(object){
-  if (!(length(dim(object)) %in% c(2,3)))
+.check_dim <- function(object) {
+  if (!(length(dim(object)) %in% c(2, 3))) {
     stop("This operation can only be performed on 2D or 3D image arrays")
+  }
 }

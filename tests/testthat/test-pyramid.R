@@ -9,69 +9,92 @@ dir.create(td <- tempfile())
 output_h5ad <- file.path(td, "h5test")
 output_zarr <- file.path(td, "zarrtest")
 
-# build image array 
+# build image array
 set.seed(1)
-mat <- array(data=sample(1:255, 2000*5000*3, replace = TRUE), 
-             dim=c(2000, 5000, 3))
+mat <- array(
+  data = sample(1:255, 2000 * 5000 * 3, replace = TRUE),
+  dim = c(2000, 5000, 3)
+)
 mat_raster <- as.raster(mat, max = 255)
 
 # read as magick object
 mat_image <- magick::image_read(mat_raster)
 
 test_that("visualize h5 ImageArray", {
-  
   # create image array
-  mat_list <- writeImageArray(mat_image, 
-                              output = output_h5ad, 
-                              name = "image",
-                              format = "HDF5ImageArray", 
-                              replace = TRUE, verbose = FALSE)
-  expect_equal(length(mat_list),4)
+  mat_list <- writeImageArray(
+    mat_image,
+    output = output_h5ad,
+    name = "image",
+    format = "HDF5ImageArray",
+    replace = TRUE,
+    verbose = FALSE
+  )
+  expect_equal(length(mat_list), 4)
 
   # create raster array
   img_raster <- as.raster(mat_list, max.pixel.size = 2000)
   expect_equal(dim(img_raster), c(500, 1250))
-  
+
   # visualize
   info <- list(width = dim(img_raster)[2], height = dim(img_raster)[1])
-  ggplot2::ggplot(data.frame(x = 0, y = 0), 
-                  ggplot2::aes(.data[["x"]], .data[["y"]])) + 
-    ggplot2::geom_blank() + 
-    ggplot2::theme_void() + 
-    ggplot2::coord_fixed(expand = FALSE, 
-                         xlim = c(0, info$width), 
-                         ylim = c(0, info$height)) + 
-    ggplot2::annotation_raster(img_raster, 0, 
-                               info$width, info$height, 
-                               0, interpolate = FALSE)
-  
+  ggplot2::ggplot(
+    data.frame(x = 0, y = 0),
+    ggplot2::aes(.data[["x"]], .data[["y"]])
+  ) +
+    ggplot2::geom_blank() +
+    ggplot2::theme_void() +
+    ggplot2::coord_fixed(
+      expand = FALSE,
+      xlim = c(0, info$width),
+      ylim = c(0, info$height)
+    ) +
+    ggplot2::annotation_raster(
+      img_raster,
+      0,
+      info$width,
+      info$height,
+      0,
+      interpolate = FALSE
+    )
 })
 
 test_that("visualize zarr ImageArray", {
-  
   # create image array
   unlink(output_zarr, recursive = TRUE)
-  mat_list <- writeImageArray(mat_image, 
-                            output = output_zarr, 
-                            name = "image",
-                            format = "ZarrImageArray", 
-                            replace = TRUE, verbose = FALSE)
-  expect_equal(length(mat_list),4)
-  
+  mat_list <- writeImageArray(
+    mat_image,
+    output = output_zarr,
+    name = "image",
+    format = "ZarrImageArray",
+    replace = TRUE,
+    verbose = FALSE
+  )
+  expect_equal(length(mat_list), 4)
+
   # create raster array
   img_raster <- as.raster(mat_list, max.pixel.size = 2000)
   expect_equal(dim(img_raster), c(500, 1250))
-  
+
   # visualize
   info <- list(width = dim(img_raster)[2], height = dim(img_raster)[1])
-  ggplot2::ggplot(data.frame(x = 0, y = 0), 
-                  ggplot2::aes(.data[["x"]], .data[["y"]])) + 
-    ggplot2::geom_blank() + 
-    ggplot2::theme_void() + 
-    ggplot2::coord_fixed(expand = FALSE, 
-                         xlim = c(0, info$width), 
-                         ylim = c(0, info$height)) + 
-    ggplot2::annotation_raster(img_raster, 0, 
-                               info$width, info$height, 
-                               0, interpolate = FALSE)
+  ggplot2::ggplot(
+    data.frame(x = 0, y = 0),
+    ggplot2::aes(.data[["x"]], .data[["y"]])
+  ) +
+    ggplot2::geom_blank() +
+    ggplot2::theme_void() +
+    ggplot2::coord_fixed(
+      expand = FALSE,
+      xlim = c(0, info$width),
+      ylim = c(0, info$height)
+    ) +
+    ggplot2::annotation_raster(
+      img_raster,
+      0,
+      info$width,
+      info$height,
+      0,
+      interpolate = FALSE
+    )
 })

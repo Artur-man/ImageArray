@@ -73,8 +73,8 @@ NULL
 #'
 #' @export
 setMethod(
-  f = '[',
-  signature = c('ImageArray', "numeric", "numeric"),
+  f = "[",
+  signature = c("ImageArray", "numeric", "numeric"),
   definition = function(x, i, j, ..., drop = FALSE) {
     crop(x, ind = list(i, j))
   }
@@ -85,10 +85,10 @@ setMethod(
 #'
 #' @export
 setMethod(
-  f = '[[',
-  signature = c('ImageArray', "numeric"),
+  f = "[[",
+  signature = c("ImageArray", "numeric"),
   definition = function(x, i) {
-    return(x@levels[[i]])
+    x@levels[[i]]
   }
 )
 
@@ -97,28 +97,35 @@ setMethod(
 #'
 #' @export
 setMethod(
-  f = '[[<-',
-  signature = c('ImageArray', "numeric"),
+  f = "[[<-",
+  signature = c("ImageArray", "numeric"),
   definition = function(x, i, ..., value) {
     x@levels[[i]] <- value
-    return(x)
+    x
   }
 )
 
 #' @importFrom S4Vectors coolcat
 #' @noRd
 setMethod(
-  f = 'show',
-  signature = c('ImageArray'),
+  f = "show",
+  signature = c("ImageArray"),
   definition = function(object) {
-    cat(class(x = object), "Object", 
-        paste0(
-          "(", paste(object@meta[["axes"]], collapse = ","), ")"
-        ), 
-    "\n")
-    scales <- vapply(object@levels, 
-                     \(x) sprintf("(%s)", paste0(dim(x), collapse=",")), 
-                     character(1))
+    cat(
+      class(x = object),
+      "Object",
+      paste0(
+        "(",
+        paste(object@meta[["axes"]], collapse = ","),
+        ")"
+      ),
+      "\n"
+    )
+    scales <- vapply(
+      object@levels,
+      \(x) sprintf("(%s)", paste0(dim(x), collapse = ",")),
+      character(1)
+    )
     S4Vectors::coolcat("Scales (%d): %s", scales)
   }
 )
@@ -142,7 +149,7 @@ setMethod("length", signature = "ImageArray", function(x) length(x@levels))
 #'
 #' A function for creating objects of ImageArray class
 #'
-#' @param meta the metadata of the ImageArray object. 
+#' @param meta the metadata of the ImageArray object.
 #' @param levels levels of the pyramid image, typically a vector of integers
 #' starting with 1
 #'
@@ -197,7 +204,7 @@ createBFArray <- function(
 #' @param max.pixel.threshold the maximum width
 #' and height pixel dimension that the lowest level of the image pyramid
 #' should have, thus the image will be downscaled two folds until both width
-#' and height is below the threshold. Default is 700 pixels. 
+#' and height is below the threshold. Default is 700 pixels.
 #' If \code{n.levels} is provided, this parameter will be ignored.
 #' @param verbose verbose
 #'
@@ -238,8 +245,9 @@ createMagickArray <- function(
   }
 
   # create image levels
-  if (verbose)
+  if (verbose) {
     .img_create_msg(dim(image), 1)
+  }
   image_data <- magick::image_data(image, channels = "rgb")
   storage.mode(image_data) <- "integer"
   image_list <- list(DelayedArray::DelayedArray(as.array(image_data)))
@@ -247,8 +255,9 @@ createMagickArray <- function(
     cur_image <- image
     for (i in 2:n.levels) {
       dim_image <- ceiling(dim_image / 2)
-      if (verbose)
+      if (verbose) {
         .img_create_msg(dim_image, 1)
+      }
       cur_image <- magick::image_resize(
         cur_image,
         geometry = magick::geometry_size_percent(50),
@@ -275,7 +284,7 @@ createMagickArray <- function(
 #' @param max.pixel.threshold the maximum width
 #' and height pixel dimension that the lowest level of the image pyramid
 #' should have, thus the image will be downscaled two folds until both width
-#' and height is below the threshold. Default is 700 pixels. 
+#' and height is below the threshold. Default is 700 pixels.
 #' If \code{n.levels} is provided, this parameter will be ignored.
 #' @param verbose verbose
 #'
@@ -309,9 +318,10 @@ createEBImageArray <- function(
 
   # create image levels
   meta <- list(axes = c("x", "y", "c"))
-  if (verbose)
+  if (verbose) {
     .img_create_msg(dim_image, 1)
-  img_perm <- if(length(dim(image)) == 2) c(1,2) else c(1, 2, 3)
+  }
+  img_perm <- if (length(dim(image)) == 2) c(1, 2) else c(1, 2, 3)
   meta[["axes"]] <- meta[["axes"]][img_perm]
   img_perm <- stats::setNames(img_perm, meta[["axes"]])
   img <- aperm(image, img_perm)
@@ -320,9 +330,9 @@ createEBImageArray <- function(
     cur_image <- image
     for (i in 2:n.levels) {
       dim_image <- ceiling(dim_image / 2)
-      if (verbose)
+      if (verbose) {
         .img_create_msg(dim_image, i)
-      resize_factor <- dim_image
+      }
       cur_image <- EBImage::resize(
         cur_image,
         w = dim_image[1],
@@ -346,13 +356,13 @@ createEBImageArray <- function(
 #' @param n.levels the number of levels of the pyramidal image,
 #' typical an integer starting from 1
 #' @param series the series IDs of the pyramidal image,
-#' typical an integer starting from 1. 
+#' typical an integer starting from 1.
 #' @param resolution the resolution IDs of the pyramidal image,
-#' typical an integer starting from 1. 
+#' typical an integer starting from 1.
 #' @param max.pixel.threshold the maximum width
 #' and height pixel dimension that the lowest level of the image pyramid
 #' should have, thus the image will be downscaled two folds until both width
-#' and height is below the threshold. Default is 700 pixels. 
+#' and height is below the threshold. Default is 700 pixels.
 #' If \code{n.levels} is provided, this parameter will be ignored.
 #' @param engine the package to use for each image layer: either
 #' \code{EBImage} or \code{magick-image}
@@ -447,7 +457,7 @@ createImageArray <- function(
 #' @param replace Should the existing file be
 #' removed or not
 #' @param n.levels the number of levels if the image supposed to be
-#' pyramidal. 
+#' pyramidal.
 #' @param chunkdim The dimensions of the chunks
 #' to use for writing the data to disk.
 #' @param level The compression level to use for
@@ -455,7 +465,7 @@ createImageArray <- function(
 #' @param engine the package to use for each image layer: either
 #' \code{EBImage} or \code{magick-image}
 #' @param verbose verbose
-#' @param ... additional parameters passed to 
+#' @param ... additional parameters passed to
 #' \link[ImageArray]{createImageArray}.
 #'
 #' @importFrom HDF5Array writeHDF5Array
@@ -534,8 +544,9 @@ writeImageArray <- function(
         rhdf5::h5createFile(ondisk_path)
       }
       # TODO: is there a better way to check existing groups
-      if(!name %in% c("", "/"))
+      if (!name %in% c("", "/")) {
         rhdf5::h5createGroup(ondisk_path, group = name)
+      }
     },
     ZarrImageArray = {
       dir.zarr <- gsub(paste0(basename(ondisk_path), "$"), "", ondisk_path)
@@ -548,7 +559,7 @@ writeImageArray <- function(
   ax <- axes(image_list)
   for (i in seq_len(length(image_list@levels))) {
     img <- image_list[[i]]
-    
+
     # write array
     switch(
       format,
@@ -566,7 +577,7 @@ writeImageArray <- function(
           )
       },
       ZarrImageArray = {
-        chunk_dim <- stats::setNames(dim(img),ax)
+        chunk_dim <- stats::setNames(dim(img), ax)
         chunk_dim["x"] <- min(chunk_dim["x"], 2000)
         chunk_dim["y"] <- min(chunk_dim["y"], 2000)
         image_list[[i]] <-
@@ -583,7 +594,7 @@ writeImageArray <- function(
   }
 
   # return
-  return(image_list)
+  image_list
 }
 
 ####
@@ -591,7 +602,7 @@ writeImageArray <- function(
 ####
 
 #' @noRd
-.img_create_msg <- function(dim_img, i){
+.img_create_msg <- function(dim_img, i) {
   cat(paste0(
     "Creating level ",
     i,

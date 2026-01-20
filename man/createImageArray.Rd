@@ -29,7 +29,7 @@ typical an integer starting from 1.}
 \item{max.pixel.threshold}{the maximum width
 and height pixel dimension that the lowest level of the image pyramid
 should have, thus the image will be downscaled two folds until both width
-and height is below the threshold. Default is 700 pixels. 
+and height is below the threshold. Default is 700 pixels.
 If \code{n.levels} is provided, this parameter will be ignored.}
 
 \item{engine}{the package to use for each image layer: either

@@ -38,7 +38,7 @@ You can install `r Biocpkg("ImageArray")` from Bioconductor with:
 
 ```{r install-BiocManager, eval = FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
-    install.packages("BiocManager")
+  install.packages("BiocManager")
 }
 BiocManager::install("ImageArray")
 ```
@@ -69,8 +69,8 @@ We primarily use images via the `r Biocpkg("EBImage")` package.
 
 ```{r read}
 # make random EBImage image
-f = system.file("images", "sample.png", package="EBImage")
-img = readImage(f)
+f <- system.file("images", "sample.png", package = "EBImage")
+img <- readImage(f)
 ```
 
 Similar to its counterparts (see `writeHDF5Array` in `r Biocpkg("HDF5Array")`), 
@@ -82,9 +82,9 @@ should have.
 # create image array
 dir.create(td <- tempfile())
 output_h5 <- file.path(td, "h5test")
-imgarray <- writeImageArray(img, 
-                            format = "HDF5ImageArray", 
-                            output = output_h5, 
+imgarray <- writeImageArray(img,
+                            format = "HDF5ImageArray",
+                            output = output_h5,
                             n.levels = 2,
                             replace = TRUE)
 imgarray
@@ -93,7 +93,7 @@ imgarray
 Each level of a pyramid can be rasterized at any time, and thus plotted.
 
 ```{r visualize_read}
-# visualize 
+# visualize
 bfa.raster <- as.raster(imgarray, level = 2)
 plot(bfa.raster)
 ```
@@ -113,7 +113,7 @@ for example, 400. This approach is particularly useful when visualizing:
 with minimal memory footprint.
 
 ```{r visualize_read2}
-# visualize 
+# visualize
 bfa.raster <- as.raster(imgarray, max.pixel.size = 400)
 dim(bfa.raster)
 ```
@@ -126,7 +126,7 @@ which then can be rasterized and plotted.
 imgarray_rotated <- rotate(imgarray, degrees = 90)
 imgarray_rotated
 
-# visualize 
+# visualize
 bfa.raster <- as.raster(imgarray_rotated, max.pixel.size = 400)
 plot(bfa.raster)
 ```
@@ -137,7 +137,7 @@ You can even crop images, either by using `crop` or `[` methods.
 imgarray_cropped <- imgarray[300:500, 200:300]
 imgarray_cropped
 
-# visualize 
+# visualize
 bfa.raster <- as.raster(imgarray_cropped, max.pixel.size = 120)
 plot(bfa.raster)
 
@@ -153,16 +153,16 @@ package where we retain the dimensionality of the image similar to
 
 ```{r read3}
 # make random EBImage image
-f = system.file("images", "sample.png", package="EBImage")
-img = magick::image_read(f)
+f <- system.file("images", "sample.png", package = "EBImage")
+img <- magick::image_read(f)
 
 # create image array
 dir.create(td <- tempfile())
 output_h5 <- file.path(td, "h5test")
-imgarray <- writeImageArray(img, 
-                         format = "HDF5ImageArray", 
-                         output = output_h5, 
-                         replace = TRUE)
+imgarray <- writeImageArray(img,
+                            format = "HDF5ImageArray",
+                            output = output_h5,
+                            replace = TRUE)
 imgarray
 
 # plot
@@ -176,7 +176,7 @@ You can create `ImageArray` objects from OME-TIFF files (or any file compatible
 with Bio-formats, see `r Biocpkg("RBioFormats")`) with already defined layers. 
 
 ```{r ometiff}
-ome.tiff.file <- system.file("extdata", "xy_12bit__plant.ome.tiff", 
+ome.tiff.file <- system.file("extdata", "xy_12bit__plant.ome.tiff",
                              package = "ImageArray")
 read.metadata(ome.tiff.file)
 
@@ -215,10 +215,10 @@ generated after a Xenium in Situ platform run (i.e. postXenium H&E).
 
 ```{r he}
 image_file <- paste(
-    "https://cf.10xgenomics.com/samples/xenium/1.0.1",
-    "Xenium_FFPE_Human_Breast_Cancer_Rep1", 
-    "Xenium_FFPE_Human_Breast_Cancer_Rep1_he_image.ome.tif",
-    sep="/")
+  "https://cf.10xgenomics.com/samples/xenium/1.0.1",
+  "Xenium_FFPE_Human_Breast_Cancer_Rep1",
+  "Xenium_FFPE_Human_Breast_Cancer_Rep1_he_image.ome.tif",
+  sep = "/")
 library(BiocFileCache)
 bfc <- BiocFileCache()
 image_file <- bfcrpath(bfc, image_file)
@@ -229,8 +229,8 @@ file includes multiple resolutions that we can ask `ImageArray`
 object to include.
 
 ```{r he_imgarray}
-imgarray <- createImageArray(image_file, 
-                             series = 1, 
+imgarray <- createImageArray(image_file,
+                             series = 1,
                              resolution = 1:6)
 imgarray
 ```
@@ -250,12 +250,12 @@ img_raster <- as.raster(imgarray_sub, max.pixel.size = 800)
 dim(img_raster)
 
 # plot with ggplot
-ggplot2::ggplot(data.frame(x = 0, y = 0), 
-                             ggplot2::aes_string("x", "y")) + 
-  ggplot2::coord_fixed(expand = FALSE, 
-                       xlim = c(0, dim(img_raster)[2]), 
-                       ylim = c(0, dim(img_raster)[1])) + 
-  ggplot2::annotation_raster(img_raster, 0, dim(img_raster)[2], 
+ggplot2::ggplot(data.frame(x = 0, y = 0),
+                ggplot2::aes_string("x", "y")) +
+  ggplot2::coord_fixed(expand = FALSE,
+                       xlim = c(0, dim(img_raster)[2]),
+                       ylim = c(0, dim(img_raster)[1])) +
+  ggplot2::annotation_raster(img_raster, 0, dim(img_raster)[2],
                              dim(img_raster)[1], 0, interpolate = FALSE)
 ```
 
@@ -271,48 +271,48 @@ This is because `as.raster` determines the layer with the pixel dimensions of
 he specified subset not exceeding the defined threshold (`max.pixel.size`).
 
 ```{r speedy_vis_shiny}
-if(interactive()){
-  
+if (interactive()) {
+
   # variables
   dimimg <- dim(imgarray)
   max.pixel.size <- 800
-  
+
   # Define UI
   ui <- fluidPage(
-    sliderInput("x_slider", label = "X", min = 1, 
-                max = dimimg[1], value = c(16000,19000)),
-    sliderInput("y_slider", label = "Y", min = 1, 
-                max = dimimg[2], value = c(7000,10000)),
+    sliderInput("x_slider", label = "X", min = 1,
+                max = dimimg[1], value = c(16000, 19000)),
+    sliderInput("y_slider", label = "Y", min = 1,
+                max = dimimg[2], value = c(7000, 10000)),
     mainPanel(
       plotOutput(outputId = "scatterPlot")
     )
   )
-  
+
   # Define server logic
   server <- function(input, output) {
-    
+
     output$scatterPlot <- renderPlot({
-      
+
       # crop image
       indx <- seq(input$x_slider[1], input$x_slider[2])
       indy <- seq(input$y_slider[1], input$y_slider[2])
       imgarray_sub <- crop(imgarray, ind = list(indx, indy))
-      
+
       # convert to raster
       img_raster <- as.raster(imgarray_sub, max.pixel.size = max.pixel.size)
-      
+
       # plot with ggplot
-      imgggplot <- ggplot2::ggplot(data.frame(x = 0, y = 0), 
-                                   ggplot2::aes_string("x", "y")) + 
-        ggplot2::coord_fixed(expand = FALSE, 
-                             xlim = c(0, dim(img_raster)[2]), 
-                             ylim = c(0, dim(img_raster)[1])) + 
-        ggplot2::annotation_raster(img_raster, 0, dim(img_raster)[2], 
+      imgggplot <- ggplot2::ggplot(data.frame(x = 0, y = 0),
+                                   ggplot2::aes_string("x", "y")) +
+        ggplot2::coord_fixed(expand = FALSE,
+                             xlim = c(0, dim(img_raster)[2]),
+                             ylim = c(0, dim(img_raster)[1])) +
+        ggplot2::annotation_raster(img_raster, 0, dim(img_raster)[2],
                                    dim(img_raster)[1], 0, interpolate = FALSE)
       imgggplot
     })
   }
-  
+
   # Run the app
   shinyApp(ui = ui, server = server)
 }

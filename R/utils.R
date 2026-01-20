@@ -37,7 +37,7 @@ setReplaceMethod(
           }
         )
     }
-    return(object)
+    object
   }
 )
 

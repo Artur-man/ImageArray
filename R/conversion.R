@@ -29,24 +29,25 @@ setMethod(
   "realize",
   signature = "ImageArray",
   function(x, level = NULL, max.pixel.size = NULL, min.pixel.size = NULL) {
-    
     # return level if specified
-    if(!is.null(level)){
+    if (!is.null(level)) {
       if (level %% 1 == 0) {
-        if(level <= length(x@levels)){
+        if (level <= length(x@levels)) {
           return(S4Arrays::as.array.Array(x[[level]]))
         } else {
-          stop("'level' should be smaller than or equal to the ",
-               "size of the pyramid")
+          stop(
+            "'level' should be smaller than or equal to the ",
+            "size of the pyramid"
+          )
         }
       } else {
         stop("'level' should be an integer.")
       }
     }
-    
+
     # axes
     ax <- axes(x)
-    
+
     # get parameter
     if (!is.null(max.pixel.size) && !is.null(min.pixel.size)) {
       stop("min and max values cant be defined in the same time!")
@@ -112,17 +113,19 @@ setMethod(
   }
   r <- array(
     if (d[3L] == 3L) {
-      grDevices::rgb(t(x[,, 1L]), t(x[,, 2L]), t(x[,, 3L]), maxColorValue = max)
+      grDevices::rgb(t(x[, , 1L]), t(x[, , 2L]), t(x[, , 3L]),
+                     maxColorValue = max)
     } else if (d[3L] == 4L) {
       grDevices::rgb(
-        t(x[,, 1L]),
-        t(x[,, 2L]),
-        t(x[,, 3L]),
-        t(x[,, 4L]),
+        t(x[, , 1L]),
+        t(x[, , 2L]),
+        t(x[, , 3L]),
+        t(x[, , 4L]),
         maxColorValue = max
       )
     } else if (d[3L] == 1L) {
-      grDevices::rgb(t(x[,, 1L]), t(x[,, 1L]), t(x[,, 1L]), maxColorValue = max)
+      grDevices::rgb(t(x[, , 1L]), t(x[, , 1L]), t(x[, , 1L]),
+                     maxColorValue = max)
     } else {
       stop("a raster array must have exactly 1, 3 or 4 planes")
     },
@@ -140,7 +143,7 @@ setMethod(
 #' @param min.pixel.size minimum pixel size
 #'
 #' @importFrom stats setNames
-#' 
+#'
 #' @export
 #' @return A raster array
 #'
@@ -162,7 +165,6 @@ setMethod(
   "as.raster",
   signature = "ImageArray",
   function(x, level = NULL, max.pixel.size = NULL, min.pixel.size = NULL) {
-    
     # get axes
     ax <- axes(x)
     cur_perm <- stats::setNames(seq_len(length(dim(x))), ax)

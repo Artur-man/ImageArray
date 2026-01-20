@@ -15,34 +15,34 @@
 #'
 #' @export
 #' @return A BFArray object
-#' 
+#'
 #' @examples
 #' # get image
 #' library(RBioFormats)
-#' img.file <- system.file("extdata", 
-#'                         "xy_12bit__plant.ome.tiff", 
+#' img.file <- system.file("extdata",
+#'                         "xy_12bit__plant.ome.tiff",
 #'                         package = "ImageArray")
 #' bfa <- BFArray(img.file, series = 1, resolution = 2)
 #' dim(bfa)
 #' type(bfa)
 BFArray <- function(image.file, series, resolution) {
-  
   # check RBioFormats
-  if(!requireNamespace("RBioFormats"))
+  if (!requireNamespace("RBioFormats")) {
     stop("Please install RBioFormats: BiocManager::install('RBioFormats')")
-  
+  }
+
   # get metadata
-  meta <- RBioFormats::read.metadata(
+  meta.data <- RBioFormats::read.metadata(
     file = image.file,
     filter.metadata = TRUE,
     proprietary.metadata = TRUE
   )
-  len_meta <- vapply(meta@.Data, length, integer(1))
-  meta@.Data <- meta@.Data[which(len_meta > 0)]
+  len_meta <- vapply(meta.data@.Data, length, integer(1))
+  meta.data@.Data <- meta.data@.Data[which(len_meta > 0)]
 
   # get shape
   series_res_meta <- vapply(
-    meta@.Data,
+    meta.data@.Data,
     function(x) {
       if (!is.null(cm <- x$coreMetadata)) {
         x <- cm
@@ -60,7 +60,7 @@ BFArray <- function(image.file, series, resolution) {
     shape <- vapply(
       c("sizeX", "sizeY", "sizeC"),
       function(x) {
-        md <- meta@.Data[[series_index]]
+        md <- meta.data@.Data[[series_index]]
         if (!is.null(cm <- md$coreMetadata)) {
           md <- cm
         }
@@ -77,7 +77,7 @@ BFArray <- function(image.file, series, resolution) {
       shape = shape,
       type = "double"
     )
-    return(.BFArray(seed = seed))
+    .BFArray(seed = seed)
   } else {
     stop("Specified resolution was not found in the image!")
   }
@@ -110,22 +110,15 @@ setMethod("dim", "BFArraySeed", function(x) x@shape)
 setMethod("type", "BFArraySeed", function(x) x@type)
 
 ### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### extract_array()
+### extract_array
 ###
 
 #' @importFrom EBImage imageData
 .extract_array_from_BFArraySeed <- function(x, index) {
-  
   # check RBioFormats
-  if(!requireNamespace("RBioFormats"))
+  if (!requireNamespace("RBioFormats")) {
     stop("Please install RBioFormats: BiocManager::install('RBioFormats')")
-  
-  # get metadata
-  meta <- RBioFormats::read.metadata(
-    file = x@filepath,
-    filter.metadata = TRUE,
-    proprietary.metadata = TRUE
-  )
+  }
 
   # check for index length
   if (length(index) > 3) {
@@ -136,11 +129,11 @@ setMethod("type", "BFArraySeed", function(x) x@type)
   ind <- mapply(
     function(x, y) {
       if (is.null(x)) {
-        return(seq_len(y))
+        seq_len(y)
       } else if (length(x) == 0) {
-        return(integer(0))
+        integer(0)
       } else if (length(x) > 0) {
-        return(x)
+        x
       }
     },
     index,
@@ -155,8 +148,9 @@ setMethod("type", "BFArraySeed", function(x) x@type)
     type(res) <- x@type
   } else {
     subset_list <- list(X = ind[[1]], Y = ind[[2]])
-    if (length(len_ind) == 3)
+    if (length(len_ind) == 3) {
       subset_list <- c(subset_list, list(C = ind[[3]]))
+    }
     res <- RBioFormats::read.image(
       file = x@filepath,
       series = x@series,
@@ -166,10 +160,10 @@ setMethod("type", "BFArraySeed", function(x) x@type)
     res <- EBImage::imageData(res)
     if (length(dim(res)) != 3) {
       res <- array(res, dim = c(dim(res), 1))
-    } 
+    }
   }
 
-  return(res)
+  res
 }
 
 setMethod("extract_array", "BFArraySeed", .extract_array_from_BFArraySeed)

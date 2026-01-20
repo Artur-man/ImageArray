@@ -7,53 +7,64 @@ dir.create(td <- tempfile())
 output_h5ad <- file.path(td, "h5test")
 output_zarr <- file.path(td, "zarrtest")
 
-# build image array 
+# build image array
 set.seed(1)
-mat <- array(data=sample(1:13, 20*50*3, replace = TRUE), dim=c(20, 50, 3))
+mat <- array(
+  data = sample(1:13, 20 * 50 * 3, replace = TRUE),
+  dim = c(20, 50, 3)
+)
 mat_raster <- as.raster(mat, max = 255)
 
 # read as magick object
 mat_image <- magick::image_read(mat_raster)
 
 test_that("path hdf5", {
-  
   # h5
-  mat_list <- writeImageArray(mat_image, 
-                              output = output_h5ad, 
-                              name = "image",
-                              format = "HDF5ImageArray", 
-                              replace = TRUE, verbose = FALSE)
-  expect_equal(length(mat_list),1)
+  mat_list <- writeImageArray(
+    mat_image,
+    output = output_h5ad,
+    name = "image",
+    format = "HDF5ImageArray",
+    replace = TRUE,
+    verbose = FALSE
+  )
+  expect_equal(length(mat_list), 1)
   expect_true(file.exists(path(mat_list)))
-  
+
   # change path
   output_h5ad_replace <- gsub("h5test.h5", "h5test2.h5", path(mat_list))
   file.rename(path(mat_list), output_h5ad_replace)
   expect_true(file.exists(output_h5ad_replace))
   path(mat_list) <- output_h5ad_replace
   expect_true(file.exists(path(mat_list)))
-  expect_equal(path(mat_list),output_h5ad_replace)
+  expect_equal(path(mat_list), output_h5ad_replace)
 })
-  
+
 test_that("path zarr", {
   # zarr
   unlink(output_zarr, recursive = TRUE)
-  mat_list <- writeImageArray(mat_image, 
-                              output = output_zarr, 
-                              name = "image",
-                              format = "ZarrImageArray", 
-                              replace = TRUE, verbose = FALSE)
-  expect_equal(length(mat_list),1)
+  mat_list <- writeImageArray(
+    mat_image,
+    output = output_zarr,
+    name = "image",
+    format = "ZarrImageArray",
+    replace = TRUE,
+    verbose = FALSE
+  )
+  expect_equal(length(mat_list), 1)
   expect_true(dir.exists(path(mat_list)))
-  
+
   # change path
   output_zarr_replace <- gsub("zarrtest.zarr", "zarrtest2.zarr", path(mat_list))
-  file.rename(gsub("image/1/", "", path(mat_list)), 
-              gsub("image/1/", "", output_zarr_replace))
+  file.rename(
+    gsub("image/1/", "", path(mat_list)),
+    gsub("image/1/", "", output_zarr_replace)
+  )
   expect_true(file.exists(output_zarr_replace))
   path(mat_list) <- gsub("image/1/", "", output_zarr_replace)
   expect_true(file.exists(path(mat_list)))
-  expect_equal(normalizePath(path(mat_list)),
-               normalizePath(output_zarr_replace))
-  
+  expect_equal(
+    normalizePath(path(mat_list)),
+    normalizePath(output_zarr_replace)
+  )
 })
