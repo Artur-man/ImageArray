@@ -19,8 +19,6 @@
 \alias{axes}
 \alias{axes,ImageArray-method}
 \alias{[,ImageArray,numeric,numeric,ANY-method}
-\alias{[[,ImageArray,numeric,ANY-method}
-\alias{[[<-,ImageArray,numeric,ANY,ANY-method}
 \alias{dim,ImageArray-method}
 \alias{type,ImageArray-method}
 \alias{length,ImageArray-method}
@@ -30,9 +28,9 @@
 \usage{
 \S4method{[}{ImageArray,numeric,numeric,ANY}(x, i, j, ..., drop = FALSE)
 
-\S4method{[[}{ImageArray,numeric,ANY}(x, i)
+\S4method{[[}{ImageArray,numeric}(x, i)
 
-\S4method{[[}{ImageArray,numeric,ANY,ANY}(x, i, j, ...) <- value
+\S4method{[[}{ImageArray,numeric}(x, i, j, ...) <- value
 
 \S4method{dim}{ImageArray}(x)
 
@@ -109,7 +107,7 @@ for \code{ImageArray} objects
 \item \code{x[[i}: Layer access
 for \code{ImageArray} objects
 
-\item \code{`[[`(x = ImageArray, i = numeric, j = ANY) <- value}: Layer access
+\item \code{`[[`(x = ImageArray, i = numeric) <- value}: Layer access
 for \code{ImageArray} objects
 
 \item \code{dim(ImageArray)}: dimensions of an ImageArray

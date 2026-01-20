@@ -519,9 +519,10 @@ writeImageArray <- function(
     stop("'replace' must be TRUE or FALSE")
   }
   if (replace) {
-    if (file.exists(ondisk_path)) {
+    if (file.exists(ondisk_path))
       file.remove(ondisk_path)
-    }
+    if(dir.exists(ondisk_path)) 
+      unlink(ondisk_path, recursive = TRUE)
   }
 
   # make Image Array
