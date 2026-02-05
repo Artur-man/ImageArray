@@ -20,11 +20,11 @@ test_that("file input, with EBImage", {
 
   # rotate
   lapply(c(0, 90, 180, 270, 360), function(x) {
-    imgarray_vis <- rotate(imgarray, degree = x)
+    imgarray_vis <- rotate(imgarray, angle = x)
     imgarray_vis <- as.raster(imgarray_vis)
     plot(imgarray_vis)
   })
-  expect_error(imgarray_vis <- rotate(imgarray, degree = 225))
+  expect_error(imgarray_vis <- rotate(imgarray, angle = 225))
 
   # flip and flop
   imgarray_vis <- flip(imgarray)
@@ -49,11 +49,11 @@ test_that("file input, with magick", {
 
   # rotate
   lapply(c(0, 90, 180, 270, 360), function(x) {
-    imgarray_vis <- rotate(imgarray, degree = x)
+    imgarray_vis <- rotate(imgarray, angle = x)
     imgarray_vis <- as.raster(imgarray_vis)
     plot(imgarray_vis)
   })
-  expect_error(imgarray_vis <- rotate(imgarray, degree = 225))
+  expect_error(imgarray_vis <- rotate(imgarray, angle = 225))
 
   # flip and flop
   imgarray_vis <- flip(imgarray)
@@ -81,11 +81,11 @@ test_that("magick input", {
 
   # rotate
   lapply(c(0, 90, 180, 270, 360), function(x) {
-    imgarray_vis <- rotate(imgarray, degree = x)
+    imgarray_vis <- rotate(imgarray, angle = x)
     imgarray_vis <- as.raster(imgarray_vis)
     plot(imgarray_vis)
   })
-  expect_error(imgarray_vis <- rotate(imgarray, degree = 225))
+  expect_error(imgarray_vis <- rotate(imgarray, angle = 225))
 
   # flip and flop
   imgarray_vis <- flip(imgarray)
@@ -114,11 +114,11 @@ test_that("bitmap input", {
 
   # rotate
   lapply(c(0, 90, 180, 270, 360), function(x) {
-    imgarray_vis <- rotate(imgarray, degree = x)
+    imgarray_vis <- rotate(imgarray, angle = x)
     imgarray_vis <- as.raster(imgarray_vis)
     plot(imgarray_vis)
   })
-  expect_error(imgarray_vis <- rotate(imgarray, degree = 225))
+  expect_error(imgarray_vis <- rotate(imgarray, angle = 225))
 
   # flip and flop
   imgarray_vis <- flip(imgarray)

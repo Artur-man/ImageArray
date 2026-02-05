@@ -1,42 +1,43 @@
+#' @importFrom EBImage rotate flip flop
+
 ####
 # Main ####
 ####
 
 #' @describeIn ImageArray-methods rotate image array to 90, 180, 270 degrees
-#' @exportMethod rotate
-setMethod("rotate", signature = "ImageArray", function(object, degrees) {
+setMethod("rotate", signature = "ImageArray", function(x, angle) {
   # validate rotation
-  if (!degrees %in% c(0, 90, 180, 270, 360)) {
+  if (!angle %in% c(0, 90, 180, 270, 360)) {
     stop("Only rotations of 0,90,180,270,360 degrees are supported!")
   }
 
   # check dimensions
-  .check_dim(object)
-  dim_img <- dim(object[[1]])
-  ax <- axes(object)
+  .check_dim(x)
+  dim_img <- dim(x[[1]])
+  ax <- axes(x)
 
   # array perm.
-  if (degrees %in% c(90, 270)) {
+  if (angle %in% c(90, 270)) {
     cur_perm <- .swap(
       seq_len(length(dim_img)),
       which(ax == "x"),
       which(ax == "y")
     )
-    object <- aperm(object, perm = cur_perm)
+    x <- aperm(x, perm = cur_perm)
   }
 
   # flop
-  if (degrees %in% c(90, 180)) {
-    object <- flop(object)
+  if (angle %in% c(90, 180)) {
+    x <- flop(x)
   }
 
   # flip
-  if (degrees %in% c(180, 270)) {
-    object <- flip(object)
+  if (angle %in% c(180, 270)) {
+    x <- flip(x)
   }
 
   # return
-  object
+  x
 })
 
 #' @describeIn ImageArray-methods permute image
@@ -98,17 +99,14 @@ setMethod("modulate", signature = "ImageArray", function(object, brightness) {
   object
 }
 
-
 #' @describeIn ImageArray-methods vertical flipping image
-#' @exportMethod flip
-setMethod("flip", signature = "ImageArray", function(object) {
-  .flipflop(object, direction = "y")
+setMethod("flip", signature = "ImageArray", function(x) {
+  .flipflop(x, direction = "y")
 })
 
 #' @describeIn ImageArray-methods horizontal flipping image
-#' @exportMethod flop
-setMethod("flop", signature = "ImageArray", function(object) {
-  .flipflop(object, direction = "x")
+setMethod("flop", signature = "ImageArray", function(x) {
+  .flipflop(x, direction = "x")
 })
 
 #' @describeIn ImageArray-methods cropping image

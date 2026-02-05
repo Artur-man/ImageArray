@@ -18,7 +18,7 @@
 #'  }
 #' }
 #' @param drop ignored
-#' @param degrees value between 0 and 360 for how many degrees to rotate
+#' @param angle value between 0 and 360 for degrees to rotate
 #' @param brightness the brightness of the new image in percentage, e.g. 120
 #' @param perm perm
 #' @param ind index list
@@ -63,7 +63,7 @@
 #'
 #' # manipulate images
 #' imgarray <- crop(imgarray, ind = list(100:200, 100:200))
-#' imgarray <- rotate(imgarray, degrees = 90)
+#' imgarray <- rotate(imgarray, angle = 90)
 #' imgarray <- flip(imgarray)
 #' imgarray <- flop(imgarray)
 NULL

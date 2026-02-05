@@ -40,7 +40,7 @@
 
 ImageArray(meta, levels)
 
-\S4method{rotate}{ImageArray}(object, degrees)
+\S4method{rotate}{ImageArray}(x, angle)
 
 \S4method{aperm}{ImageArray}(a, perm)
 
@@ -48,9 +48,9 @@ ImageArray(meta, levels)
 
 \S4method{modulate}{ImageArray}(object, brightness)
 
-\S4method{flip}{ImageArray}(object)
+\S4method{flip}{ImageArray}(x)
 
-\S4method{flop}{ImageArray}(object)
+\S4method{flop}{ImageArray}(x)
 
 \S4method{crop}{ImageArray}(object, ind)
 
@@ -79,7 +79,7 @@ ImageArray(meta, levels)
 \item{levels}{levels of the pyramid image, typically a vector of integers
 starting with 1}
 
-\item{degrees}{value between 0 and 360 for how many degrees to rotate}
+\item{angle}{value between 0 and 360 for degrees to rotate}
 
 \item{perm}{perm}
 
@@ -155,7 +155,7 @@ length(imgarray)
 
 # manipulate images
 imgarray <- crop(imgarray, ind = list(100:200, 100:200))
-imgarray <- rotate(imgarray, degrees = 90)
+imgarray <- rotate(imgarray, angle = 90)
 imgarray <- flip(imgarray)
 imgarray <- flop(imgarray)
 }

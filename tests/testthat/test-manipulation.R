@@ -46,13 +46,13 @@ test_that("manipulate h5 ImageArray", {
   expect_equal(type(mat_list_negated[[1]]), "integer")
 
   # rotate
-  mat_list_rotated <- rotate(mat_list, degrees = 90)
+  mat_list_rotated <- rotate(mat_list, angle = 90)
   expect_equal(dim(mat_list_rotated), c(3, 2000, 5000))
-  mat_list_rotated <- rotate(mat_list, degrees = 180)
+  mat_list_rotated <- rotate(mat_list, angle = 180)
   expect_equal(dim(mat_list_rotated), c(3, 5000, 2000))
-  mat_list_rotated <- rotate(mat_list, degrees = 270)
+  mat_list_rotated <- rotate(mat_list, angle = 270)
   expect_equal(dim(mat_list_rotated), c(3, 2000, 5000))
-  expect_error(mat_list_rotated <- rotate(mat_list, degrees = 20))
+  expect_error(mat_list_rotated <- rotate(mat_list, angle = 20))
 
   # flip flop
   mat_list_flipflop <- flip(mat_list)
@@ -121,13 +121,13 @@ test_that("manipulate zarr ImageArray", {
   expect_equal(unique(as.vector(tmp)), 255)
 
   # rotate
-  mat_list_rotated <- rotate(mat_list, degrees = 90)
+  mat_list_rotated <- rotate(mat_list, angle = 90)
   expect_equal(dim(mat_list_rotated), c(3, 2000, 5000))
-  mat_list_rotated <- rotate(mat_list, degrees = 180)
+  mat_list_rotated <- rotate(mat_list, angle = 180)
   expect_equal(dim(mat_list_rotated), c(3, 5000, 2000))
-  mat_list_rotated <- rotate(mat_list, degrees = 270)
+  mat_list_rotated <- rotate(mat_list, angle = 270)
   expect_equal(dim(mat_list_rotated), c(3, 2000, 5000))
-  expect_error(mat_list_rotated <- rotate(mat_list, degrees = 20))
+  expect_error(mat_list_rotated <- rotate(mat_list, angle = 20))
 
   # flip flop
   mat_list_flipflop <- flip(mat_list)
