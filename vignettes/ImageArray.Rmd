@@ -13,15 +13,6 @@ vignette: |
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r load-libs}
-library(ImageArray)
-library(BiocFileCache)
-library(RBioFormats)
-library(EBImage)
-library(ggplot2)
-library(shiny)
-```
-
 # Introduction
 
 The `r Biocpkg("ImageArray")` package provides a **unified, memory-efficient** 
@@ -63,6 +54,16 @@ are applied lazily (or delayed) across all levels.
 
 # Usage
 
+```{r load-libs, message=FALSE, warning=FALSE}
+library(ImageArray)
+library(BiocFileCache)
+library(RBioFormats)
+library(EBImage)
+library(magick)
+library(ggplot2)
+library(shiny)
+```
+
 ## EBImage
 
 We primarily use images via the `r Biocpkg("EBImage")` package. 
@@ -70,6 +71,8 @@ We primarily use images via the `r Biocpkg("EBImage")` package.
 ```{r read}
 # make random EBImage image
 f <- system.file("images", "sample.png", package = "EBImage")
+
+# read image with EBImage
 img <- readImage(f)
 ```
 
@@ -93,7 +96,6 @@ imgarray
 Each level of a pyramid can be rasterized at any time, and thus plotted.
 
 ```{r visualize_read}
-# visualize
 bfa.raster <- as.raster(imgarray, level = 2)
 plot(bfa.raster)
 ```
@@ -154,7 +156,9 @@ package where we retain the dimensionality of the image similar to
 ```{r read3}
 # make random EBImage image
 f <- system.file("images", "sample.png", package = "EBImage")
-img <- magick::image_read(f)
+
+# read image with magick
+img <- image_read(f)
 
 # create image array
 dir.create(td <- tempfile())
@@ -250,13 +254,13 @@ img_raster <- as.raster(imgarray_sub, max.pixel.size = 800)
 dim(img_raster)
 
 # plot with ggplot
-ggplot2::ggplot(data.frame(x = 0, y = 0),
-                ggplot2::aes_string("x", "y")) +
-  ggplot2::coord_fixed(expand = FALSE,
-                       xlim = c(0, dim(img_raster)[2]),
-                       ylim = c(0, dim(img_raster)[1])) +
-  ggplot2::annotation_raster(img_raster, 0, dim(img_raster)[2],
-                             dim(img_raster)[1], 0, interpolate = FALSE)
+ggplot(data.frame(x = 0, y = 0), aes(x, y)) +
+  coord_fixed(expand = FALSE,
+              xlim = c(0, dim(img_raster)[2]),
+              ylim = c(0, dim(img_raster)[1])) +
+  annotation_raster(img_raster, 
+                    0, dim(img_raster)[2],
+                    dim(img_raster)[1], 0, interpolate = FALSE)
 ```
 
 ## Interactive Shiny Applications
@@ -302,13 +306,13 @@ if (interactive()) {
       img_raster <- as.raster(imgarray_sub, max.pixel.size = max.pixel.size)
 
       # plot with ggplot
-      imgggplot <- ggplot2::ggplot(data.frame(x = 0, y = 0),
-                                   ggplot2::aes_string("x", "y")) +
-        ggplot2::coord_fixed(expand = FALSE,
-                             xlim = c(0, dim(img_raster)[2]),
-                             ylim = c(0, dim(img_raster)[1])) +
-        ggplot2::annotation_raster(img_raster, 0, dim(img_raster)[2],
-                                   dim(img_raster)[1], 0, interpolate = FALSE)
+      imgggplot <- ggplot(data.frame(x = 0, y = 0), aes(x, y)) +
+        coord_fixed(expand = FALSE,
+                    xlim = c(0, dim(img_raster)[2]),
+                    ylim = c(0, dim(img_raster)[1])) +
+        annotation_raster(img_raster, 
+                          0, dim(img_raster)[2],
+                          dim(img_raster)[1], 0, interpolate = FALSE)
       imgggplot
     })
   }
