@@ -22,6 +22,9 @@
 #' @param brightness the brightness of the new image in percentage, e.g. 120
 #' @param perm perm
 #' @param ind index list
+#' @param max.pixel.size maximum pixel size
+#' @param min.pixel.size minimum pixel size
+#' @param level level
 #' @param ... Arguments passed to other methods
 #'
 #' @name ImageArray-methods
@@ -44,7 +47,11 @@
 #' modulate,ImageArray-method
 #' axes
 #' axes,ImageArray-method
-#'
+#' realize
+#' realize,ImageArray-method
+#' as.raster
+#' as.raster,ImageArray-method
+#' 
 #' @examples
 #' # get image
 #' library(EBImage)
@@ -66,6 +73,21 @@
 #' imgarray <- rotate(imgarray, angle = 90)
 #' imgarray <- flip(imgarray)
 #' imgarray <- flop(imgarray)
+#'
+#' # create ImageArray on disk as HDF5 format
+#' dir.create(td <- tempfile())
+#' output_h5ad <- file.path(td, "h5test")
+#' imgarray <- writeImageArray(img.file,
+#'                           output = output_h5ad,
+#'                           name = "image",
+#'                           format = "HDF5ImageArray",
+#'                           replace = TRUE, verbose = FALSE)
+#'                           
+#' # as.raster
+#' imgarray_raster <- as.raster(imgarray)
+#' 
+#' # realize
+#' imgarray <- realize(imgarray)
 NULL
 
 #' @describeIn ImageArray-methods subset and crop
@@ -518,12 +540,8 @@ writeImageArray <- function(
   if (!.isTRUEorFALSE(replace)) {
     stop("'replace' must be TRUE or FALSE")
   }
-  if (replace) {
-    if (file.exists(ondisk_path))
-      file.remove(ondisk_path)
-    if(dir.exists(ondisk_path)) 
-      unlink(ondisk_path, recursive = TRUE)
-  }
+  if (replace)
+    unlink(ondisk_path, recursive=TRUE)
 
   # make Image Array
   if (!inherits(image, "ImageArray")) {

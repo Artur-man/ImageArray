@@ -125,7 +125,7 @@ conducted on all levels (without loading the image in the memory)
 which then can be rasterized and plotted.
 
 ```{r rotate}
-imgarray_rotated <- rotate(imgarray, degrees = 90)
+imgarray_rotated <- rotate(imgarray, angle = 90)
 imgarray_rotated
 
 # visualize

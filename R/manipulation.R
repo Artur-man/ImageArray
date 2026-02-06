@@ -1,10 +1,12 @@
 #' @importFrom EBImage rotate flip flop
+NULL
 
 ####
 # Main ####
 ####
 
 #' @describeIn ImageArray-methods rotate image array to 90, 180, 270 degrees
+#' @export
 setMethod("rotate", signature = "ImageArray", function(x, angle) {
   # validate rotation
   if (!angle %in% c(0, 90, 180, 270, 360)) {
@@ -100,11 +102,13 @@ setMethod("modulate", signature = "ImageArray", function(object, brightness) {
 }
 
 #' @describeIn ImageArray-methods vertical flipping image
+#' @export
 setMethod("flip", signature = "ImageArray", function(x) {
   .flipflop(x, direction = "y")
 })
 
 #' @describeIn ImageArray-methods horizontal flipping image
+#' @export
 setMethod("flop", signature = "ImageArray", function(x) {
   .flipflop(x, direction = "x")
 })

@@ -1,30 +1,12 @@
-#' as.array
-#'
-#' as.array method for ImageArray object
-#'
-#' @param x an ImageArray object
-#' @param max.pixel.size maximum pixel size
-#' @param min.pixel.size minimum pixel size
-#' @param level level
+#' @importFrom grDevices as.raster
+
+####
+# Main ####
+####
+
+#' @describeIn ImageArray-methods realize the array 
 #' @importFrom S4Arrays as.array.Array
-#'
 #' @export
-#' @return An array object
-#'
-#' @examples
-#' # get image
-#' library(EBImage)
-#' img.file <- system.file("images", "sample.png", package="EBImage")
-#'
-#' # create ImageArray
-#' dir.create(td <- tempfile())
-#' output_h5ad <- file.path(td, "h5test")
-#' imgarray <- writeImageArray(img.file,
-#'                           output = output_h5ad,
-#'                           name = "image",
-#'                           format = "HDF5ImageArray",
-#'                           replace = TRUE, verbose = FALSE)
-#' imgarray <- realize(imgarray)
 setMethod(
   "realize",
   signature = "ImageArray",
@@ -135,57 +117,34 @@ setMethod(
   r
 }
 
-#' as.raster method for ImageArray object
-#'
-#' @param x an ImageArray object
-#' @param level level
-#' @param max.pixel.size maximum pixel size
-#' @param min.pixel.size minimum pixel size
-#'
+#' @describeIn ImageArray-methods create a raster object
 #' @importFrom stats setNames
-#'
 #' @export
-#' @return A raster array
-#'
-#' @examples
-#' # get image
-#' library(EBImage)
-#' img.file <- system.file("images", "sample.png", package="EBImage")
-#'
-#' # create ImageArray
-#' dir.create(td <- tempfile())
-#' output_h5ad <- file.path(td, "h5test")
-#' imgarray <- writeImageArray(img.file,
-#'                           output = output_h5ad,
-#'                           name = "image",
-#'                           format = "HDF5ImageArray",
-#'                           replace = TRUE, verbose = FALSE)
-#' imgarray_raster <- as.raster(imgarray)
-setMethod(
-  "as.raster",
-  signature = "ImageArray",
-  function(x, level = NULL, max.pixel.size = NULL, min.pixel.size = NULL) {
-    # get axes
-    ax <- axes(x)
-    cur_perm <- stats::setNames(seq_len(length(dim(x))), ax)
-
-    # realize
-    rx <- realize(
-      x,
-      level = level,
-      max.pixel.size = max.pixel.size,
-      min.pixel.size = min.pixel.size
-    )
-    d <- length(dim(x))
-    if (d == 2) {
-      cur_perm <- stats::setNames(c(cur_perm, 3), c(ax, "c"))
-      rx <- array(rx, dim = c(dim(rx), 1))
-    }
-    rx <- aperm(rx, perm = cur_perm[c("y", "x", "c")])
-    rx <- .as_raster_array(
-      rx,
-      max = if (type(x) == "double") 1 else 255
-    )
-    rx
+as.raster.ImageArray <- function(x,
+                                 level = NULL, 
+                                 max.pixel.size = NULL, 
+                                 min.pixel.size = NULL, 
+                                 ...) {
+  # get axes
+  ax <- axes(x)
+  cur_perm <- stats::setNames(seq_len(length(dim(x))), ax)
+  
+  # realize
+  rx <- realize(
+    x,
+    level = level,
+    max.pixel.size = max.pixel.size,
+    min.pixel.size = min.pixel.size
+  )
+  d <- length(dim(x))
+  if (d == 2) {
+    cur_perm <- stats::setNames(c(cur_perm, 3), c(ax, "c"))
+    rx <- array(rx, dim = c(dim(rx), 1))
   }
-)
+  rx <- aperm(rx, perm = cur_perm[c("y", "x", "c")])
+  rx <- .as_raster_array(
+    rx,
+    max = if (type(x) == "double") 1 else 255
+  )
+  rx
+}
