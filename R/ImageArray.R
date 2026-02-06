@@ -530,18 +530,12 @@ writeImageArray <- function(
   # verbose
   verbose <- DelayedArray:::normarg_verbose(verbose)
 
-  # path
-  ondisk_path <- paste0(
-    output,
-    ifelse(format == "HDF5ImageArray", ".h5", ".zarr")
-  )
-
   # create or replace output folder
   if (!.isTRUEorFALSE(replace)) {
     stop("'replace' must be TRUE or FALSE")
   }
   if (replace)
-    unlink(ondisk_path, recursive=TRUE)
+    unlink(output, recursive=TRUE)
 
   # make Image Array
   if (!inherits(image, "ImageArray")) {
@@ -559,18 +553,16 @@ writeImageArray <- function(
   switch(
     format,
     HDF5ImageArray = {
-      if (!file.exists(ondisk_path)) {
-        rhdf5::h5createFile(ondisk_path)
-      }
+      if (!file.exists(output))
+        rhdf5::h5createFile(output)
       # TODO: is there a better way to check existing groups
-      if (!name %in% c("", "/")) {
-        rhdf5::h5createGroup(ondisk_path, group = name)
-      }
+      if (!name %in% c("", "/"))
+        rhdf5::h5createGroup(output, group = name)
     },
     ZarrImageArray = {
-      dir.zarr <- gsub(paste0(basename(ondisk_path), "$"), "", ondisk_path)
-      open_zarr(dir = dir.zarr, name = basename(ondisk_path))
-      zarrcreateGroup(ondisk_path, name)
+      if (!dir.exists(output)) 
+        create_zarr(store = output)
+      create_zarr_group(output, name)
     }
   )
 
@@ -586,7 +578,7 @@ writeImageArray <- function(
         image_list[[i]] <-
           HDF5Array::writeHDF5Array(
             img,
-            filepath = ondisk_path,
+            filepath = output,
             name = paste0(name, "/", i),
             chunkdim = chunkdim,
             level = level,
@@ -602,7 +594,7 @@ writeImageArray <- function(
         image_list[[i]] <-
           Rarr::writeZarrArray(
             img,
-            zarr_array_path = file.path(ondisk_path, paste0(name, "/", i)),
+            zarr_array_path = file.path(output, paste0(name, "/", i)),
             chunk_dim = chunk_dim
           )
       },
@@ -622,7 +614,7 @@ writeImageArray <- function(
 
 #' @noRd
 .img_create_msg <- function(dim_img, i) {
-  cat(paste0(
+  message(paste0(
     "Creating level ",
     i,
     " ",

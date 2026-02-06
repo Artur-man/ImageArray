@@ -15,7 +15,7 @@ Encoding: UTF-8
 RoxygenNote: 7.3.3
 biocViews: Software, Visualization
 Depends: 
-  R (>= 4.4.0),
+  R (>= 4.5.0),
   EBImage
 Imports: 
   methods, 
