@@ -3,9 +3,9 @@ library(rhdf5)
 library(HDF5Array)
 library(Rarr)
 
-dir.create(td <- tempfile())
-output_h5ad <- file.path(td, "test.h5")
-output_zarr <- file.path(td, "test.zarr")
+
+output_h5ad <- tempfile(fileext = ".h5")
+output_zarr <- tempfile(fileext = ".zarr")
 
 # build image array
 set.seed(1)
@@ -32,7 +32,7 @@ test_that("path hdf5", {
   expect_true(file.exists(path(mat_list)))
 
   # change path
-  output_h5ad_replace <- gsub("h5test.h5", "h5test2.h5", path(mat_list))
+  output_h5ad_replace <- gsub(".h5$", "2.h5", path(mat_list))
   file.rename(path(mat_list), output_h5ad_replace)
   expect_true(file.exists(output_h5ad_replace))
   path(mat_list) <- output_h5ad_replace
@@ -55,7 +55,7 @@ test_that("path zarr", {
   expect_true(dir.exists(path(mat_list)))
 
   # change path
-  output_zarr_replace <- gsub("zarrtest.zarr", "zarrtest2.zarr", path(mat_list))
+  output_zarr_replace <- gsub(".zarr$", "2.zarr", path(mat_list))
   file.rename(
     gsub("image/1/", "", path(mat_list)),
     gsub("image/1/", "", output_zarr_replace)

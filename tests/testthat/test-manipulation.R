@@ -3,9 +3,8 @@ library(rhdf5)
 library(HDF5Array)
 library(Rarr)
 
-dir.create(td <- tempfile())
-output_h5ad <- file.path(td, "h5test")
-output_zarr <- file.path(td, "zarrtest")
+output_h5ad <- tempfile(fileext = ".h5")
+output_zarr <- tempfile(fileext = ".zarr")
 
 # build image array
 set.seed(1)
