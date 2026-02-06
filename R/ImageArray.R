@@ -102,6 +102,31 @@ setMethod(
   }
 )
 
+setMethod(
+  f = "[",
+  signature = c("ImageArray", "numeric", "missing"),
+  definition = function(x, i, j, ..., drop = FALSE) {
+    crop(x, ind = list(i, NULL))
+  }
+)
+
+setMethod(
+  f = "[",
+  signature = c("ImageArray", "missing", "numeric"),
+  definition = function(x, i, j, ..., drop = FALSE) {
+    crop(x, ind = list(NULL, j))
+  }
+)
+
+setMethod(
+  f = "[",
+  signature = c("ImageArray", "missing", "missing"),
+  definition = function(x, i, j, ..., drop = FALSE) {
+    crop(x, ind = list(NULL, NULL))
+  }
+)
+
+
 #' @describeIn ImageArray-methods Layer access
 #' for \code{ImageArray} objects
 #'
@@ -110,6 +135,7 @@ setMethod(
   f = "[[",
   signature = c("ImageArray", "numeric"),
   definition = function(x, i) {
+    .check_level(i,x)
     x@levels[[i]]
   }
 )
@@ -122,6 +148,7 @@ setMethod(
   f = "[[<-",
   signature = c("ImageArray", "numeric"),
   definition = function(x, i, ..., value) {
+    .check_level(i,x)
     x@levels[[i]] <- value
     x
   }
@@ -612,6 +639,7 @@ writeImageArray <- function(
 # Auxiliary ####
 ####
 
+#' @keywords internal
 #' @noRd
 .img_create_msg <- function(dim_img, i) {
   message(paste0(
@@ -621,4 +649,14 @@ writeImageArray <- function(
     paste0("(", paste(dim_img, collapse = ","), ")"),
     "\n"
   ))
+}
+
+#' @keywords internal
+#' @noRd
+.check_level <- function(i,x){
+  if(i %% 1 != 0)
+    stop("Level should be an integer!")
+  n.levels <- length(x)
+  if(i < 1 || n.levels < i)
+    stop("Level is outside of range")
 }

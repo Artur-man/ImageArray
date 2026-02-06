@@ -19,6 +19,17 @@ mat_raster <- as.raster(mat, max = 255)
 # read as magick object
 mat_image <- magick::image_read(mat_raster)
 
+test_that("validate pyramid level", {
+  imgarray <- createImageArray(mat_image, n.levels = 3)
+  dim_img <- dim(imgarray)
+  expect_equal(dim(imgarray[[1]]), dim_img)
+  expect_equal(dim(imgarray[[2]]), 
+               c(dim_img[1], dim_img[2]/2, dim_img[3]/2))
+  expect_error(imgarray[[-1]])
+  expect_error(imgarray[[1.2]])
+  expect_error(imgarray[[0]])
+})
+
 test_that("visualize h5 ImageArray", {
   # create image array
   mat_list <- writeImageArray(

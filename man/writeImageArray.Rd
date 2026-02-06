@@ -65,7 +65,7 @@ imgarray <- writeImageArray(img.file,
                           output = output_h5ad,
                           name = "image",
                           format = "HDF5ImageArray",
-                          replace = TRUE, verbose = FALSE)
+                          verbose = FALSE)
 imgarray_raster <- as.raster(imgarray)
 plot(imgarray_raster)
 

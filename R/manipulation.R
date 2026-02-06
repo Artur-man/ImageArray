@@ -117,33 +117,36 @@ setMethod("flop", signature = "ImageArray", function(x) {
 #' @importFrom utils head tail
 #' @importFrom stats setNames
 #' @exportMethod crop
-setMethod("crop", signature = "ImageArray", function(object, ind) {
+setMethod("crop", signature = "ImageArray", function(object, index) {
+  
+  # check_dim
+  .check_dim(object)
+  
   # get axes
   ax <- axes(object)
   dim_img <- stats::setNames(dim(object), ax)
-
+  
   # check ind
-  if (!is.list(ind)) {
-    stop("'ind' should be a list of integers")
+  if (missing(index)) {
+    index <- vector(mode = "list", 
+                    length = length(metadata$shape))
   }
-
-  # check_dim
-  .check_dim(object)
+  index <- .check_indices(index = index, dim = dim_img)
 
   # ind control
-  if (length(ind) == 2) {
-    ind <- stats::setNames(ind, c("x", "y"))
+  if (length(index) == 2) {
+    index <- stats::setNames(index, c("x", "y"))
     if (length(dim_img) == 3) {
-      ind <- c(ind, list(c = seq_len(dim_img["c"])))
+      index <- c(index, list(c = seq_len(dim_img["c"])))
     }
-    ind <- ind[ax]
+    index <- index[ax]
   }
 
   # check sequential
-  check_sequential <- all(vapply(ind[c("x", "y")], is.sequential, logical(1)))
+  check_sequential <- all(vapply(index[c("x", "y")], is.sequential, logical(1)))
   if (!check_sequential) {
     stop(
-      "'ind' should be a list of sequantial integer 
+      "'index' should be a list of sequantial integer 
                    vectors (hence slice)"
     )
   }
@@ -153,10 +156,10 @@ setMethod("crop", signature = "ImageArray", function(object, ind) {
   for (i in seq_len(n.levels)) {
     img <- object[[i]]
     dim_img <- stats::setNames(dim(img), ax)[c("x", "y")]
-    cur_ind <- ind
+    cur_ind <- index
     cur_ind[c("x", "y")] <-
-      lapply(seq_len(length(ind[c("x", "y")])), function(j) {
-        curind <- ind[c("x", "y")][[j]]
+      lapply(seq_len(length(index[c("x", "y")])), function(j) {
+        curind <- index[c("x", "y")][[j]]
         id <- c(
           floor(utils::head(curind, 1) / (2^(i - 1))),
           ceiling(utils::tail(curind, 1) / (2^(i - 1)))
@@ -208,4 +211,41 @@ setMethod("axes", "ImageArray", function(object) object@meta[["axes"]])
   if (!(length(dim(object)) %in% c(2, 3))) {
     stop("This operation can only be performed on 2D or 3D image arrays")
   }
+}
+
+# check_index() from Huber-group-EMBL/Rarr
+#' @keywords internal
+.check_indices <- function(index, dim) {
+  
+  ## check list
+  if (!is.list(index))
+    stop("'index' should be a list of integers")
+  
+  ## check we have the correct number of dimensions
+  if (isFALSE(length(index) == length(dim))) {
+    stop(
+      "The number of dimensions provided to 'index' ", 
+      "does not match the shape of the array"
+    )
+  }
+  
+  ## If any dimensions are NULL transform into the entirety of that dimension
+  ## Otherwise check provided indices are valid
+  failed <- rep_len(FALSE, length(index))
+  for (i in seq_along(index)) {
+    if (is.null(index[[i]])) {
+      index[[i]] <- seq_len(dim[[i]])
+    } else if (any(index[[i]] < 1) || any(index[[i]] > dim[[i]])) {
+      failed[i] <- TRUE
+    }
+  }
+  
+  if (any(failed)) {
+    stop(sprintf(
+      "Selected indices for dimension(s) %s are out of range.",
+      paste(which(failed), collapse = " & ")
+    ))
+  }
+  
+  return(index)
 }

@@ -63,7 +63,7 @@ ImageArray(meta, levels)
 
 \S4method{flop}{ImageArray}(x)
 
-\S4method{crop}{ImageArray}(object, ind)
+\S4method{crop}{ImageArray}(object, index)
 
 \S4method{axes}{ImageArray}(object)
 }
@@ -187,7 +187,7 @@ imgarray <- writeImageArray(img.file,
                           output = output_h5ad,
                           name = "image",
                           format = "HDF5ImageArray",
-                          replace = TRUE, verbose = FALSE)
+                          verbose = FALSE)
                           
 # as.raster
 imgarray_raster <- as.raster(imgarray)
