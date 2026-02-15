@@ -102,7 +102,30 @@ create_zarr <- function(store, version = "v2") {
   }
 }
 
+#' Zarr path exists
+#'
+#' Check if a path in Zarr exists
+#'
+#' @return Whether the `name` exists in `store`
 #' @noRd
-.collapse_slashes <- function(x) {
-  gsub("/+", "/", x)
+#'
+#' @param store Path to a Zarr store
+#' @param name The path within the store to test for
+.zarr_path_exists <- function(store, name = "") {
+  zarr <- file.path(store, name)
+  if (!dir.exists(zarr)) {
+    FALSE
+  } else {
+    list_files <- list.files(
+      path = zarr,
+      full.names = FALSE,
+      recursive = FALSE,
+      all.files = TRUE
+    )
+    if (any(c(".zarray", ".zattrs", ".zgroup") %in% list_files)) {
+      TRUE
+    } else {
+      FALSE
+    }
+  }
 }

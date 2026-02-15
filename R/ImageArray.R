@@ -80,7 +80,7 @@
 #' imgarray <- writeImageArray(img.file,
 #'                           output = output_h5ad,
 #'                           name = "image",
-#'                           format = "HDF5ImageArray",
+#'                           format = "h5",
 #'                           verbose = FALSE)
 #'                           
 #' # as.raster
@@ -502,7 +502,10 @@ createImageArray <- function(
 #' @param image image
 #' @param output output file name
 #' @param name name of the group
-#' @param format on disk format
+#' @param format on disk format, either "h5" for HDF5 format, "zarr" for 
+#' zarr format, or "in-memory" for in-memory ImageArray object. 
+#' If not provided, the format will be inferred from the file extension of 
+#' the output path.
 #' @param replace Should the existing file be
 #' removed or not
 #' @param n.levels the number of levels if the image supposed to be
@@ -520,6 +523,7 @@ createImageArray <- function(
 #' @importFrom HDF5Array writeHDF5Array
 #' @importFrom Rarr writeZarrArray
 #' @importFrom rhdf5 h5createFile h5createGroup
+#' @importFrom tools file_ext
 #' @import DelayedArray
 #'
 #' @export
@@ -536,7 +540,7 @@ createImageArray <- function(
 #' imgarray <- writeImageArray(img.file,
 #'                           output = output_h5ad,
 #'                           name = "image",
-#'                           format = "HDF5ImageArray",
+#'                           format = "h5",
 #'                           verbose = FALSE)
 #' imgarray_raster <- as.raster(imgarray)
 #' plot(imgarray_raster)
@@ -545,7 +549,7 @@ writeImageArray <- function(
   image,
   output = "my_image",
   name = "",
-  format = c("InMemoryImageArray", "HDF5ImageArray", "ZarrImageArray"),
+  format = NULL,
   replace = FALSE,
   n.levels = NULL,
   chunkdim = NULL,
@@ -558,9 +562,10 @@ writeImageArray <- function(
   verbose <- DelayedArray:::normarg_verbose(verbose)
 
   # create or replace output folder
-  if (!.isTRUEorFALSE(replace)) {
+  if (!.isTRUEorFALSE(replace))
     stop("'replace' must be TRUE or FALSE")
-  }
+  
+  # remove files or folders if needed
   if (replace)
     unlink(output, recursive=TRUE)
 
@@ -575,18 +580,33 @@ writeImageArray <- function(
   } else {
     image_list <- image
   }
+  
+  # check format
+  if(is.null(format)){
+    format <- tools::file_ext(output)
+    if(!format %in% .FORMATS)
+      stop(
+        sprintf(
+          paste0(
+            "Invalid format: %s. Currently supported formats are %s."),
+          format, 
+          paste(
+            vapply(.FORMATS, \(.) paste0('"', ., '"'), character(1)), 
+            collapse = ", "))
+      )
+  }
 
   # open ondisk store
   switch(
     format,
-    HDF5ImageArray = {
+    h5 = {
       if (!file.exists(output))
         rhdf5::h5createFile(output)
       # TODO: is there a better way to check existing groups
       if (!name %in% c("", "/"))
         rhdf5::h5createGroup(output, group = name)
     },
-    ZarrImageArray = {
+    zarr = {
       if (!dir.exists(output)) 
         create_zarr(store = output)
       create_zarr_group(output, name)
@@ -601,7 +621,7 @@ writeImageArray <- function(
     # write array
     switch(
       format,
-      HDF5ImageArray = {
+      h5 = {
         image_list[[i]] <-
           HDF5Array::writeHDF5Array(
             img,
@@ -614,7 +634,7 @@ writeImageArray <- function(
             verbose = verbose
           )
       },
-      ZarrImageArray = {
+      zarr = {
         chunk_dim <- stats::setNames(dim(img), ax)
         chunk_dim["x"] <- min(chunk_dim["x"], 2000)
         chunk_dim["y"] <- min(chunk_dim["y"], 2000)
@@ -625,7 +645,7 @@ writeImageArray <- function(
             chunk_dim = chunk_dim
           )
       },
-      InMemoryImageArray = {
+      "in-memory" = {
         image_list[[i]] <- img
       }
     )
@@ -660,3 +680,7 @@ writeImageArray <- function(
   if(i < 1 || n.levels < i)
     stop("Level is outside of range")
 }
+
+#' @keywords internal
+#' @noRd
+.FORMATS <- c("in-memory", "h5", "zarr")

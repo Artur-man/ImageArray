@@ -1,0 +1,22 @@
+test_that("manage slashes in paths", {
+  expect_equal(
+    .normalizePathSeparators("temp"),
+    "/temp/"
+  )
+  expect_equal(
+    .normalizePathSeparators("///temp///"),
+    "/temp/"
+  )
+  expect_equal(
+    .normalizePathSeparators("temp//temp"),
+    "/temp/temp/"
+  )
+  expect_equal(
+    .normalizePathSeparators("temp////temp"),
+    "/temp/temp/"
+  )
+  expect_equal(
+    .normalizePathSeparators("//temp////temp//"),
+    "/temp/temp/"
+  )
+})

@@ -8,7 +8,7 @@ writeImageArray(
   image,
   output = "my_image",
   name = "",
-  format = c("InMemoryImageArray", "HDF5ImageArray", "ZarrImageArray"),
+  format = NULL,
   replace = FALSE,
   n.levels = NULL,
   chunkdim = NULL,
@@ -25,7 +25,10 @@ writeImageArray(
 
 \item{name}{name of the group}
 
-\item{format}{on disk format}
+\item{format}{on disk format, either "h5" for HDF5 format, "zarr" for 
+zarr format, or "in-memory" for in-memory ImageArray object. 
+If not provided, the format will be inferred from the file extension of 
+the output path.}
 
 \item{replace}{Should the existing file be
 removed or not}
@@ -64,7 +67,7 @@ output_h5ad <- file.path(td, "h5test")
 imgarray <- writeImageArray(img.file,
                           output = output_h5ad,
                           name = "image",
-                          format = "HDF5ImageArray",
+                          format = "h5",
                           verbose = FALSE)
 imgarray_raster <- as.raster(imgarray)
 plot(imgarray_raster)

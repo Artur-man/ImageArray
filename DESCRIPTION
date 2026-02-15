@@ -26,7 +26,8 @@ Imports:
   rhdf5,
   HDF5Array,
   Rarr,
-  magick
+  magick,
+  tools
 Suggests: 
   testthat (>= 3.0.0),
   knitr,
