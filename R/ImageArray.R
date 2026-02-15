@@ -51,6 +51,8 @@
 #' realize,ImageArray-method
 #' as.raster
 #' as.raster,ImageArray-method
+#' path
+#' path,ImageArray-method
 #' 
 #' @examples
 #' # get image

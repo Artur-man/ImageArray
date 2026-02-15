@@ -49,8 +49,7 @@ h5_sample <- file.path(td, "sample")
 imgarray <- writeImageArray(img, 
                             format = "HDF5ImageArray", 
                             output = h5_sample, 
-                            nlevels = 2,
-                            replace = TRUE)
+                            nlevels = 2)
 imgarray
 ```
 

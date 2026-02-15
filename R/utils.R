@@ -43,7 +43,7 @@ setReplaceMethod(
             path.name <- methods::slotNames(x)[ind]
             file_path <- methods::slot(x, name = path.name)
             if (.zarr_path_exists(file_path)) {
-              if(!grepl(".zarr", file_path) || !grepl(".zarr", file_path))
+              if(!grepl(".zarr", file_path) || !grepl(".zarr", value))
                 stop(
                   "The path of the ImageArray object or the ",
                   "replacement should be a .zarr extension ", 
@@ -61,16 +61,6 @@ setReplaceMethod(
     object
   }
 )
-
-#' @noRd
-.normalizePathSeparators <- function(path) {
-  path <- .collapse_slashes(path)
-  # if (!startsWith(path, "/")) 
-  #   path <- paste0("/", path)
-  # if (endslash && !endsWith(path, "/"))
-  #   path <- paste0(path, "/")
-  path
-}
 
 #' @noRd
 .collapse_slashes <- function(x) {

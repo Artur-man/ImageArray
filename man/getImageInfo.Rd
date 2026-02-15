@@ -27,7 +27,7 @@ imgarray <- writeImageArray(img.file,
                           output = output_h5ad,
                           name = "image",
                           format = "HDF5ImageArray",
-                          replace = TRUE, verbose = FALSE)
+                          verbose = FALSE)
 getImageInfo(imgarray)
 
 # create ImageArray
