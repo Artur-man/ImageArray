@@ -78,4 +78,103 @@ is.sequential <- function(x) {
   all(abs(diff(x)) == 1)
 }
 
+#' @noRd
+.subset_array <- function(x, idx, drop = FALSE) {
+  d <- dim(x)
+  if (is.null(d)) {
+    stop("x must be an array or matrix.")
+  }
+  if (length(idx) > length(d)) {
+    stop("Too many index dimensions provided.")
+  }
+  
+  # pad missing dimensions with full slices
+  while (length(idx) < length(d)) {
+    idx[[length(idx) + 1]] <- seq_len(d[length(idx) + 1])
+  }
+  
+  if (length(idx) == 3) {
+    x[idx[[1]], idx[[2]], idx[[3]], drop = drop]
+  } else {
+    x[idx[[1]], idx[[2]], drop = drop]
+  }
+}
 
+.swap <- function(x, i, j) {
+  x[c(i, j)] <- x[c(j, i)]
+  x
+}
+
+.check_dim <- function(object) {
+  if (!(length(dim(object)) %in% c(2, 3))) {
+    stop("For now, ImageArray only supports only 2D images ", 
+         "(and 3D images with channels) !!")
+  }
+}
+
+# check_index() from Huber-group-EMBL/Rarr
+#' @keywords internal
+.check_indices <- function(index, dim) {
+  
+  ## check list
+  if (!is.list(index))
+    stop("'index' should be a list of integers")
+  
+  ## check we have the correct number of dimensions
+  if (isFALSE(length(index) == length(dim))) {
+    stop(
+      "The number of dimensions provided to 'index' ", 
+      "does not match the shape of the array"
+    )
+  }
+  
+  ## If any dimensions are NULL transform into the entirety of that dimension
+  ## Otherwise check provided indices are valid
+  failed <- rep_len(FALSE, length(index))
+  for (i in seq_along(index)) {
+    if (is.null(index[[i]])) {
+      index[[i]] <- seq_len(dim[[i]])
+    } else if (any(index[[i]] < 1) || any(index[[i]] > dim[[i]])) {
+      failed[i] <- TRUE
+    }
+  }
+  
+  if (any(failed)) {
+    stop(sprintf(
+      "Selected indices for dimension(s) %s are out of range.",
+      paste(which(failed), collapse = " & ")
+    ))
+  }
+  
+  return(index)
+}
+
+#' @keywords internal
+#' @noRd
+.img_create_msg <- function(dim_img, i) {
+  message(paste0(
+    "Creating level ",
+    i,
+    " ",
+    paste0("(", paste(dim_img, collapse = ","), ")"),
+    "\n"
+  ))
+}
+
+#' @keywords internal
+#' @noRd
+.check_level <- function(i,x){
+  if(i %% 1 != 0)
+    stop("Level should be an integer!")
+  n.levels <- length(x)
+  if(i < 1 || n.levels < i)
+    stop("Level is outside of range")
+}
+
+#' @keywords internal
+#' @noRd
+.FORMATS <- c("in-memory", "h5", "zarr")
+
+#' @keywords internal
+#' @noRd
+.DEFAULT_AXES <- c("t", "c", "z", "y", "x")

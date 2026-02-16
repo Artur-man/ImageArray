@@ -1,7 +1,3 @@
-####
-# Methods ####
-####
-
 #' Methods for ImageArray
 #'
 #' Methods for \code{ImageArray} objects
@@ -366,6 +362,9 @@ createEBImageArray <- function(
   } else if (n.levels < 1) {
     stop("'n.levels' has to be 1 or a larger integer value!")
   }
+  
+  # check dim
+  .check_dim(image)
 
   # create image levels
   meta <- list(axes = c("x", "y", "c"))
@@ -501,7 +500,7 @@ createImageArray <- function(
 #'
 #' Writing image arrays on disk
 #'
-#' @param image image
+#' @param image an Image object (EBImage), a magick object or the path to an image file, 
 #' @param output output file name
 #' @param name name of the group
 #' @param format on disk format, either "h5" for HDF5 format, "zarr" for 
@@ -656,33 +655,3 @@ writeImageArray <- function(
   # return
   image_list
 }
-
-####
-# Auxiliary ####
-####
-
-#' @keywords internal
-#' @noRd
-.img_create_msg <- function(dim_img, i) {
-  message(paste0(
-    "Creating level ",
-    i,
-    " ",
-    paste0("(", paste(dim_img, collapse = ","), ")"),
-    "\n"
-  ))
-}
-
-#' @keywords internal
-#' @noRd
-.check_level <- function(i,x){
-  if(i %% 1 != 0)
-    stop("Level should be an integer!")
-  n.levels <- length(x)
-  if(i < 1 || n.levels < i)
-    stop("Level is outside of range")
-}
-
-#' @keywords internal
-#' @noRd
-.FORMATS <- c("in-memory", "h5", "zarr")

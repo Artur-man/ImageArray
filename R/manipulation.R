@@ -1,10 +1,6 @@
 #' @importFrom EBImage rotate flip flop
 NULL
 
-####
-# Main ####
-####
-
 #' @describeIn ImageArray-methods rotate image array to 90, 180, 270 degrees
 #' @export
 setMethod("rotate", signature = "ImageArray", function(x, angle) {
@@ -175,77 +171,3 @@ setMethod("crop", signature = "ImageArray", function(object, index) {
 #' @describeIn ImageArray-methods get axes metadata of the ImageArray object
 #' @exportMethod axes
 setMethod("axes", "ImageArray", function(object) object@meta[["axes"]])
-
-####
-# Auxiliary ####
-####
-
-#' @noRd
-.subset_array <- function(x, idx, drop = FALSE) {
-  d <- dim(x)
-  if (is.null(d)) {
-    stop("x must be an array or matrix.")
-  }
-  if (length(idx) > length(d)) {
-    stop("Too many index dimensions provided.")
-  }
-
-  # pad missing dimensions with full slices
-  while (length(idx) < length(d)) {
-    idx[[length(idx) + 1]] <- seq_len(d[length(idx) + 1])
-  }
-
-  if (length(idx) == 3) {
-    x[idx[[1]], idx[[2]], idx[[3]], drop = drop]
-  } else {
-    x[idx[[1]], idx[[2]], drop = drop]
-  }
-}
-
-.swap <- function(x, i, j) {
-  x[c(i, j)] <- x[c(j, i)]
-  x
-}
-
-.check_dim <- function(object) {
-  if (!(length(dim(object)) %in% c(2, 3))) {
-    stop("This operation can only be performed on 2D or 3D image arrays")
-  }
-}
-
-# check_index() from Huber-group-EMBL/Rarr
-#' @keywords internal
-.check_indices <- function(index, dim) {
-  
-  ## check list
-  if (!is.list(index))
-    stop("'index' should be a list of integers")
-  
-  ## check we have the correct number of dimensions
-  if (isFALSE(length(index) == length(dim))) {
-    stop(
-      "The number of dimensions provided to 'index' ", 
-      "does not match the shape of the array"
-    )
-  }
-  
-  ## If any dimensions are NULL transform into the entirety of that dimension
-  ## Otherwise check provided indices are valid
-  failed <- rep_len(FALSE, length(index))
-  for (i in seq_along(index)) {
-    if (is.null(index[[i]])) {
-      index[[i]] <- seq_len(dim[[i]])
-    } else if (any(index[[i]] < 1) || any(index[[i]] > dim[[i]])) {
-      failed[i] <- TRUE
-    }
-  }
-  
-  if (any(failed)) {
-    stop(sprintf(
-      "Selected indices for dimension(s) %s are out of range.",
-      paste(which(failed), collapse = " & ")
-    ))
-  }
-  
-  return(index)
-}
