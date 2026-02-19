@@ -36,7 +36,7 @@ test_that("visualize h5 ImageArray", {
     mat_image,
     output = output_h5ad,
     name = "image",
-    format = "HDF5ImageArray",
+    format = "h5",
     replace = TRUE,
     verbose = FALSE
   )

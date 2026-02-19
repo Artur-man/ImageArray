@@ -23,7 +23,7 @@ test_that("manipulate h5 ImageArray", {
     mat_image,
     output = output_h5ad,
     name = "image",
-    format = "HDF5ImageArray",
+    format = "h5",
     replace = TRUE,
     verbose = FALSE
   )
@@ -35,7 +35,7 @@ test_that("manipulate h5 ImageArray", {
   expect_equal(dim(mat_list_perm), c(5000, 3, 2000))
 
   # crop
-  mat_list_cropped <- crop(mat_list, ind = list(2001:3000, 1001:2000))
+  mat_list_cropped <- crop(mat_list, ind = list(NULL, 2001:3000, 1001:2000))
   expect_equal(dim(mat_list_cropped), c(3, 1000, 1000))
 
   # negate
@@ -70,7 +70,7 @@ test_that("manipulate h5 ImageArray", {
     mat_image,
     output = output_h5ad,
     name = "image",
-    format = "HDF5ImageArray",
+    format = "h5",
     engine = "EBImage",
     replace = TRUE,
     verbose = FALSE
@@ -80,9 +80,9 @@ test_that("manipulate h5 ImageArray", {
   mat_list_modulated <- modulate(mat_list, brightness = 200)
   expect_equal(type(mat_list_modulated[[1]]), "integer")
   expect_equal(type(mat_list_modulated), "integer")
-  orig <- realize(mat_list[1:10, 1:10]) * 2
+  orig <- realize(mat_list[,1:10, 1:10]) * 2
   orig[orig > 255] <- 255
-  newmat <- realize(mat_list_modulated[1:10, 1:10])
+  newmat <- realize(mat_list_modulated[,1:10, 1:10])
   expect_equal(orig, newmat)
 })
 
@@ -93,7 +93,7 @@ test_that("manipulate zarr ImageArray", {
     mat_image,
     output = output_zarr,
     name = "image",
-    format = "ZarrImageArray",
+    format = "zarr",
     replace = TRUE,
     verbose = FALSE
   )
@@ -105,14 +105,14 @@ test_that("manipulate zarr ImageArray", {
   expect_equal(dim(mat_list_perm), c(5000, 3, 2000))
 
   # crop
-  mat_list_cropped <- crop(mat_list, ind = list(2001:3000, 1001:2000))
+  mat_list_cropped <- crop(mat_list, ind = list(NULL, 2001:3000, 1001:2000))
   expect_equal(dim(mat_list_cropped), c(3, 1000, 1000))
-  mat_list_cropped <- mat_list[2001:3000, 1001:2000]
+  mat_list_cropped <- mat_list[,2001:3000, 1001:2000]
   expect_equal(
     mat_list_cropped,
-    crop(mat_list, ind = list(2001:3000, 1001:2000))
+    crop(mat_list, ind = list(NULL, 2001:3000, 1001:2000))
   )
-  expect_error(crop(mat_list, ind = list(2001:3000, c(10, 20))))
+  expect_error(crop(mat_list, ind = list(NULL, 2001:3000, c(10, 20))))
 
   # negate
   mat_list_negated <- negate(mat_list)
@@ -145,7 +145,7 @@ test_that("manipulate zarr ImageArray", {
     mat_image,
     output = output_zarr,
     name = "image",
-    format = "ZarrImageArray",
+    format = "zarr",
     replace = TRUE,
     verbose = FALSE
   )
@@ -154,8 +154,8 @@ test_that("manipulate zarr ImageArray", {
   mat_list_modulated <- modulate(mat_list, brightness = 200)
   expect_equal(type(mat_list_modulated[[1]]), "integer")
   expect_equal(type(mat_list_modulated), "integer")
-  orig <- realize(mat_list[1:10, 1:10]) * 2
+  orig <- realize(mat_list[,1:10, 1:10]) * 2
   orig[orig > 255] <- 255
-  newmat <- realize(mat_list_modulated[1:10, 1:10])
+  newmat <- realize(mat_list_modulated[,1:10, 1:10])
   expect_equal(orig, newmat)
 })

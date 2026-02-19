@@ -26,7 +26,7 @@ output_h5ad <- file.path(td, "h5test")
 imgarray <- writeImageArray(img.file,
                           output = output_h5ad,
                           name = "image",
-                          format = "HDF5ImageArray",
+                          format = "h5",
                           verbose = FALSE)
 getImageInfo(imgarray)
 

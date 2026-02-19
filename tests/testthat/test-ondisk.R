@@ -23,7 +23,7 @@ test_that("write image array to disk", {
     img,
     output = output_h5ad,
     name = "image",
-    format = "HDF5ImageArray",
+    format = "h5",
     replace = TRUE,
     verbose = FALSE
   )
@@ -36,7 +36,7 @@ test_that("write image array to disk", {
     img,
     output = output_zarr,
     name = "image",
-    format = "ZarrImageArray",
+    format = "zarr",
     replace = TRUE,
     verbose = FALSE
   )

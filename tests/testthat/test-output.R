@@ -53,7 +53,7 @@ test_that("format is given (zarr)", {
     format = "zarr",
     replace = TRUE
   )
-  expect_di(normalizePath(path(imgarray)), 
+  expect_equal(normalizePath(path(imgarray)), 
                normalizePath(.collapse_slashes(output_zarr)))
   
   # replace path

@@ -114,11 +114,11 @@ is.sequential <- function(x) {
 
 # check_index() from Huber-group-EMBL/Rarr
 #' @keywords internal
-.check_indices <- function(index, dim) {
+.check_indices <- function(index, dim, ax) {
   
   ## check list
   if (!is.list(index))
-    stop("'index' should be a list of integers")
+    stop("'index' should be a list")
   
   ## check we have the correct number of dimensions
   if (isFALSE(length(index) == length(dim))) {
@@ -132,21 +132,34 @@ is.sequential <- function(x) {
   ## Otherwise check provided indices are valid
   failed <- rep_len(FALSE, length(index))
   for (i in seq_along(index)) {
+    
+    # check if null
     if (is.null(index[[i]])) {
       index[[i]] <- seq_len(dim[[i]])
-    } else if (any(index[[i]] < 1) || any(index[[i]] > dim[[i]])) {
-      failed[i] <- TRUE
+      next
     }
+    
+    # check if valid
+    failed[i] <- !(
+      is.numeric(index[[i]]) &&
+        length(index[[i]]) > 0 &&
+        all(index[[i]] %% 1 == 0) &&
+        all(index[[i]] >= 1) &&
+        all(index[[i]] <= dim[[i]])
+    )
   }
   
+  # message if failed
   if (any(failed)) {
     stop(sprintf(
-      "Selected indices for dimension(s) %s are out of range.",
-      paste(which(failed), collapse = " & ")
+      "Selected indices for axes %s are out of range or invalid.",
+      paste(
+        paste0("'", ax[which(failed)], "'"),
+        collapse = " & ")
     ))
   }
   
-  return(index)
+  index
 }
 
 #' @keywords internal

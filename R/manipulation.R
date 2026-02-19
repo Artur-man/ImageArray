@@ -127,16 +127,9 @@ setMethod("crop", signature = "ImageArray", function(object, index) {
     index <- vector(mode = "list", 
                     length = length(metadata$shape))
   }
-  index <- .check_indices(index = index, dim = dim_img)
-
-  # ind control
-  if (length(index) == 2) {
-    index <- stats::setNames(index, c("x", "y"))
-    if (length(dim_img) == 3) {
-      index <- c(index, list(c = seq_len(dim_img["c"])))
-    }
-    index <- index[ax]
-  }
+  index <- .check_indices(index = index, dim = dim_img, ax = ax)
+  if(is.null(names(index)))
+    names(index) <- ax
 
   # check sequential
   check_sequential <- all(vapply(index[c("x", "y")], is.sequential, logical(1)))

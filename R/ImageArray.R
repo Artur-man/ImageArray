@@ -92,38 +92,17 @@ NULL
 #' for \code{ImageArray} objects
 #'
 #' @export
-setMethod(
-  f = "[",
-  signature = c("ImageArray", "numeric", "numeric"),
-  definition = function(x, i, j, ..., drop = FALSE) {
-    crop(x, ind = list(i, j))
-  }
-)
-
-setMethod(
-  f = "[",
-  signature = c("ImageArray", "numeric", "missing"),
-  definition = function(x, i, j, ..., drop = FALSE) {
-    crop(x, ind = list(i, NULL))
-  }
-)
-
-setMethod(
-  f = "[",
-  signature = c("ImageArray", "missing", "numeric"),
-  definition = function(x, i, j, ..., drop = FALSE) {
-    crop(x, ind = list(NULL, j))
-  }
-)
-
-setMethod(
-  f = "[",
-  signature = c("ImageArray", "missing", "missing"),
-  definition = function(x, i, j, ..., drop = FALSE) {
-    crop(x, ind = list(NULL, NULL))
-  }
-)
-
+setMethod(f = "[", 
+          signature = c("ImageArray"),
+          function(x, i, j, ..., drop = FALSE) {
+            if (missing(x))
+              stop(wmsg("'x' is missing"))
+            if (!.isTRUEorFALSE(drop))
+              stop(wmsg("'drop' must be TRUE or FALSE"))
+            Nindex <- S4Arrays:::extract_Nindex_from_syscall(sys.call(), 
+                                                             parent.frame())
+            crop(x, index = Nindex)
+          })
 
 #' @describeIn ImageArray-methods Layer access
 #' for \code{ImageArray} objects

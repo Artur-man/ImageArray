@@ -17,6 +17,7 @@ img.file2 <- system.file(
 )
 
 test_that("bfarray object", {
+  
   # create array
   bfa <- BFArray(img.file, series = 1, resolution = 2)
   expect_equal(dim(bfa), c(256, 256, 1))
@@ -36,9 +37,9 @@ test_that("bfarray object", {
 
   # single channel modulate
   img_modulated <- modulate(img, brightness = 200)
-  orig <- realize(img[1:10, 1:10]) * 2
+  orig <- realize(img[1:10, 1:10,]) * 2
   orig[orig > 1] <- 1
-  newmat <- realize(img_modulated[1:10, 1:10])
+  newmat <- realize(img_modulated[1:10, 1:10,])
   expect_equal(orig, newmat)
 })
 
