@@ -82,14 +82,8 @@ locations. Here, `n.levels` control the amount of levels that the pyramid image
 should have. 
 
 ```{r write}
-# create image array
-dir.create(td <- tempfile())
-output_h5 <- file.path(td, "h5test")
-imgarray <- writeImageArray(img,
-                            format = "HDF5ImageArray",
-                            output = output_h5,
-                            n.levels = 2,
-                            replace = TRUE)
+output_h5 <- tempfile(fileext = ".h5")
+imgarray <- writeImageArray(img, output = output_h5, n.levels = 2)
 imgarray
 ```
 
@@ -161,12 +155,8 @@ f <- system.file("images", "sample.png", package = "EBImage")
 img <- image_read(f)
 
 # create image array
-dir.create(td <- tempfile())
-output_h5 <- file.path(td, "h5test")
-imgarray <- writeImageArray(img,
-                            format = "HDF5ImageArray",
-                            output = output_h5,
-                            replace = TRUE)
+output_h5 <- tempfile(fileext = ".h5")
+imgarray <- writeImageArray(img, output = output_h5)
 imgarray
 
 # plot
