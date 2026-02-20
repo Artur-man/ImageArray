@@ -24,7 +24,7 @@ test_that("path hdf5", {
     mat_image,
     output = output_h5ad,
     name = "image",
-    format = "HDF5ImageArray",
+    format = "h5",
     replace = TRUE,
     verbose = FALSE
   )
@@ -42,12 +42,11 @@ test_that("path hdf5", {
 
 test_that("path zarr", {
   # zarr
-  unlink(output_zarr, recursive = TRUE)
   mat_list <- writeImageArray(
     mat_image,
     output = output_zarr,
-    name = "image",
-    format = "ZarrImageArray",
+    name = "",
+    format = "zarr",
     replace = TRUE,
     verbose = FALSE
   )
@@ -55,14 +54,13 @@ test_that("path zarr", {
   expect_true(dir.exists(path(mat_list)))
 
   # change path
-  output_zarr_replace <- gsub(".zarr$", "2.zarr", path(mat_list))
-  file.rename(
-    gsub("image/1/", "", path(mat_list)),
-    gsub("image/1/", "", output_zarr_replace)
-  )
-  expect_true(file.exists(output_zarr_replace))
-  path(mat_list) <- gsub("image/1/", "", output_zarr_replace)
-  expect_true(file.exists(path(mat_list)))
+  output_zarr_replace <- gsub(".zarr", "2.zarr", path(mat_list))
+  system(paste('mv', 
+               path(mat_list),
+               output_zarr_replace))
+  expect_true(dir.exists(output_zarr_replace))
+  path(mat_list) <- output_zarr_replace
+  expect_true(dir.exists(path(mat_list)))
   expect_equal(
     normalizePath(path(mat_list)),
     normalizePath(output_zarr_replace)

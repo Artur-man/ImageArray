@@ -12,12 +12,8 @@ setMethod("path", signature = "ImageArray", function(object) {
   file_path <- DelayedArray::path(obj)
   
   # check if path is a zarr path
-  if (.zarr_path_exists(file_path) || grepl(".zarr", file_path)) {
-    file_path <- strsplit(file_path, split = "\\/")[[1]]
-    file_path <- normalizePath(
-      paste(file_path[-length(file_path)], collapse = "/")
-    )
-    .collapse_slashes(file_path)
+  if (.zarr_path_exists(file_path) && grepl(".zarr", file_path)) {
+    sub("^(.*?\\.zarr).*", "\\1", file_path)
   } else {
     file_path
   }

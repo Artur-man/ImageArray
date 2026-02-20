@@ -247,7 +247,7 @@ the entire image, or a subset.
 
 ```{r speedy_vis, out.width="70%"}
 # crop image
-imgarray_sub <- crop(imgarray, index = list(16000:19000, 7000:10000))
+imgarray_sub <- crop(imgarray, index = list(16000:19000, 7000:10000, NULL))
 
 # convert to raster
 img_raster <- as.raster(imgarray_sub, max.pixel.size = 800)
@@ -300,7 +300,7 @@ if (interactive()) {
       # crop image
       indx <- seq(input$x_slider[1], input$x_slider[2])
       indy <- seq(input$y_slider[1], input$y_slider[2])
-      imgarray_sub <- crop(imgarray, index = list(indx, indy))
+      imgarray_sub <- crop(imgarray, index = list(indx, indy, NULL))
 
       # convert to raster
       img_raster <- as.raster(imgarray_sub, max.pixel.size = max.pixel.size)
