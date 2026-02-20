@@ -479,7 +479,8 @@ createImageArray <- function(
 #'
 #' Writing image arrays on disk
 #'
-#' @param image an Image object (EBImage), a magick object or the path to an image file, 
+#' @param image an Image object (EBImage), a magick object or the path 
+#' to an image file, 
 #' @param output output file name
 #' @param name name of the group
 #' @param format on disk format, either "h5" for HDF5 format, "zarr" for 

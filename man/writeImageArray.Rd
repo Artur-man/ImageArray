@@ -19,7 +19,8 @@ writeImageArray(
 )
 }
 \arguments{
-\item{image}{an Image object (EBImage), a magick object or the path to an image file,}
+\item{image}{an Image object (EBImage), a magick object or the path 
+to an image file,}
 
 \item{output}{output file name}
 
