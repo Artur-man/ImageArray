@@ -140,7 +140,7 @@ is.sequential <- function(x) {
       is.numeric(index[[i]]) &&
         length(index[[i]]) > 0 &&
         all(index[[i]] %% 1 == 0) &&
-        all(index[[i]] >= 1) &&
+        all(index[[i]] >= 0) &&
         all(index[[i]] <= dim[[i]])
     )
   }
