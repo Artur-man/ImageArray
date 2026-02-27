@@ -148,7 +148,7 @@ is.sequential <- function(x) {
     # adjust indices
     new_indices <- setNames(rep(list(NULL),length(ax)),ax)
     new_indices[names(index)] <- index
-    
+    index <- new_indices
   }
   
   ## If any dimensions are NULL transform into the entirety of that dimension
@@ -167,7 +167,7 @@ is.sequential <- function(x) {
       is.numeric(index[[i]]) &&
         length(index[[i]]) > 0 &&
         all(index[[i]] %% 1 == 0) &&
-        all(index[[i]] >= 1) &&
+        all(index[[i]] >= 0) &&
         all(index[[i]] <= dim[[i]])
     )
   }
