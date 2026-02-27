@@ -144,7 +144,7 @@ setMethod(
       "Object",
       paste0(
         "(",
-        paste(object@meta[["axes"]], collapse = ","),
+        paste(axes(object), collapse = ","),
         ")"
       ),
       "\n"

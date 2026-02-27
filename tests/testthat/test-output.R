@@ -61,7 +61,7 @@ test_that("format is given (zarr)", {
   path(imgarray) <- temp_output
   expect_equal(
     suppressWarnings(normalizePath(path(imgarray))),
-    suppressWarnings(normalizePath(.collapse_slashes(temp_output))))
+    suppressWarnings(normalizePath(temp_output)))
   
   # without extension
   output_zarr <- tempfile(fileext = "")
@@ -73,11 +73,6 @@ test_that("format is given (zarr)", {
   )
   expect_equal(normalizePath(path(imgarray)),
                normalizePath(output_zarr))
-  
-  # replacement is not allowed for .zarr stores with .zarr extension
-  temp_output <- tempfile(fileext = ".zarr")
-  expect_error(path(imgarray) <- temp_output)
-  
 })
 
 test_that("format is not given", {

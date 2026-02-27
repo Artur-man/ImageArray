@@ -5,19 +5,15 @@
 #' @export
 setMethod("path", signature = "ImageArray", function(object) {
   
-  # check DelayedArray seed
-  obj <- object[[1]]
-  if(!inherits(obj, "DelayedArray"))
-    stop("The path method is only applicable to ImageArray objects ", 
-         "whose layers with DelayedArray seeds.")
-  file_path <- DelayedArray::path(obj)
-  
+  # get one path
+  file_path <- .get_layer_path(object)
+
   # check if path is a zarr path
-  if (.zarr_path_exists(file_path) && grepl(".zarr", file_path)) {
-    sub("^(.*?\\.zarr).*", "\\1", file_path)
-  } else {
-    file_path
-  }
+  # the path could have a zarr extension with no associated zarr group/array
+  if (.zarr_path_exists(file_path) || grepl(".zarr", file_path))
+    file_path <- dirname(file_path)
+
+  file_path
 })
 
 #' @describeIn ImageArray-methods replace method for path(ImageArray)
@@ -31,33 +27,43 @@ setReplaceMethod(
   signature = "ImageArray",
   function(object, value) {
     n.levels <- length(object)
+    file_path <- .get_layer_path(object)
+    # update all paths
     for (i in seq_len(n.levels)) {
       object[[i]] <-
         modify_seeds(
           object[[i]],
           function(x) {
+            
+            # check zarr
+            if (.zarr_path_exists(file_path) || grepl(".zarr", file_path)){
+              value <- gsub(dirname(file_path), value, file_path)
+              # value <- .collapse_slashes(value)
+            }
+            
+            # replace path slot
             ind <- grepl("path", slotNames(x))
             path.name <- methods::slotNames(x)[ind]
-            file_path <- methods::slot(x, name = path.name)
-            if (.zarr_path_exists(file_path)) {
-              if(!grepl(".zarr", file_path) || !grepl(".zarr", value))
-                stop(
-                  "The path of the ImageArray object or the ",
-                  "replacement should be a .zarr extension ", 
-                  "for replacement to take place!"
-                )
-              name <- strsplit(file_path, split = "\\.zarr")[[1]][2]
-              value <- file.path(value, name)
-              value <- .collapse_slashes(value)
-            }
             methods::slot(x, name = path.name) <- value
+            
             x
           }
         )
     }
+    
     object
   }
 )
+
+#' @noRd
+.get_layer_path <- function(object) {
+  # check DelayedArray seed
+  obj <- object[[1]]
+  if(!inherits(obj, "DelayedArray"))
+    stop("The path method is only applicable to ImageArray objects ", 
+         "whose layers with DelayedArray seeds.")
+  DelayedArray::path(obj)
+}
 
 #' @noRd
 .collapse_slashes <- function(x) {
