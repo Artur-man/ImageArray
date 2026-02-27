@@ -32,7 +32,8 @@ setReplaceMethod(
             
             # check zarr
             if (.zarr_path_exists(file_path) || grepl(".zarr", file_path))
-              value <- gsub(os_friendly_dirname(file_path), value, file_path)
+              value <- gsub(os_friendly_dirname(file_path), 
+                            value, file_path, fixed = TRUE)
             
             # replace path slot
             ind <- grepl("path", slotNames(x))
