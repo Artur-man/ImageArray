@@ -9,7 +9,7 @@ setMethod("path", signature = "ImageArray", function(object) {
   # check if path is a zarr path
   # the path could have a zarr extension with no associated zarr group/array
   if (.zarr_path_exists(file_path) || grepl(".zarr", file_path))
-    file_path <- dirname(file_path)
+    file_path <- os_friendly_dirname(file_path)
 
   file_path
 })
@@ -31,9 +31,8 @@ setReplaceMethod(
           function(x) {
             
             # check zarr
-            if (.zarr_path_exists(file_path) || grepl(".zarr", file_path)){
-              value <- gsub(dirname(file_path), value, file_path)
-            }
+            if (.zarr_path_exists(file_path) || grepl(".zarr", file_path))
+              value <- gsub(os_friendly_dirname(file_path), value, file_path)
             
             # replace path slot
             ind <- grepl("path", slotNames(x))
@@ -215,3 +214,12 @@ is.sequential <- function(x) {
 #' @keywords internal
 #' @noRd
 .AXES <- c("c", "y", "x")
+
+#' @noRd
+os_friendly_dirname <- function(path) {
+  if(Sys.info()["sysname"] == "Windows") {
+    normalizePath(dirname(path), winslash = "\\")
+  } else {
+    dirname(path)
+  }
+}
