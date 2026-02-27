@@ -46,6 +46,14 @@ test_that("check indexing (BFArray)", {
   imgarray_vis <- as.raster(imgarray_vis)
   plot(imgarray_vis)
   
+  # crop using names
+  imgarray_vis <- crop(imgarray, ind = list(x = 100:200, y = 100:200))
+  imgarray_vis <- as.raster(imgarray_vis)
+  plot(imgarray_vis)
+  expect_error(
+    imgarray_vis <- crop(imgarray, ind = list(z = 100:200, y = 100:200))
+  )
+  
   # [ method works
   imgarray_vis <- imgarray[100:200,,]
   expect_equal(dim(imgarray_vis), c(101, dim(imgarray)[2], 1))

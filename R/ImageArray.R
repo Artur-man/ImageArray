@@ -41,6 +41,8 @@
 #' negate,ImageArray-method
 #' modulate
 #' modulate,ImageArray-method
+#' meta
+#' meta,ImageArray-method
 #' axes
 #' axes,ImageArray-method
 #' realize

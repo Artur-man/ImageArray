@@ -1,3 +1,4 @@
+
 #' @describeIn ImageArray-methods path of an ImageArray object
 #' @param object an ImageArray object
 #' @importFrom DelayedArray path
@@ -116,12 +117,38 @@ is.sequential <- function(x) {
   if (!is.list(index))
     stop("'index' should be a list")
   
-  ## check we have the correct number of dimensions
-  if (isFALSE(length(index) == length(dim))) {
-    stop(
-      "The number of dimensions provided to 'index' ", 
-      "does not match the shape of the array"
-    )
+  ## check if named
+  if (is.null(names(index))) {
+    
+    ## check we have the correct number of dimensions
+    if (isFALSE(length(index) == length(dim))) {
+      stop(
+        "The number of dimensions provided to 'index' ", 
+        "does not match the shape of the array"
+      )
+    }
+    
+    # name indices
+    names(index) <- ax
+    
+  } else {
+    
+    # check names
+    if (!all(names(index) %in% ax)) {
+      stop(
+        sprintf(
+          paste0("The names of the provided indices should ", 
+                 "be among axes %s of the ImageArray object"), 
+          paste(
+            paste0("'", ax, "'"),
+            collapse = ","))
+      )
+    } 
+    
+    # adjust indices
+    new_indices <- setNames(rep(list(NULL),length(ax)),ax)
+    new_indices[names(index)] <- index
+    
   }
   
   ## If any dimensions are NULL transform into the entirety of that dimension
@@ -140,7 +167,7 @@ is.sequential <- function(x) {
       is.numeric(index[[i]]) &&
         length(index[[i]]) > 0 &&
         all(index[[i]] %% 1 == 0) &&
-        all(index[[i]] >= 0) &&
+        all(index[[i]] >= 1) &&
         all(index[[i]] <= dim[[i]])
     )
   }
@@ -186,4 +213,4 @@ is.sequential <- function(x) {
 
 #' @keywords internal
 #' @noRd
-.DEFAULT_AXES <- c("t", "c", "z", "y", "x")
+.AXES <- c("c", "y", "x")

@@ -17,6 +17,8 @@
 \alias{negate,ImageArray-method}
 \alias{modulate}
 \alias{modulate,ImageArray-method}
+\alias{meta}
+\alias{meta,ImageArray-method}
 \alias{axes}
 \alias{axes,ImageArray-method}
 \alias{realize}
@@ -26,8 +28,6 @@
 \alias{path}
 \alias{path,ImageArray-method}
 \alias{[,ImageArray,ANY,ANY,ANY-method}
-\alias{[[,ImageArray,numeric,ANY-method}
-\alias{[[<-,ImageArray,numeric,ANY,ANY-method}
 \alias{dim,ImageArray-method}
 \alias{type,ImageArray-method}
 \alias{length,ImageArray-method}
@@ -39,9 +39,9 @@
 \usage{
 \S4method{[}{ImageArray,ANY,ANY,ANY}(x, i, j, ..., drop = FALSE)
 
-\S4method{[[}{ImageArray,numeric,ANY}(x, i)
+\S4method{[[}{ImageArray,numeric}(x, i)
 
-\S4method{[[}{ImageArray,numeric,ANY,ANY}(x, i, j, ...) <- value
+\S4method{[[}{ImageArray,numeric}(x, i, j, ...) <- value
 
 \S4method{dim}{ImageArray}(x)
 
@@ -70,6 +70,8 @@ ImageArray(meta, levels)
 \S4method{crop}{ImageArray}(object, index)
 
 \S4method{axes}{ImageArray}(object)
+
+\S4method{meta}{ImageArray}(object)
 
 \S4method{path}{ImageArray}(object)
 
@@ -136,7 +138,7 @@ for \code{ImageArray} objects
 \item \code{x[[i}: Layer access
 for \code{ImageArray} objects
 
-\item \code{`[[`(x = ImageArray, i = numeric, j = ANY) <- value}: Layer access
+\item \code{`[[`(x = ImageArray, i = numeric) <- value}: Layer access
 for \code{ImageArray} objects
 
 \item \code{dim(ImageArray)}: dimensions of an ImageArray
@@ -168,6 +170,8 @@ A function for creating objects of ImageArray class
 \item \code{crop(ImageArray)}: cropping image
 
 \item \code{axes(ImageArray)}: get axes metadata of the ImageArray object
+
+\item \code{meta(ImageArray)}: get metadata of the ImageArray object
 
 \item \code{path(ImageArray)}: path of an ImageArray object
 

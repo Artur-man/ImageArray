@@ -128,8 +128,8 @@ setMethod("crop", signature = "ImageArray", function(object, index) {
                     length = length(metadata$shape))
   }
   index <- .check_indices(index = index, dim = dim_img, ax = ax)
-  if(is.null(names(index)))
-    names(index) <- ax
+  # if(is.null(names(index)))
+  #   names(index) <- ax
 
   # check sequential
   check_sequential <- all(vapply(index[c("x", "y")], is.sequential, logical(1)))
@@ -163,4 +163,8 @@ setMethod("crop", signature = "ImageArray", function(object, index) {
 
 #' @describeIn ImageArray-methods get axes metadata of the ImageArray object
 #' @exportMethod axes
-setMethod("axes", "ImageArray", function(object) object@meta[["axes"]])
+setMethod("axes", "ImageArray", function(object) meta(object)[["axes"]])
+
+#' @describeIn ImageArray-methods get metadata of the ImageArray object
+#' @exportMethod meta
+setMethod("meta", "ImageArray", function(object) object@meta)
