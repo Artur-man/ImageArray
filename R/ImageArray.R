@@ -17,7 +17,8 @@
 #' @param angle value between 0 and 360 for degrees to rotate
 #' @param brightness the brightness of the new image in percentage, e.g. 120
 #' @param perm perm
-#' @param ind index list
+#' @param index a named or unnamed list of indices for cropping/subsetting the 
+# image, e.g. list(x = 1:100, y = 1:100) or list(1:100, 1:100)
 #' @param max.pixel.size maximum pixel size
 #' @param min.pixel.size minimum pixel size
 #' @param level level
@@ -70,6 +71,7 @@
 #'
 #' # manipulate images
 #' imgarray <- crop(imgarray, ind = list(100:200, 100:200))
+#' imgarray <- crop(imgarray, ind = list(x = 10:20, y = 10:20))
 #' imgarray <- rotate(imgarray, angle = 90)
 #' imgarray <- flip(imgarray)
 #' imgarray <- flop(imgarray)

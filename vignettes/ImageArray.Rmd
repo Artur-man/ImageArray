@@ -137,7 +137,19 @@ imgarray_cropped
 bfa.raster <- as.raster(imgarray_cropped, max.pixel.size = 120)
 plot(bfa.raster)
 
+# cropping with indices
 imgarray_cropped <- crop(imgarray, index = list(300:500, 200:300))
+imgarray_cropped
+```
+
+Cropping can also be performed with named indices, thus allowing users
+to define indices for only the target dimensions. For now, 
+`r Biocpkg("ImageArray")` only includes `x` and `y` dimensions and 'c' for
+image channels.
+
+```{r crop_named}
+# cropping with named indices
+imgarray_cropped <- crop(imgarray, index = list(x=300:500, y=200:300))
 imgarray_cropped
 ```
 

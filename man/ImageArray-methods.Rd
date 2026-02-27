@@ -95,8 +95,6 @@ ImageArray(meta, levels)
 
 \item{drop}{ignored}
 
-\item{value}{the new path}
-
 \item{meta}{the metadata of the ImageArray object.}
 
 \item{levels}{levels of the pyramid image, typically a vector of integers
@@ -112,11 +110,9 @@ starting with 1}
 
 \item{perm}{perm}
 
-\item{object}{an ImageArray object}
-
 \item{brightness}{the brightness of the new image in percentage, e.g. 120}
 
-\item{ind}{index list}
+\item{index}{a named or unnamed list of indices for cropping/subsetting the}
 }
 \value{
 dim of the first level of the ImageArray object
@@ -196,6 +192,7 @@ length(imgarray)
 
 # manipulate images
 imgarray <- crop(imgarray, ind = list(100:200, 100:200))
+imgarray <- crop(imgarray, ind = list(x = 10:20, y = 10:20))
 imgarray <- rotate(imgarray, angle = 90)
 imgarray <- flip(imgarray)
 imgarray <- flop(imgarray)

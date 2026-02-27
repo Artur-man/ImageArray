@@ -1,7 +1,5 @@
 
 #' @describeIn ImageArray-methods path of an ImageArray object
-#' @param object an ImageArray object
-#' @importFrom DelayedArray path
 #' @export
 setMethod("path", signature = "ImageArray", function(object) {
   
@@ -17,10 +15,7 @@ setMethod("path", signature = "ImageArray", function(object) {
 })
 
 #' @describeIn ImageArray-methods replace method for path(ImageArray)
-#' @param object an ImageArray object
-#' @param value the new path
 #' @importFrom methods slotNames slot slot<-
-#' @importFrom DelayedArray modify_seeds
 #' @export
 setReplaceMethod(
   "path",
@@ -38,7 +33,6 @@ setReplaceMethod(
             # check zarr
             if (.zarr_path_exists(file_path) || grepl(".zarr", file_path)){
               value <- gsub(dirname(file_path), value, file_path)
-              # value <- .collapse_slashes(value)
             }
             
             # replace path slot
@@ -55,6 +49,7 @@ setReplaceMethod(
   }
 )
 
+#' @importFrom DelayedArray path
 #' @noRd
 .get_layer_path <- function(object) {
   # check DelayedArray seed
@@ -115,7 +110,7 @@ is.sequential <- function(x) {
   }
 }
 
-# check_index() from Huber-group-EMBL/Rarr
+# based on check_index() from Huber-group-EMBL/Rarr
 #' @keywords internal
 .check_indices <- function(index, dim, ax) {
   
