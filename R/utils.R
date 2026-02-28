@@ -38,7 +38,7 @@ setReplaceMethod(
             # this also requires normalizing the path to ensure correct 
             # replacement on Windows
             file_path <- path(x)
-            if (.zarr_path_exists(file_path) || grepl(".zarr", file_path))
+            if(is(x, "ZarrArraySeed"))
               value <- gsub(
                 normalizePath(dirname(file_path), winslash = "\\"), 
                 value,
