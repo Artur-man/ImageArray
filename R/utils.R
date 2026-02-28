@@ -1,10 +1,15 @@
 
 #' @describeIn ImageArray-methods path of an ImageArray object
+#' @importFrom DelayedArray path
 #' @export
 setMethod("path", signature = "ImageArray", function(object) {
   
-  # get one path
-  file_path <- .get_layer_path(object)
+  # check DelayedArray
+  obj <- object[[1]]
+  if(!inherits(obj, "DelayedArray"))
+    stop("The path method is only applicable to ImageArray objects ", 
+         "whose layers with DelayedArray seeds.")
+  file_path <- DelayedArray::path(obj)
 
   # check if path is a zarr path
   # the path could have a zarr extension with no associated zarr group/array
@@ -22,7 +27,6 @@ setReplaceMethod(
   signature = "ImageArray",
   function(object, value) {
     n.levels <- length(object)
-    file_path <- .get_layer_path(object)
     # update all paths
     for (i in seq_len(n.levels)) {
       object[[i]] <-
@@ -54,17 +58,6 @@ setReplaceMethod(
     object
   }
 )
-
-#' @importFrom DelayedArray path
-#' @noRd
-.get_layer_path <- function(object) {
-  # check DelayedArray seed
-  obj <- object[[1]]
-  if(!inherits(obj, "DelayedArray"))
-    stop("The path method is only applicable to ImageArray objects ", 
-         "whose layers with DelayedArray seeds.")
-  DelayedArray::path(obj)
-}
 
 #' @noRd
 .collapse_slashes <- function(x) {
