@@ -114,18 +114,16 @@ setMethod("flop", signature = "ImageArray", function(x) {
 #' @importFrom stats setNames
 #' @exportMethod crop
 setMethod("crop", signature = "ImageArray", function(object, index) {
-  
   # check_dim
   .check_dim(object)
-  
+
   # get axes
   ax <- axes(object)
   dim_img <- stats::setNames(dim(object), ax)
-  
+
   # check ind
   if (missing(index)) {
-    index <- vector(mode = "list", 
-                    length = length(metadata$shape))
+    index <- vector(mode = "list", length = length(metadata$shape))
   }
   index <- .check_indices(index = index, dim = dim_img, ax = ax)
   # if(is.null(names(index)))

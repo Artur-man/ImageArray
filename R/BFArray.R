@@ -44,8 +44,9 @@ BFArray <- function(image.file, series, resolution) {
   series_res_meta <- vapply(
     meta.data@.Data,
     function(x) {
-      if (!is.null(cm <- x$coreMetadata))
+      if (!is.null(cm <- x$coreMetadata)) {
         x <- cm
+      }
       c(x$series, x$resolutionLevel)
     },
     integer(2)

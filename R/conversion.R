@@ -4,7 +4,7 @@
 # Main ####
 ####
 
-#' @describeIn ImageArray-methods realize the array 
+#' @describeIn ImageArray-methods realize the array
 #' @importFrom S4Arrays as.array.Array
 #' @export
 setMethod(
@@ -95,19 +95,17 @@ setMethod(
   }
   r <- array(
     if (d[3L] == 3L) {
-      grDevices::rgb(t(x[, , 1L]), t(x[, , 2L]), t(x[, , 3L]),
-                     maxColorValue = max)
+      grDevices::rgb(t(x[,, 1L]), t(x[,, 2L]), t(x[,, 3L]), maxColorValue = max)
     } else if (d[3L] == 4L) {
       grDevices::rgb(
-        t(x[, , 1L]),
-        t(x[, , 2L]),
-        t(x[, , 3L]),
-        t(x[, , 4L]),
+        t(x[,, 1L]),
+        t(x[,, 2L]),
+        t(x[,, 3L]),
+        t(x[,, 4L]),
         maxColorValue = max
       )
     } else if (d[3L] == 1L) {
-      grDevices::rgb(t(x[, , 1L]), t(x[, , 1L]), t(x[, , 1L]),
-                     maxColorValue = max)
+      grDevices::rgb(t(x[,, 1L]), t(x[,, 1L]), t(x[,, 1L]), maxColorValue = max)
     } else {
       stop("a raster array must have exactly 1, 3 or 4 planes")
     },
@@ -120,15 +118,17 @@ setMethod(
 #' @describeIn ImageArray-methods create a raster object
 #' @importFrom stats setNames
 #' @export
-as.raster.ImageArray <- function(x,
-                                 level = NULL, 
-                                 max.pixel.size = NULL, 
-                                 min.pixel.size = NULL, 
-                                 ...) {
+as.raster.ImageArray <- function(
+  x,
+  level = NULL,
+  max.pixel.size = NULL,
+  min.pixel.size = NULL,
+  ...
+) {
   # get axes
   ax <- axes(x)
   cur_perm <- stats::setNames(seq_len(length(dim(x))), ax)
-  
+
   # realize
   rx <- realize(
     x,

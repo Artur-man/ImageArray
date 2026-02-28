@@ -17,7 +17,7 @@
 #' @param angle value between 0 and 360 for degrees to rotate
 #' @param brightness the brightness of the new image in percentage, e.g. 120
 #' @param perm perm
-#' @param index a named or unnamed list of indices for cropping/subsetting the 
+#' @param index a named or unnamed list of indices for cropping/subsetting the
 # image, e.g. list(x = 1:100, y = 1:100) or list(1:100, 1:100)
 #' @param max.pixel.size maximum pixel size
 #' @param min.pixel.size minimum pixel size
@@ -52,7 +52,7 @@
 #' as.raster,ImageArray-method
 #' path
 #' path,ImageArray-method
-#' 
+#'
 #' @examples
 #' # get image
 #' library(EBImage)
@@ -84,10 +84,10 @@
 #'                           name = "image",
 #'                           format = "h5",
 #'                           verbose = FALSE)
-#'                           
+#'
 #' # as.raster
 #' imgarray_raster <- as.raster(imgarray)
-#' 
+#'
 #' # realize
 #' imgarray <- realize(imgarray)
 NULL
@@ -96,17 +96,20 @@ NULL
 #' for \code{ImageArray} objects
 #'
 #' @export
-setMethod(f = "[", 
-          signature = c("ImageArray"),
-          function(x, i, j, ..., drop = FALSE) {
-            if (missing(x))
-              stop(wmsg("'x' is missing"))
-            if (!.isTRUEorFALSE(drop))
-              stop(wmsg("'drop' must be TRUE or FALSE"))
-            Nindex <- S4Arrays:::extract_Nindex_from_syscall(sys.call(), 
-                                                             parent.frame())
-            crop(x, index = Nindex)
-          })
+setMethod(
+  f = "[",
+  signature = c("ImageArray"),
+  function(x, i, j, ..., drop = FALSE) {
+    if (missing(x)) {
+      stop(wmsg("'x' is missing"))
+    }
+    if (!.isTRUEorFALSE(drop)) {
+      stop(wmsg("'drop' must be TRUE or FALSE"))
+    }
+    Nindex <- S4Arrays:::extract_Nindex_from_syscall(sys.call(), parent.frame())
+    crop(x, index = Nindex)
+  }
+)
 
 #' @describeIn ImageArray-methods Layer access
 #' for \code{ImageArray} objects
@@ -116,7 +119,7 @@ setMethod(
   f = "[[",
   signature = c("ImageArray", "numeric"),
   definition = function(x, i) {
-    .check_level(i,x)
+    .check_level(i, x)
     x@levels[[i]]
   }
 )
@@ -129,7 +132,7 @@ setMethod(
   f = "[[<-",
   signature = c("ImageArray", "numeric"),
   definition = function(x, i, ..., value) {
-    .check_level(i,x)
+    .check_level(i, x)
     x@levels[[i]] <- value
     x
   }
@@ -345,7 +348,7 @@ createEBImageArray <- function(
   } else if (n.levels < 1) {
     stop("'n.levels' has to be 1 or a larger integer value!")
   }
-  
+
   # check dim
   .check_dim(image)
 
@@ -483,13 +486,13 @@ createImageArray <- function(
 #'
 #' Writing image arrays on disk
 #'
-#' @param image an Image object (EBImage), a magick object or the path 
-#' to an image file, 
+#' @param image an Image object (EBImage), a magick object or the path
+#' to an image file,
 #' @param output output file name
 #' @param name name of the group
-#' @param format on disk format, either "h5" for HDF5 format, "zarr" for 
-#' zarr format, or "in-memory" for in-memory ImageArray object. 
-#' If not provided, the format will be inferred from the file extension of 
+#' @param format on disk format, either "h5" for HDF5 format, "zarr" for
+#' zarr format, or "in-memory" for in-memory ImageArray object.
+#' If not provided, the format will be inferred from the file extension of
 #' the output path.
 #' @param replace Should the existing file be
 #' removed or not
@@ -547,12 +550,14 @@ writeImageArray <- function(
   verbose <- DelayedArray:::normarg_verbose(verbose)
 
   # create or replace output folder
-  if (!.isTRUEorFALSE(replace))
+  if (!.isTRUEorFALSE(replace)) {
     stop("'replace' must be TRUE or FALSE")
-  
+  }
+
   # remove files or folders if needed
-  if (replace)
-    unlink(output, recursive=TRUE)
+  if (replace) {
+    unlink(output, recursive = TRUE)
+  }
 
   # make Image Array
   if (!inherits(image, "ImageArray")) {
@@ -565,35 +570,42 @@ writeImageArray <- function(
   } else {
     image_list <- image
   }
-  
+
   # check format
-  if(is.null(format)){
+  if (is.null(format)) {
     format <- tools::file_ext(output)
-    if(!format %in% .FORMATS)
+    if (!format %in% .FORMATS) {
       stop(
         sprintf(
           paste0(
-            "Invalid format: %s. Currently supported formats are %s."),
-          format, 
+            "Invalid format: %s. Currently supported formats are %s."
+          ),
+          format,
           paste(
-            vapply(.FORMATS, \(.) paste0('"', ., '"'), character(1)), 
-            collapse = ", "))
+            vapply(.FORMATS, \(.) paste0('"', ., '"'), character(1)),
+            collapse = ", "
+          )
+        )
       )
+    }
   }
 
   # open ondisk store
   switch(
     format,
     h5 = {
-      if (!file.exists(output))
+      if (!file.exists(output)) {
         rhdf5::h5createFile(output)
+      }
       # TODO: is there a better way to check existing groups
-      if (!name %in% c("", "/"))
+      if (!name %in% c("", "/")) {
         rhdf5::h5createGroup(output, group = name)
+      }
     },
     zarr = {
-      if (!dir.exists(output)) 
+      if (!dir.exists(output)) {
         create_zarr(store = output)
+      }
       create_zarr_group(output, name)
     }
   )
