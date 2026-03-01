@@ -101,10 +101,10 @@ setMethod(
   signature = c("ImageArray"),
   function(x, i, j, ..., drop = FALSE) {
     if (missing(x)) {
-      stop(wmsg("'x' is missing"))
+      stop("'x' is missing")
     }
     if (!.isTRUEorFALSE(drop)) {
-      stop(wmsg("'drop' must be TRUE or FALSE"))
+      stop("'drop' must be TRUE or FALSE")
     }
     Nindex <- S4Arrays:::extract_Nindex_from_syscall(sys.call(), parent.frame())
     crop(x, index = Nindex)

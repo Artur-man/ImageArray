@@ -19,16 +19,16 @@ writeImageArray(
 )
 }
 \arguments{
-\item{image}{an Image object (EBImage), a magick object or the path 
+\item{image}{an Image object (EBImage), a magick object or the path
 to an image file,}
 
 \item{output}{output file name}
 
 \item{name}{name of the group}
 
-\item{format}{on disk format, either "h5" for HDF5 format, "zarr" for 
-zarr format, or "in-memory" for in-memory ImageArray object. 
-If not provided, the format will be inferred from the file extension of 
+\item{format}{on disk format, either "h5" for HDF5 format, "zarr" for
+zarr format, or "in-memory" for in-memory ImageArray object.
+If not provided, the format will be inferred from the file extension of
 the output path.}
 
 \item{replace}{Should the existing file be

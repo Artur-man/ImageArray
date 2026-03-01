@@ -1,7 +1,9 @@
 #' @describeIn ImageArray-methods path of an ImageArray object
 #' @importFrom DelayedArray path
+#' @importFrom methods is
 #' @export
 setMethod("path", signature = "ImageArray", function(object) {
+  
   # check DelayedArray
   obj <- object[[1]]
   if (!inherits(obj, "DelayedArray")) {
@@ -14,7 +16,7 @@ setMethod("path", signature = "ImageArray", function(object) {
 
   # check if path is a zarr path
   # the path could have a zarr extension with no associated zarr group/array
-  if (.zarr_path_exists(file_path) || grepl(".zarr", file_path)) {
+  if (methods::is(obj, "ZarrArray")) {
     file_path <- normalizePath(dirname(file_path), winslash = "\\")
   }
 
@@ -22,7 +24,7 @@ setMethod("path", signature = "ImageArray", function(object) {
 })
 
 #' @describeIn ImageArray-methods replace method for path(ImageArray)
-#' @importFrom methods slotNames slot slot<-
+#' @importFrom methods slotNames slot slot<- is
 #' @export
 setReplaceMethod(
   "path",
@@ -35,11 +37,12 @@ setReplaceMethod(
         modify_seeds(
           object[[i]],
           function(x) {
+            
             # check zarr and update value for each layer
             # this also requires normalizing the path to ensure correct
             # replacement on Windows
             file_path <- path(x)
-            if (is(x, "ZarrArraySeed")) {
+            if (methods::is(x, "ZarrArraySeed")) {
               value <- gsub(
                 normalizePath(dirname(file_path), winslash = "\\"),
                 value,

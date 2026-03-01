@@ -123,11 +123,9 @@ setMethod("crop", signature = "ImageArray", function(object, index) {
 
   # check ind
   if (missing(index)) {
-    index <- vector(mode = "list", length = length(metadata$shape))
+    index <- vector(mode = "list", length = length(ax))
   }
   index <- .check_indices(index = index, dim = dim_img, ax = ax)
-  # if(is.null(names(index)))
-  #   names(index) <- ax
 
   # check sequential
   check_sequential <- all(vapply(index[c("x", "y")], is.sequential, logical(1)))
